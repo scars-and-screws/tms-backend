@@ -1,0 +1,351 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ! USER MODEL
+model User {
+  id String @id @default(uuid())
+
+  email        String @unique @db.VarChar(255)
+  username     String @unique @db.VarChar(50)
+  passwordHash String
+
+  firstName String @db.VarChar(100)
+  lastName  String @db.VarChar(100)
+
+  avatarUrl      String?
+  avatarPublicId String?
+
+  bio      String?  @db.Text
+  headline String?  @db.VarChar(150)
+  skills   String[] @default([])
+
+  isEmailVerified  Boolean @default(false)
+  twoFactorEnabled Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+  otps          Otp[]
+
+  organizationMemberships OrganizationMember[]
+
+  createdOrganizations Organization[] @relation("OrganizationOwner")
+
+  projectMemberships ProjectMember[]
+
+  createdProjects Project[] @relation("ProjectCreator")
+
+  assignedTasks Task[] @relation("TaskAssignee")
+
+  createdTasks Task[] @relation("TaskCreator")
+
+  taskComments TaskComment[]
+
+  uploadedFiles File[]
+
+  activities Activity[]
+
+  @@index([createdAt])
+}
+
+// ! REFRESH TOKEN MODEL
+model RefreshToken {
+  id String @id @default(uuid())
+
+  // Represents an authentication token associated with a user.
+  // This relation establishes a one-to-many connection where:
+  // - Each token belongs to exactly one user
+  // - When a user is deleted, all their associated tokens are automatically deleted as well (cascading delete)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tokenHash String @unique
+
+  ipAddress String? @db.VarChar(45) // Supports IPv4 and IPv6
+  userAgent String?
+
+  deviceId    String @db.VarChar(255)
+  fingerprint String @db.VarChar(255)
+
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime @default(now())
+
+  @@unique([userId, deviceId])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ! OTP MODEL
+model Otp {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  otpHash String
+  purpose OtpPurpose
+
+  expiresAt DateTime
+  attempts  Int      @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, purpose])
+}
+
+enum OtpPurpose {
+  EMAIL_VERIFY
+  PASSWORD_RESET
+  TWO_FACTOR
+}
+
+// ! FILE MODEL
+model File {
+  id String @id @default(uuid())
+
+  fileName     String
+  fileUrl      String
+  filePublicId String
+
+  mimeType String
+  size     Int
+
+  uploadedById String
+  projectId    String?
+  taskId       String?
+
+  createdAt DateTime @default(now())
+
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task    Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([taskId])
+  @@index([uploadedById])
+}
+
+// ! ORGANIZATION MODEL
+model Organization {
+  id String @id @default(uuid())
+
+  name        String  @db.VarChar(120)
+  description String? @db.VarChar(500)
+
+  logoUrl      String?
+  logoPublicId String?
+
+  ownerId String
+  owner   User   @relation("OrganizationOwner", fields: [ownerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members  OrganizationMember[]
+  projects Project[]
+
+  activities Activity[]
+
+  @@index([ownerId])
+}
+
+// ! ORGANIZATION MEMBER MODEL
+model OrganizationMember {
+  id String @id @default(uuid())
+
+  userId         String
+  organizationId String
+
+  role OrganizationRole @default(MEMBER)
+
+  joinedAt DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId])
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+// ! PROJECT MODEL
+model Project {
+  id String @id @default(uuid())
+
+  name        String  @db.VarChar(120)
+  description String? @db.VarChar(500)
+
+  organizationId String
+  createdById    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdBy User @relation("ProjectCreator", fields: [createdById], references: [id])
+
+  members ProjectMember[]
+
+  tasks Task[]
+
+  files File[]
+
+  activities Activity[]
+
+  @@index([organizationId])
+}
+
+// ! PROJECT MEMBER MODEL
+model ProjectMember {
+  id String @id @default(uuid())
+
+  userId    String
+  projectId String
+
+  role ProjectRole @default(MEMBER)
+
+  joinedAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([projectId])
+}
+
+enum ProjectRole {
+  ADMIN
+  MEMBER
+}
+
+// ! TASK MODEL
+model Task {
+  id String @id @default(uuid())
+
+  title       String  @db.VarChar(200)
+  description String?
+
+  status   TaskStatus   @default(TODO)
+  priority TaskPriority @default(MEDIUM)
+
+  projectId String
+
+  assigneeId  String?
+  createdById String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  assignee User? @relation("TaskAssignee", fields: [assigneeId], references: [id])
+
+  createdBy User @relation("TaskCreator", fields: [createdById], references: [id])
+
+  comments TaskComment[]
+
+  files File[]
+
+  activities Activity[]
+
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([projectId, status])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+// ! TASK COMMENT MODEL
+model TaskComment {
+  id String @id @default(uuid())
+
+  taskId   String
+  authorId String
+
+  content String
+
+  createdAt DateTime @default(now())
+
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([taskId])
+}
+
+// ! ACTIVITY MODEL
+model Activity {
+  id String @id @default(uuid())
+
+  actorId String
+
+  organizationId String?
+  projectId      String?
+  taskId         String?
+
+  type ActivityType
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  actor        User          @relation(fields: [actorId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  project      Project?      @relation(fields: [projectId], references: [id])
+  task         Task?         @relation(fields: [taskId], references: [id])
+
+  @@index([actorId])
+  @@index([organizationId])
+  @@index([projectId])
+  @@index([taskId])
+}
+
+enum ActivityType {
+  ORGANIZATION_CREATED
+  MEMBER_ADDED
+  MEMBER_REMOVED
+  MEMBER_LEFT
+  MEMBER_ROLE_UPDATED
+  OWNERSHIP_TRANSFERRED
+
+  PROJECT_CREATED
+  PROJECT_UPDATED
+  PROJECT_MEMBER_ADDED
+  PROJECT_MEMBER_REMOVED
+
+  TASK_CREATED
+  TASK_UPDATED
+  TASK_ASSIGNED
+  TASK_STATUS_CHANGED
+  TASK_COMPLETED
+
+  COMMENT_ADDED
+  FILE_UPLOADED
+}
