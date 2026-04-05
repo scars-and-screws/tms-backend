@@ -1,26 +1,16 @@
 # 🚀 Task Management System (Backend)
 
-A production-ready backend system built with a modular architecture, featuring authentication, RBAC, organization management, and advanced security mechanisms.
+A scalable, production-ready backend system built with a modular architecture, focused on authentication, RBAC, and multi-tenant organization management.
 
 ---
 
-## 🧠 Highlights
+## ✨ Key Highlights
 
-- 🔐 Advanced Authentication System (JWT, Sessions, 2FA, OTP)
+- 🔐 Advanced Authentication (JWT, Sessions, 2FA, OTP)
 - 🏢 Multi-tenant Organization Support
 - 👥 Role-Based Access Control (RBAC)
-- 📦 Modular & Scalable Architecture
-- 🛡️ Security-focused design (device tracking, fingerprinting)
-
----
-
-## 🚧 Ongoing Development
-
-Currently expanding the system with:
-
-- 📋 Task management module  
-- 💬 Task comments & collaboration system  
-- 👥 Advanced role-based permissions for teams  
+- 🛡️ Security-first architecture (device tracking, fingerprinting)
+- 📦 Modular & scalable code structure
 
 ---
 
@@ -33,13 +23,6 @@ src/
  ├── core/        → Shared infrastructure (security, middleware, utils)
  ├── modules/     → Feature-based modules (auth, users, organizations)
 ```
-
-### 🔑 Design Principles
-
-- Feature-based modular structure  
-- Separation of concerns  
-- Scalable & maintainable codebase  
-- Reusable core utilities  
 
 ---
 
@@ -58,7 +41,7 @@ src/
 
 ### 🧰 Utilities
 - Centralized error handling  
-- API response standardization  
+- Standardized API responses  
 - Request metadata handling  
 
 ---
@@ -66,15 +49,19 @@ src/
 ## 📦 Modules
 
 ### 🔑 Auth Module
-- Login / Register  
+- User registration & login  
 - Email verification  
 - Password reset  
 - Two-Factor Authentication (2FA)  
 - Session management  
 
+---
+
 ### 👤 User Module
 - User profile management  
 - Avatar upload (Cloudinary)  
+
+---
 
 ### 🏢 Organization Module
 - Multi-tenant organization system  
@@ -83,7 +70,7 @@ src/
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ Tech Stack
 
 <p>
   <img src="https://skillicons.dev/icons?i=nodejs,express,postgres,prisma,js,git,linux" />
@@ -93,22 +80,26 @@ src/
 
 ## ⚙️ Setup Instructions
 
-### 1. Clone the repository
-```
+### 1️⃣ Clone the repository
+```bash
 git clone https://github.com/scars-and-screws/tms-backend.git
 cd tms-backend
 ```
 
-### 2. Install dependencies
-```
+---
+
+### 2️⃣ Install dependencies
+```bash
 npm install
 ```
 
-### 3. Configure environment variables
+---
+
+### 3️⃣ Configure environment variables
 
 Create a `.env` file in the root directory:
 
-```
+```env
 # PORT
 PORT=5000
 
@@ -122,10 +113,10 @@ DATABASE_URL="your-database-url-here"
 SALT_ROUNDS=10
 
 # JWT AUTH
-JWT_ACCESS_TOKEN_SECRET="your-access-token-secret-here"
+JWT_ACCESS_TOKEN_SECRET="your-access-token-secret"
 JWT_ACCESS_TOKEN_EXPIRATION=15m
 
-JWT_REFRESH_TOKEN_SECRET="your-refresh-token-secret-here"
+JWT_REFRESH_TOKEN_SECRET="your-refresh-token-secret"
 JWT_REFRESH_TOKEN_EXPIRATION=15d
 
 # DEVICE COOKIE
@@ -146,19 +137,19 @@ EMAIL_PASS="your-app-password"
 MAIL_SERVICE="gmail"
 
 # RESEND
-RESEND_API_KEY="your-resend-api-key-here"
+RESEND_API_KEY="your-resend-api-key"
 
 # CLOUDINARY
-CLOUDINARY_CLOUD_NAME="your-cloudinary-cloud-name-here"
-CLOUDINARY_API_KEY="your-cloudinary-api-key-here"
-CLOUDINARY_API_SECRET="your-cloudinary-api-secret-here"
-CLOUDINARY_URL="your-cloudinary-url-here"
+CLOUDINARY_CLOUD_NAME="your-cloudinary-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+CLOUDINARY_URL="your-cloudinary-url"
 ```
 
 ---
 
-### 4. Run the server
-```
+### 4️⃣ Run the server
+```bash
 npm run dev
 ```
 
@@ -168,24 +159,26 @@ npm run dev
 
 - Authentication (JWT, sessions, refresh tokens)  
 - Authorization (RBAC, organization roles)  
-- Multi-tenant system design  
-- Modular backend architecture  
-- Security best practices  
+- Multi-tenant architecture  
+- Secure backend design  
+- Modular scalable system design  
 
 ---
 
-## 📡 API Documentation (Planned)
+## 🚧 Ongoing Development
 
-API documentation using Swagger will be added after core modules are completed to ensure accurate and stable documentation.
+- 📌 Task & subtask management system  
+- 💬 Comments & collaboration features  
+- 📊 Activity tracking & audit logs  
 
 ---
 
 ## 📈 Future Improvements
 
-- API documentation (Swagger)  
-- Rate limiting & throttling  
-- Logging & monitoring  
-- Docker & deployment setup  
+- 📄 API documentation (Swagger)  
+- 🚦 Rate limiting & throttling  
+- 📊 Logging & monitoring  
+- 🐳 Docker & deployment setup  
 
 ---
 
