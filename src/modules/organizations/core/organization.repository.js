@@ -1,13 +1,9 @@
 import prisma from "../../../core/database/prisma.js";
-import { ApiError } from "../../../core/utils/index.js";
-import { mapOrganizationList, sanitizeOrganization } from "../index.js";
 
-// ! LIST USER ORGANIZATIONS QUERY SERVICE
-export const listUserOrganizationsQueryService = async userId => {
-  const memberships = await prisma.organizationMember.findMany({
-    where: {
-      userId,
-    },
+// ! LIST USER ORGANIZATIONS
+export const findUserOrganizations = async userId => {
+  return prisma.organizationMember.findMany({
+    where: { userId },
     include: {
       organization: true,
     },
@@ -15,18 +11,21 @@ export const listUserOrganizationsQueryService = async userId => {
       joinedAt: "asc",
     },
   });
-  return mapOrganizationList(memberships);
 };
 
-// ! GET ORGANIZATION QUERY SERVICE
-export const getOrganizationQueryService = async organizationId => {
-  const organization = await prisma.organization.findUnique({
+// ! FIND ORGANIZATION BY ID
+export const findOrganizationById = async organizationId => {
+  return prisma.organization.findUnique({
+    where: { id: organizationId },
+  });
+};
+
+// ! FIND ORGANIZATION BY NAME AND OWNER ID
+export const findOrganizationByNameAndOwnerId = async (name, ownerId) => {
+  return prisma.organization.findFirst({
     where: {
-      id: organizationId,
+      name,
+      ownerId,
     },
   });
-  if (!organization) {
-    throw new ApiError(404, "Organization not found");
-  }
-  return sanitizeOrganization(organization);
 };

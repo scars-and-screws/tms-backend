@@ -1,8 +1,8 @@
 import { asyncHandler, ApiResponse } from "../../../core/utils/index.js";
 import {
   createOrganizationService,
-  getOrganizationQueryService,
-  listUserOrganizationsQueryService,
+  getOrganizationService,
+  listUserOrganizationsService,
   updateOrganizationService,
   transferOrganizationOwnershipService,
   leaveOrganizationService,
@@ -22,7 +22,7 @@ export const createOrganizationController = asyncHandler(async (req, res) => {
 // ! LIST USER ORGANIZATIONS CONTROLLER
 export const listUserOrganizationsController = asyncHandler(
   async (req, res) => {
-    const organizations = await listUserOrganizationsQueryService(req.user.id);
+    const organizations = await listUserOrganizationsService(req.user.id);
 
     return res
       .status(200)
@@ -38,7 +38,7 @@ export const listUserOrganizationsController = asyncHandler(
 
 // ! GET ORGANIZATION CONTROLLER
 export const getOrganizationController = asyncHandler(async (req, res) => {
-  const organization = await getOrganizationQueryService(
+  const organization = await getOrganizationService(
     req.params.organizationId
   );
   res

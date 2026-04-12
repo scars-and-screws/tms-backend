@@ -10,7 +10,7 @@ export const createOrganizationSchema = {
   body: z
     .object({
       name: organizationNameSchema,
-      description: descriptionSchema.optional().optional(),
+      description: descriptionSchema.optional(),
     })
     .strict(),
 };

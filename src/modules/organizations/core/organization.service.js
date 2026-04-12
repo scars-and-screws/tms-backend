@@ -4,23 +4,38 @@ import { createActivityService } from "../../../core/activity/activity.service.j
 import { sanitizeOrganization } from "../index.js";
 import { deleteFromCloudinary } from "../../../core/upload/index.js";
 import {
+  findOrganizationById,
+  findUserOrganizations,
+  findOrganizationByNameAndOwnerId
+} from "./organization.repository.js";
+import {
   ORGANIZATION_ROLES,
   ACTIVITY_TYPES,
 } from "../../../core/constants/index.js";
+
+// ! GET ORGANIZATION SERVICE
+export const getOrganizationService = async organizationId => {
+  const organization = await findOrganizationById(organizationId);
+  if (!organization) {
+    throw new ApiError(404, "Organization not found");
+  }
+  return sanitizeOrganization(organization);
+};
+
+// ! LIST USER ORGANIZATIONS SERVICE
+export const listUserOrganizationsService = async userId => {
+  const memberships = await findUserOrganizations(userId);
+  return mapOrganizationList(memberships);
+};
 
 // ! CREATE ORGANIZATION SERVICE
 export const createOrganizationService = async (userId, data) => {
   const { name, description } = data;
 
   // 1️⃣ Check if organization name already exists for this owner
-  const existingOrganization = await prisma.organization.findFirst({
-    where: {
-      name,
-      ownerId: userId,
-    },
-  });
+  const existing = await findOrganizationByNameAndOwnerId(name, userId);
 
-  if (existingOrganization) {
+  if (existing) {
     throw new ApiError(
       400,
       "You already created an organizaiton with this name"
