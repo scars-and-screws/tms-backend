@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   idSchema,
   projectNameSchema,
+  descriptionSchema,
   projectRoleSchema,
 } from "../../../core/validation/index.js";
 

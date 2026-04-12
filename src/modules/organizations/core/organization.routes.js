@@ -21,6 +21,7 @@ import {
   deleteOrganizationController,
   deleteOrganizationSchema,
 } from "../index.js";
+import { projectRoutes } from "../../projects/core/index.js";
 
 const router = Router();
 
@@ -61,6 +62,13 @@ router.use(
 
 // ! NESTED MEMBER ROUTES
 router.use("/:organizationId/members", requireOrganizationMember, memberRoutes);
+
+// ! NESTED PROJECT ROUTES
+router.use(
+  "/:organizationId/projects",
+  requireOrganizationMember,
+  projectRoutes
+);
 
 // ! TRANSFER OWNERSHIP ROUTE
 router.post(

@@ -8,14 +8,21 @@ export const createProject = async data => {
 };
 
 // ! GET PROJECT BY ID
-export const getProjectById = async projectId => {
+export const findProjectById = async projectId => {
   return prisma.project.findUnique({
     where: { id: projectId },
   });
 };
 
+// ! CHECK FOR DUPLICATE PROJECT NAME WITHIN SAME ORG
+export const findProjectByNameAndOrg = async (name, organizationId) => {
+  return prisma.project.findFirst({
+    where: { name, organizationId },
+  });
+};
+
 // ! GET PROJECT WITH MEMBERS (for project access checks)
-export const getProjectWithMembers = async projectId => {
+export const findProjectWithMembers = async projectId => {
   return prisma.project.findUnique({
     where: { id: projectId },
     include: { members: true },
@@ -23,7 +30,7 @@ export const getProjectWithMembers = async projectId => {
 };
 
 // ! LIST PROJECTS BY ORGANIZATION
-export const listProjectsByOrganization = async organizationId => {
+export const findProjectsByOrganization = async organizationId => {
   return prisma.project.findMany({
     where: { organizationId },
     orderBy: { createdAt: "desc" },
