@@ -202,15 +202,13 @@ model Project {
 
   createdBy User @relation("ProjectCreator", fields: [createdById], references: [id])
 
-  members ProjectMember[]
-
-  tasks Task[]
-
-  files File[]
-
+  members    ProjectMember[]
+  tasks      Task[]
+  files      File[]
   activities Activity[]
 
   @@index([organizationId])
+  @@index([organizationId, createdAt])
 }
 
 // ! PROJECT MEMBER MODEL
@@ -229,6 +227,7 @@ model ProjectMember {
 
   @@unique([userId, projectId])
   @@index([projectId])
+  @@index([userId])
 }
 
 enum ProjectRole {
