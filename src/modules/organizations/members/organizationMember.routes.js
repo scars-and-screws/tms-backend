@@ -33,7 +33,7 @@ router.get(
 
 //  UPDATE ORGANIZATION MEMBER ROLE
 router.patch(
-  "/:organizationMemberId",
+  "/:memberId",
   requireOrganizationRole(["OWNER", "ADMIN"]),
   validate(updateOrganizationMemberRoleSchema),
   updateOrganizationMemberRoleController
@@ -41,7 +41,7 @@ router.patch(
 
 // REMOVE ORGANIZATION MEMBER
 router.delete(
-  "/:organizationMemberId",
+  "/:memberId",
   requireOrganizationRole(["OWNER", "ADMIN"]),
   validate(removeOrganizationMemberSchema),
   removeOrganizationMemberController

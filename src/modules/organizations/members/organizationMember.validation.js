@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { emailSchema, idSchema } from "../../../core/validation/index.js";
+import {
+  emailSchema,
+  idSchema,
+  organizationRoleSchema,
+} from "../../../core/validation/index.js";
 
 // ! ADD ORGANIZATION MEMBER VALIDATION SCHEMA
 export const addOrganizationMemberSchema = {
@@ -31,7 +35,7 @@ export const updateOrganizationMemberRoleSchema = {
 
   body: z
     .object({
-      role: z.enum(["ADMIN", "MEMBER"]),
+      role: organizationRoleSchema,
     })
     .strict(),
 };

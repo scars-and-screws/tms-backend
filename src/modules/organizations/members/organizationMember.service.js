@@ -1,8 +1,14 @@
-import prisma from "../../../core/database/prisma.js";
+import {
+  createOrganizationMember,
+  findOrganizationMember,
+  findOrganizationMemberById,
+  updateOrganizationMemberRoleById,
+  findUserByEmail,
+} from "./organizationMember.repository.js";
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
-import { ACTIVITY_TYPES } from "../../../core/constants/index.js";
 import { sanitizeOrganizationMember } from "./index.js";
+import { ACTIVITY_TYPES } from "../../../core/constants/index.js";
 
 // ! ADD ORGANIZATION MEMBER SERVICE
 export const addOrganizationMemberService = async ({
@@ -12,49 +18,24 @@ export const addOrganizationMemberService = async ({
   actorId,
 }) => {
   // 1️⃣ Find user by email
-  const user = await prisma.user.findUnique({
-    where: { email },
-  });
+  const user = await findUserByEmail(email);
 
   if (!user) {
-    throw new ApiError(404, "User with this email does not exist");
+    throw new ApiError(404, "User not found ");
   }
 
-  // 2️⃣ Check if the user is already a member of the organization
-  const existingOrganizationMember = await prisma.organizationMember.findUnique(
-    {
-      where: {
-        userId_organizationId: {
-          userId: user.id,
-          organizationId,
-        },
-      },
-    }
-  );
+  // 2️⃣ Check membership
+  const existing = await findOrganizationMember(user.id, organizationId);
 
-  if (existingOrganizationMember) {
+  if (existing) {
     throw new ApiError(409, "User is already a member of this organization");
   }
 
   // 3️⃣ Create membership
-  const organizationMember = await prisma.organizationMember.create({
-    data: {
-      organizationId,
-      userId: user.id,
-      role,
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          avatarUrl: true,
-        },
-      },
-    },
+  const member = await createOrganizationMember({
+    organizationId,
+    userId: user.id,
+    role,
   });
 
   // 4️⃣ Log activity
@@ -68,7 +49,13 @@ export const addOrganizationMemberService = async ({
     },
   });
 
-  return sanitizeOrganizationMember(organizationMember);
+  return sanitizeOrganizationMember(member);
+};
+
+// ! LIST ORGANIZATION MEMBERS SERVICE
+export const listOrganizationMembersService = async organizationId => {
+  const members = await findOrganizationMembersByOrganizationId(organizationId);
+  return mapOrganizationMemberList(members);
 };
 
 // ! UPDATE ORGANIZATION MEMBER ROLE SERVICE
@@ -79,31 +66,9 @@ export const updateOrganizationMemberRoleService = async ({
   actorId,
 }) => {
   // 1️⃣ Fetch actor membership to check permissions
-  const actor = await prisma.organizationMember.findUnique({
-    where: {
-      userId_organizationId: {
-        userId: actorId,
-        organizationId,
-      },
-    },
-  });
-
+  const actor = await findOrganizationMember(actorId, organizationId);
   // 2️⃣ Fetch target membership
-  const target = await prisma.organizationMember.findUnique({
-    where: { id: memberId },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          avatarUrl: true,
-        },
-      },
-    },
-  });
+  const target = await findOrganizationMemberById(memberId);
 
   if (!target || target.organizationId !== organizationId) {
     throw new ApiError(404, "Member not found in this organization");
@@ -115,29 +80,12 @@ export const updateOrganizationMemberRoleService = async ({
   }
 
   // 4️⃣ ADMIN restrictions
-  if (actor.role === "ADMIN") {
-    if (target.role !== "MEMBER") {
-      throw new ApiError(403, "Admin can only modify members");
-    }
+  if (actor.role === "ADMIN" && target.role !== "MEMBER") {
+    throw new ApiError(403, "Admin can only modify member roles");
   }
 
   // 5️⃣ Update role
-  const updated = await prisma.organizationMember.update({
-    where: { id: memberId },
-    data: { role: newRole },
-    include: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          avatarUrl: true,
-        },
-      },
-    },
-  });
+  const updated = await updateOrganizationMemberRoleById(memberId, newRole);
 
   // 6️⃣ Log activity
   await createActivityService({
