@@ -3,7 +3,7 @@ import {
   organizationNameSchema,
   descriptionSchema,
   idSchema,
-} from "../../core/validation/index.js";
+} from "../../../core/validation/index.js";
 
 // ! CREATE ORGANIZATION VALIDATION SCHEMA
 export const createOrganizationSchema = {

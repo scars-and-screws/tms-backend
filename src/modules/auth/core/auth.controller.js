@@ -1,24 +1,24 @@
-import { NODE_ENV } from "../../core/config/env.js";
+import { NODE_ENV } from "../../../core/config/env.js";
 import {
   generateDeviceId,
   setRefreshTokenCookie,
   setDeviceCookie,
-} from "../../core/security/index.js";
+} from "../../../core/security/index.js";
 import {
   asyncHandler,
   ApiResponse,
   buildAuthResponse,
   getRequestMeta,
-} from "../../core/utils/index.js";
+} from "../../../core/utils/index.js";
 import {
   getUserSessionsService,
   revokeAllSessionsService,
   revokeSessionService,
   rotateSessionService,
   terminateSessionService,
-} from "./session/index.js";
+} from "../session/index.js";
 
-import { loginService, registerService } from "./index.js";
+import { loginService, registerService } from "../index.js";
 
 // ! CONTROLLER FOR USER REGISTRATION
 export const registerController = asyncHandler(async (req, res) => {

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { memberRoutes } from "./members/index.js";
-import { logoRoutes } from "./logo/index.js";
+import { memberRoutes } from "../members/index.js";
+import { logoRoutes } from "../logo/index.js";
 import {
   validate,
   requireOrganizationMember,
   requireOrganizationRole,
-} from "./../../core/middleware/index.js";
+} from "../../../core/middleware/index.js";
 import {
   createOrganizationController,
   createOrganizationSchema,
@@ -20,7 +20,7 @@ import {
   leaveOrganizationSchema,
   deleteOrganizationController,
   deleteOrganizationSchema,
-} from "./index.js";
+} from "../index.js";
 
 const router = Router();
 

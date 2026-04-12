@@ -9,7 +9,7 @@ import {
   skillsSchema,
   idSchema,
   identifierSchema,
-} from "../../core/validation/index.js";
+} from "../../../core/validation/index.js";
 
 // REGISTER VALIDATION SCHEMA
 export const registerSchema = {

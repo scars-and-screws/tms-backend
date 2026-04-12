@@ -3,13 +3,13 @@ import {
   ApiResponse,
   buildAuthResponse,
   getRequestMeta,
-} from "../../core/utils/index.js";
+} from "../../../core/utils/index.js";
 import {
   getProfileService,
   changePasswordService,
   updateProfileService,
-} from "./index.js";
-import { setRefreshTokenCookie } from "../../core/security/index.js";
+} from "../index.js";
+import { setRefreshTokenCookie } from "../../../core/security/index.js";
 
 // ! CONTROLLER FOR GETTING CURRENT USER PROFILE
 export const getProfileController = asyncHandler(async (req, res) => {

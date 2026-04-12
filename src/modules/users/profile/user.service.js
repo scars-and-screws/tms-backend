@@ -1,10 +1,10 @@
-import prisma from "../../core/database/prisma.js";
-import { ApiError, sanitizeUser } from "../../core/utils/index.js";
-import { hashPassword, comparePassword } from "../../core/security/index.js";
+import prisma from "../../../core/database/prisma.js";
+import { ApiError, sanitizeUser } from "../../../core/utils/index.js";
+import { hashPassword, comparePassword } from "../../../core/security/index.js";
 import {
   createSessionService,
   revokeAllSessionsService,
-} from "../auth/session/index.js";
+} from "../../auth/session/index.js";
 
 // ! CURRENT USER PROFILE SERVICE
 export const getProfileService = async userId => {

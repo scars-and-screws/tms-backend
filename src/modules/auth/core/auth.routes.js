@@ -3,7 +3,7 @@ import {
   authenticate,
   requireVerifiedEmail,
   validate,
-} from "../../core/middleware/index.js";
+} from "../../../core/middleware/index.js";
 
 import {
   registerController,
@@ -16,15 +16,15 @@ import {
   registerSchema,
   loginSchema,
   terminateSessionSchema,
-} from "./index.js";
+} from "../index.js";
 
-import { verificationRoutes } from "./verification/index.js";
-import { passwordResetRoutes } from "./password-reset/index.js";
+import { verificationRoutes } from "../verification/index.js";
+import { passwordResetRoutes } from "../password-reset/index.js";
 import {
   verifyTwoFactorLoginController,
   verifyTwoFactorLoginSchema,
   twoFactorRoutes,
-} from "./two-factor/index.js";
+} from "../two-factor/index.js";
 
 const router = Router();
 

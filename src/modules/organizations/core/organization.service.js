@@ -1,12 +1,12 @@
-import prisma from "../../core/database/prisma.js";
-import { ApiError } from "../../core/utils/index.js";
-import { createActivityService } from "../../core/activity/activity.service.js";
-import { sanitizeOrganization } from "./index.js";
-import { deleteFromCloudinary } from "../../core/upload/index.js";
+import prisma from "../../../core/database/prisma.js";
+import { ApiError } from "../../../core/utils/index.js";
+import { createActivityService } from "../../../core/activity/activity.service.js";
+import { sanitizeOrganization } from "../index.js";
+import { deleteFromCloudinary } from "../../../core/upload/index.js";
 import {
   ORGANIZATION_ROLES,
   ACTIVITY_TYPES,
-} from "../../core/constants/index.js";
+} from "../../../core/constants/index.js";
 
 // ! CREATE ORGANIZATION SERVICE
 export const createOrganizationService = async (userId, data) => {

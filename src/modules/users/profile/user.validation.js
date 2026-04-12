@@ -6,7 +6,7 @@ import {
   headlineSchema,
   skillsSchema,
   passwordSchema,
-} from "../../core/validation/index.js";
+} from "../../../core/validation/index.js";
 
 // ! UPDATE PROFILE VALIDATION SCHEMA
 export const updateProfileSchema = {

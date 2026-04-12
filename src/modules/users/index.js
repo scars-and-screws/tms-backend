@@ -1,4 +1,4 @@
-export * from "./user.controller.js";
-export * from "./user.service.js";
-export * from "./user.validation.js";
-export { default as userRoutes } from "./user.routes.js";
+export * from "./profile/user.controller.js";
+export * from "./profile/user.service.js";
+export * from "./profile/user.validation.js";
+export { default as userRoutes } from "./profile/user.routes.js";

@@ -1,4 +1,4 @@
-import { asyncHandler, ApiResponse } from "../../core/utils/index.js";
+import { asyncHandler, ApiResponse } from "../../../core/utils/index.js";
 import {
   createOrganizationService,
   getOrganizationQueryService,
@@ -7,7 +7,7 @@ import {
   transferOwnershipService,
   leaveOrganizationService,
   deleteOrganizationService,
-} from "./index.js";
+} from "../index.js";
 
 // ! CREATE ORGANIZATION CONTROLLER
 export const createOrganizationController = asyncHandler(async (req, res) => {

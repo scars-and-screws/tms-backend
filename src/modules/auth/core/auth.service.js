@@ -1,11 +1,11 @@
-import prisma from "../../core/database/prisma.js";
-import { hashPassword, comparePassword } from "../../core/security/index.js";
+import prisma from "../../../core/database/prisma.js";
+import { hashPassword, comparePassword } from "../../../core/security/index.js";
 
-import { ApiError } from "../../core/utils/index.js";
-import { createSessionService } from "./session/index.js";
-import { sendEmailVerificationService } from "./verification/index.js";
-import { createOtpRecord, OTP_PURPOSE } from "../../core/otp/index.js";
-import { sendMail, verificationTemplate } from "../../core/mail/index.js";
+import { ApiError } from "../../../core/utils/index.js";
+import { createSessionService } from "../session/index.js";
+import { sendEmailVerificationService } from "../verification/index.js";
+import { createOtpRecord, OTP_PURPOSE } from "../../../core/otp/index.js";
+import { sendMail, verificationTemplate } from "../../../core/mail/index.js";
 
 // ! USER REGISTER SERVICE
 export const registerService = async (data, meta) => {

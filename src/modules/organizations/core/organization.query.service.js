@@ -1,6 +1,6 @@
-import prisma from "../../core/database/prisma.js";
-import { ApiError } from "../../core/utils/index.js";
-import { mapOrganizationList, sanitizeOrganization } from "./index.js";
+import prisma from "../../../core/database/prisma.js";
+import { ApiError } from "../../../core/utils/index.js";
+import { mapOrganizationList, sanitizeOrganization } from "../index.js";
 
 // ! LIST USER ORGANIZATIONS QUERY SERVICE
 export const listUserOrganizationsQueryService = async userId => {

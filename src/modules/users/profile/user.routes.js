@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { validate } from "../../core/middleware/index.js";
-import { avatarRoutes } from "./avatar/index.js";
+import { validate } from "../../../core/middleware/index.js";
+import { avatarRoutes } from "../avatar/index.js";
 import {
   getProfileController,
   updateProfileController,
   changePasswordController,
   updateProfileSchema,
   changePasswordSchema,
-} from "./index.js";
+} from "../index.js";
 
 const router = Router();
 
