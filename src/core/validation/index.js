@@ -72,10 +72,22 @@ const organizationRoleSchema = z.enum(["OWNER", "ADMIN", "MEMBER"], {
   errorMap: () => ({ message: "Role must be one of OWNER, ADMIN, or MEMBER" }),
 });
 
+const projectNameSchema = z
+  .string()
+  .trim()
+  .min(2, { message: "Project name must be at least 2 characters" })
+  .max(120, { message: "Project name must be at most 120 characters" });
+
+const projectRoleSchema = z.enum(["ADMIN", "MEMBER"], {
+  errorMap: () => ({ message: "Role must be either ADMIN or MEMBER" }),
+});
+
 export {
   usernameSchema,
   passwordSchema,
   nameSchema,
+  projectNameSchema,
+  projectRoleSchema,
   avatarUrlSchema,
   bioSchema,
   headlineSchema,
