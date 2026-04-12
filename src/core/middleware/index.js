@@ -1,3 +1,4 @@
+// ! INDEX FILE TO EXPORT ALL MIDDLEWARES FROM THE MIDDLEWARE DIRECTORY AS BARREL EXPORTS
 export { default as errorHandler } from "./errorHandler.js";
 export { default as validate } from "./validate.js";
 export { default as notFound } from "./notFound.js";

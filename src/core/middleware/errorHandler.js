@@ -14,14 +14,15 @@ const errorHandler = (err, req, res, next) => {
 
   const statusCode = err.statusCode || 500;
 
+  // Send a JSON response with the error message and details based on the environment and error type
   res.status(statusCode).json({
     success: false,
     message:
       NODE_ENV === "development"
         ? err.message
         : statusCode === 500
-        ? "Internal Server Error"
-        : err.message,
+          ? "Internal Server Error"
+          : err.message,
     errors: err.errors || null,
   });
 };

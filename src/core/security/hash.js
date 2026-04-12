@@ -1,6 +1,7 @@
 import crypto from "crypto";
 
-// Hashes a token using SHA-256 and returns the hexadecimal representation of the hash, providing a secure way to store or compare tokens without exposing the original token value
+// ! FUNCTION TO HASH A TOKEN USING THE SHA-256 ALGORITHM FROM THE CRYPTO MODULE. THIS FUNCTION TAKES A TOKEN AS INPUT, CREATES A SHA-256 HASH OF IT, AND RETURNS THE HASH IN HEXADECIMAL FORMAT. HASHING TOKENS BEFORE STORING THEM IN THE DATABASE ENHANCES SECURITY BY ENSURING THAT THE ACTUAL TOKEN VALUE IS NOT STORED IN PLAIN TEXT, MAKING IT MORE DIFFICULT FOR ATTACKERS TO RETRIEVE THE ORIGINAL TOKEN EVEN IF THEY GAIN ACCESS TO THE DATABASE.
+
 const hashToken = token => {
   return crypto.createHash("sha256").update(token).digest("hex");
 };
