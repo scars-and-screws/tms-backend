@@ -2,10 +2,10 @@ import prisma from "../../../core/database/prisma.js";
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
 import { ACTIVITY_TYPES } from "../../../core/constants/index.js";
-import { sanitizeMember } from "./index.js";
+import { sanitizeOrganizationMember } from "./index.js";
 
-// ! ADD MEMBER SERVICE
-export const addMemberService = async ({
+// ! ADD ORGANIZATION MEMBER SERVICE
+export const addOrganizationMemberService = async ({
   organizationId,
   email,
   role,
@@ -21,21 +21,23 @@ export const addMemberService = async ({
   }
 
   // 2️⃣ Check if the user is already a member of the organization
-  const existingMember = await prisma.organizationMember.findUnique({
-    where: {
-      userId_organizationId: {
-        userId: user.id,
-        organizationId,
+  const existingOrganizationMember = await prisma.organizationMember.findUnique(
+    {
+      where: {
+        userId_organizationId: {
+          userId: user.id,
+          organizationId,
+        },
       },
-    },
-  });
+    }
+  );
 
-  if (existingMember) {
+  if (existingOrganizationMember) {
     throw new ApiError(409, "User is already a member of this organization");
   }
 
   // 3️⃣ Create membership
-  const membership = await prisma.organizationMember.create({
+  const organizationMember = await prisma.organizationMember.create({
     data: {
       organizationId,
       userId: user.id,
@@ -66,11 +68,11 @@ export const addMemberService = async ({
     },
   });
 
-  return sanitizeMember(membership);
+  return sanitizeOrganizationMember(organizationMember);
 };
 
-// ! UPDATE MEMBER ROLE SERVICE
-export const updateMemberRoleService = async ({
+// ! UPDATE ORGANIZATION MEMBER ROLE SERVICE
+export const updateOrganizationMemberRoleService = async ({
   organizationId,
   memberId,
   newRole,
@@ -148,11 +150,11 @@ export const updateMemberRoleService = async ({
     },
   });
 
-  return sanitizeMember(updated);
+  return sanitizeOrganizationMember(updated);
 };
 
-// ! REMOVE MEMBER SERVICE
-export const removeMemberService = async ({
+// ! REMOVE ORGANIZATION MEMBER SERVICE
+export const removeOrganizationMemberService = async ({
   organizationId,
   memberId,
   actorId,

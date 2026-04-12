@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { emailSchema, idSchema } from "../../../core/validation/index.js";
 
-// ! ADD MEMBER VALIDATION SCHEMA
-export const addMemberSchema = {
+// ! ADD ORGANIZATION MEMBER VALIDATION SCHEMA
+export const addOrganizationMemberSchema = {
   params: z.object({
     organizationId: idSchema,
   }),
@@ -15,15 +15,15 @@ export const addMemberSchema = {
     .strict(),
 };
 
-// ! LIST MEMBERS VALIDATION SCHEMA
-export const listMembersSchema = {
+// ! LIST ORGANIZATION MEMBERS VALIDATION SCHEMA
+export const listOrganizationMembersSchema = {
   params: z.object({
     organizationId: idSchema,
   }),
 };
 
-// ! UPDATE MEMBER ROLE VALIDATION SCHEMA
-export const updateMemberRoleSchema = {
+// ! UPDATE ORGANIZATION MEMBER ROLE VALIDATION SCHEMA
+export const updateOrganizationMemberRoleSchema = {
   params: z.object({
     organizationId: idSchema,
     memberId: idSchema,
@@ -36,8 +36,8 @@ export const updateMemberRoleSchema = {
     .strict(),
 };
 
-// ! REMOVE MEMBER VALIDATION SCHEMA
-export const removeMemberSchema = {
+// ! REMOVE ORGANIZATION MEMBER VALIDATION SCHEMA
+export const removeOrganizationMemberSchema = {
   params: z.object({
     organizationId: idSchema,
     memberId: idSchema,

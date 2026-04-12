@@ -81,8 +81,8 @@ export const updateOrganizationService = async (organizationId, data) => {
   return sanitizeOrganization(updatedOrganization);
 };
 
-// ! TRANSFER OWNERSHIP SERVICE
-export const transferOwnershipService = async ({
+// ! TRANSFER ORGANIZATION OWNERSHIP SERVICE
+export const transferOrganizationOwnershipService = async ({
   organizationId,
   newOwnerId,
   actorId,

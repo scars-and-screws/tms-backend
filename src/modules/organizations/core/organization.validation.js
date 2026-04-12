@@ -35,8 +35,8 @@ export const organizationIdParamSchema = {
   }),
 };
 
-// ! TRANSFER OWNERSHIP VALIDATION SCHEMA
-export const transferOwnershipSchema = {
+// ! TRANSFER ORGANIZATION OWNERSHIP VALIDATION SCHEMA
+export const transferOrganizationOwnershipSchema = {
   params: z.object({
     organizationId: idSchema,
   }),

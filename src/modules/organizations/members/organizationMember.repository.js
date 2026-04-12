@@ -1,9 +1,9 @@
 import prisma from "../../../core/database/prisma.js";
-import { mapMemberList } from "./index.js";
+import { mapOrganizationMemberList } from "./index.js";
 
-// ! LIST MEMBERS QUERY SERVICE
-export const listMembersQueryService = async organizationId => {
-  const memberships = await prisma.organizationMember.findMany({
+// ! LIST ORGANIZATION MEMBERS SERVICE
+export const listOrganizationMembersService = async organizationId => {
+  const organizationMembers = await prisma.organizationMember.findMany({
     where: { organizationId },
     include: {
       user: {
@@ -21,5 +21,5 @@ export const listMembersQueryService = async organizationId => {
       joinedAt: "asc",
     },
   });
-  return mapMemberList(memberships);
+  return mapOrganizationMemberList(organizationMembers);
 };

@@ -1,4 +1,4 @@
-export const sanitizeMember = membership => {
+export const sanitizeOrganizationMember = membership => {
   return {
     id: membership.id,
     role: membership.role,
@@ -15,6 +15,6 @@ export const sanitizeMember = membership => {
   };
 };
 
-export const mapMemberList = memberships => {
-  return memberships.map(sanitizeMember);
+export const mapOrganizationMemberList = memberships => {
+  return memberships.map(sanitizeOrganizationMember);
 };

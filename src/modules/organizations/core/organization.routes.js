@@ -12,8 +12,8 @@ import {
   getOrganizationController,
   listUserOrganizationsController,
   organizationIdParamSchema,
-  transferOwnershipController,
-  transferOwnershipSchema,
+  transferOrganizationOwnershipController,
+  transferOrganizationOwnershipSchema,
   updateOrganizationController,
   updateOrganizationSchema,
   leaveOrganizationController,
@@ -67,8 +67,8 @@ router.post(
   "/:organizationId/transfer-ownership",
   requireOrganizationMember,
   requireOrganizationRole(["OWNER"]),
-  validate(transferOwnershipSchema),
-  transferOwnershipController
+  validate(transferOrganizationOwnershipSchema),
+  transferOrganizationOwnershipController
 );
 
 // ! LEAVE ORGANIZATION ROUTE

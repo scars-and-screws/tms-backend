@@ -4,7 +4,7 @@ import {
   getOrganizationQueryService,
   listUserOrganizationsQueryService,
   updateOrganizationService,
-  transferOwnershipService,
+  transferOrganizationOwnershipService,
   leaveOrganizationService,
   deleteOrganizationService,
 } from "../index.js";
@@ -67,27 +67,29 @@ export const updateOrganizationController = asyncHandler(async (req, res) => {
     );
 });
 
-// ! TRANSFER OWNERSHIP CONTROLLER
-export const transferOwnershipController = asyncHandler(async (req, res) => {
-  const { organizationId } = req.params;
-  const { newOwnerId } = req.body;
-  const actorId = req.user.id;
+// ! TRANSFER ORGANIZATION OWNERSHIP CONTROLLER
+export const transferOrganizationOwnershipController = asyncHandler(
+  async (req, res) => {
+    const { organizationId } = req.params;
+    const { newOwnerId } = req.body;
+    const actorId = req.user.id;
 
-  const result = await transferOwnershipService({
-    organizationId,
-    newOwnerId,
-    actorId,
-  });
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        result,
-        "Organization ownership transferred successfully"
-      )
-    );
-});
+    const result = await transferOrganizationOwnershipService({
+      organizationId,
+      newOwnerId,
+      actorId,
+    });
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          result,
+          "Organization ownership transferred successfully"
+        )
+      );
+  }
+);
 
 // ! LEAVE ORGANIZATION CONTROLLER
 export const leaveOrganizationController = asyncHandler(async (req, res) => {
