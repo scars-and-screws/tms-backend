@@ -4,6 +4,7 @@ import {
   listProjectMembersService,
   updateProjectMemberRoleService,
   removeProjectMemberService,
+  leaveProjectService,
 } from "./index.js";
 
 // ! ADD PROJECT MEMBER CONTROLLER
@@ -71,4 +72,15 @@ export const removeProjectMemberController = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Project member removed successfully"));
+});
+
+// ! LEAVE PROJECT CONTROLLER
+export const leaveProjectController = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+  const userId = req.user.id;
+  await leaveProjectService(projectId, userId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "You left the project successfully"));
 });

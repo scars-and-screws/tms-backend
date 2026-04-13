@@ -40,3 +40,12 @@ export const removeProjectMemberSchema = {
     })
     .strict(),
 };
+
+// ! LEAVE PROJECT SCHEMA (SELF-REMOVAL)
+export const leaveProjectSchema = {
+  params: z
+    .object({
+      projectId: idSchema,
+    })
+    .strict(),
+};

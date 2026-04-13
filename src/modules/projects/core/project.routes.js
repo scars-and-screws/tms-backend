@@ -18,6 +18,10 @@ import {
   requireProjectMember,
   requireProjectRole,
 } from "../../../core/middleware/index.js";
+import {
+  leaveProjectController,
+  leaveProjectSchema,
+} from "../members/index.js";
 import projectMemberRoutes from "../members/projectMember.routes.js";
 
 const router = Router({ mergeParams: true });
@@ -59,7 +63,15 @@ router.delete(
   deleteProjectController
 );
 
+// ! LEAVE PROJECT
+router.post(
+  "/:projectId/leave",
+  requireProjectMember,
+  validate(leaveProjectSchema),
+  leaveProjectController
+);
+
 // ! NESTED ROUTES FOR PROJECT MEMBERS
-router.use("/:projectId/members", requireProjectMember, projectMemberRoutes);
+router.use("/:projectId/members", projectMemberRoutes);
 
 export default router;

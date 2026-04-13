@@ -73,3 +73,13 @@ export const deleteProjectMemberById = async memberId => {
     where: { id: memberId },
   });
 };
+
+// ! COUNT ADMINS IN A PROJECT (used to prevent orphaned projects)
+export const countProjectAdmins = async projectId => {
+  return prisma.projectMember.count({
+    where: {
+      projectId,
+      role: "ADMIN",
+    },
+  });
+};

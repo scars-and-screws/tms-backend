@@ -146,3 +146,44 @@ export const removeProjectMemberService = async (memberId, actorId) => {
     },
   });
 };
+
+// ! LEAVE PROJECT SERVICE (SELF-REMOVAL)
+export const leaveProjectService = async (projectId, userId) => {
+  // 1️⃣ Fetch check project exists
+  const project = await findProjectById(projectId);
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  // 2️⃣ Fetch membership
+  const member = await findProjectMember(userId, projectId);
+  if (!member) {
+    throw new ApiError(403, "You are not a member of this project");
+  }
+
+  // 3️⃣ ADMIN CHECK: Prevent leaving if user is the last admin
+  if (member.role === "ADMIN") {
+    const adminCount = await countProjectAdmins(projectId);
+    if (adminCount <= 1) {
+      throw new ApiError(
+        400,
+        "You are last admin. Assign another admin before leaving the project"
+      );
+    }
+  }
+
+  // 4️⃣ Remove project membership
+  await deleteProjectMemberById(member.id);
+
+  // 5️⃣ Log activity (non-blocking)
+  await createActivityService({
+    actorId: userId,
+    type: ACTIVITY_TYPES.PROJECT_MEMBER_LEFT,
+    projectId,
+    metadata: {
+      memberId: member.userId,
+    },
+  });
+
+  return true;
+};

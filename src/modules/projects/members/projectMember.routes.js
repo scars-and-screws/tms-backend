@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   validate,
   requireProjectRole,
+  requireProjectMember,
 } from "../../../core/middleware/index.js";
 
 import {
@@ -19,17 +20,19 @@ const router = Router({ mergeParams: true });
 // ! ADD MEMBER
 router.post(
   "/",
+  requireProjectMember,
   requireProjectRole(["ADMIN"]),
   validate(addProjectMemberSchema),
   addProjectMemberController
 );
 
 // ! LIST MEMBERS
-router.get("/", listProjectMembersController);
+router.get("/", requireProjectMember, listProjectMembersController);
 
 // ! UPDATE MEMBER ROLE
-router.put(
+router.patch(
   "/:memberId",
+  requireProjectMember,
   requireProjectRole(["ADMIN"]),
   validate(updateProjectMemberRoleSchema),
   updateProjectMemberRoleController
@@ -38,6 +41,7 @@ router.put(
 // ! REMOVE MEMBER
 router.delete(
   "/:memberId",
+  requireProjectMember,
   requireProjectRole(["ADMIN"]),
   validate(removeProjectMemberSchema),
   removeProjectMemberController
