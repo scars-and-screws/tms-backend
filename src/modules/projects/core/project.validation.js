@@ -35,8 +35,8 @@ export const updateProjectSchema = {
       description: descriptionSchema.optional(),
     })
     .strict()
-    .refine(data => data.name !== undefined || data.description !== undefined, {
-      message: "At least one field must be provided for update",
+    .refine(data => data.name || data.description, {
+      message: "At least one field required (name or description)",
     }),
 };
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { memberRoutes } from "../members/index.js";
+import memberRoutes from "../members/organizationMember.routes.js";
 import { logoRoutes } from "../logo/index.js";
 import {
   validate,
@@ -20,7 +20,7 @@ import {
   leaveOrganizationSchema,
   deleteOrganizationController,
   deleteOrganizationSchema,
-} from "../index.js";
+} from "./index.js";
 import { projectRoutes } from "../../projects/core/index.js";
 
 const router = Router();
@@ -63,13 +63,6 @@ router.use(
 // ! NESTED MEMBER ROUTES
 router.use("/:organizationId/members", requireOrganizationMember, memberRoutes);
 
-// ! NESTED PROJECT ROUTES
-router.use(
-  "/:organizationId/projects",
-  requireOrganizationMember,
-  projectRoutes
-);
-
 // ! TRANSFER OWNERSHIP ROUTE
 router.post(
   "/:organizationId/transfer-ownership",
@@ -94,6 +87,13 @@ router.delete(
   requireOrganizationRole(["OWNER"]),
   validate(deleteOrganizationSchema),
   deleteOrganizationController
+);
+
+// ! NESTED PROJECT ROUTES
+router.use(
+  "/:organizationId/projects",
+  requireOrganizationMember,
+  projectRoutes
 );
 
 export default router;

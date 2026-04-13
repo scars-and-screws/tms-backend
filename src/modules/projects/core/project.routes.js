@@ -1,12 +1,21 @@
 import { Router } from "express";
 import {
-  createProjectController,
   createProjectSchema,
+  projectIdParamSchema,
+  updateProjectSchema,
+} from "./project.validation.js";
+import {
+  createProjectController,
   listProjectsController,
-} from "./index.js";
+  getProjectController,
+  updateProjectController,
+  deleteProjectController,
+} from "./project.controller.js";
 import {
   validate,
   requireOrganizationRole,
+  requireProjectMember,
+  requireProjectRole,
 } from "../../../core/middleware/index.js";
 
 const router = Router({ mergeParams: true });
@@ -21,5 +30,31 @@ router.post(
 
 // ! LIST PROJECTS
 router.get("/", listProjectsController);
+
+// ! GET PROJECT
+router.get(
+  "/:projectId",
+  requireProjectMember,
+  validate(projectIdParamSchema),
+  getProjectController
+);
+
+// ! UPDATE PROJECT
+router.patch(
+  "/:projectId",
+  requireProjectMember,
+  requireProjectRole(["ADMIN"]),
+  validate(updateProjectSchema),
+  updateProjectController
+);
+
+// ! DELETE PROJECT
+router.delete(
+  "/:projectId",
+  requireProjectMember,
+  requireProjectRole(["ADMIN"]),
+  validate(projectIdParamSchema),
+  deleteProjectController
+);
 
 export default router;

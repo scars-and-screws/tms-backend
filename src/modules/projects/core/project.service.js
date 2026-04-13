@@ -10,7 +10,9 @@ import {
   createProject,
   findProjectByNameAndOrg,
   findProjectsByOrganization,
-} from "./project.repository.js";
+  findProjectById,
+  deleteProjectById,
+} from "./index.js";
 
 import { createProjectMember } from "../members/projectMember.repository.js";
 
@@ -96,4 +98,93 @@ export const listProjectsService = async organizationId => {
     description: project.description,
     createdAt: project.createdAt,
   }));
+};
+
+// ! GET PROJECT SERVICE
+export const getProjectService = async (projectId, organizaitonId) => {
+  const project = await findProjectById(projectId);
+
+  if (!project || project.organizationId !== organizaitonId) {
+    throw new ApiError(404, "Project not found");
+  }
+  return {
+    id: project.id,
+    name: project.name,
+    description: project.description,
+    createdAt: project.createdAt,
+  };
+};
+
+// ! UPDATE PROJECT SERVICE
+export const updateProjectService = async (
+  projectId,
+  organizationId,
+  userId,
+  data
+) => {
+  const project = await findProjectById(projectId);
+
+  if (!project || project.organizationId !== organizationId) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  // Unique name check (if name is being updated)
+  if (data.name) {
+    const existing = await findProjectByNameAndOrg(data.name, organizationId);
+    if (existing && existing.id !== projectId) {
+      throw new ApiError(
+        409,
+        "Project with this name already exists in this organization"
+      );
+    }
+  }
+
+  // Update the project
+  const updated = await updateProject(projectId, data);
+
+  // Log activity (non-blocking)
+  await createActivityService({
+    actorId: userId,
+    type: ACTIVITY_TYPES.PROJECT_UPDATED,
+    organizationId,
+    projectId,
+    metadata: {
+      updatedFields: Object.keys(data),
+    },
+  });
+
+  return {
+    id: updated.id,
+    name: updated.name,
+    description: updated.description,
+    createdAt: updated.createdAt,
+  };
+};
+
+// ! DELETE PROJECT SERVICE
+export const deleteProjectService = async (
+  projectId,
+  organizationId,
+  userId
+) => {
+  const project = await findProjectById(projectId);
+
+  if (!project || project.organizationId !== organizationId) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  await deleteProjectById(projectId);
+
+  // Log activity (non-blocking)
+  await createActivityService({
+    actorId: userId,
+    type: ACTIVITY_TYPES.PROJECT_DELETED,
+    organizationId,
+    projectId,
+    metadata: {
+      projectName: project.name,
+    },
+  });
+
+  return true;
 };

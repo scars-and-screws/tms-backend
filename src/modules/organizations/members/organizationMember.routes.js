@@ -1,17 +1,17 @@
 import { Router } from "express";
 import {
-  addOrganizationMemberController,
   addOrganizationMemberSchema,
-  listOrganizationMembersController,
   listOrganizationMembersSchema,
-  updateOrganizationMemberRoleController,
   updateOrganizationMemberRoleSchema,
-  removeOrganizationMemberController,
   removeOrganizationMemberSchema,
+  addOrganizationMemberController,
+  listOrganizationMembersController,
+  updateOrganizationMemberRoleController,
+  removeOrganizationMemberController,
 } from "./index.js";
 import {
-  validate,
   requireOrganizationRole,
+  validate,
 } from "../../../core/middleware/index.js";
 
 const router = Router({ mergeParams: true });

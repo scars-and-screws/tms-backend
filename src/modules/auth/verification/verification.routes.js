@@ -4,7 +4,7 @@ import { verifyOtpSchema } from "../../../core/otp/index.js";
 import {
   sendEmailVerificationController,
   verifyEmailController,
-} from "./index.js";
+} from "./verification.controller.js";
 
 const router = Router();
 

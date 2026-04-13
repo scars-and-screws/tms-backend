@@ -1,4 +1,4 @@
-import prisma from "../../core/database/prisma.js";
+import { createActivity } from "./activity.repository.js";
 
 // ! CREATE ACTIVITY SERVICE
 export const createActivityService = async ({
@@ -10,15 +10,13 @@ export const createActivityService = async ({
   metadata = null,
 }) => {
   try {
-    await prisma.activity.create({
-      data: {
-        actorId,
-        type,
-        organizationId,
-        projectId,
-        taskId,
-        metadata,
-      },
+    await createActivity({
+      actorId,
+      type,
+      organizationId,
+      projectId,
+      taskId,
+      metadata,
     });
   } catch (err) {
     // ACTIVITY LOGGING FAILURE SHOULD NOT BLOCK MAIN OPERATION, LOG ERROR AND CONTINUE

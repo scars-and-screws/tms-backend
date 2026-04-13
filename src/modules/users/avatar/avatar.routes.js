@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { upload, validateUpload } from "../../../core/upload/index.js";
-import { uploadAvatarController } from "./index.js";
+import { uploadAvatarController } from "./avatar.controller.js";
 
 const router = Router();
 

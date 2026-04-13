@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   enableTwoFactorLoginController,
   disableTwoFactorLoginController,
-} from "./index.js";
+} from "./twoFactor.controller.js";
 
 const router = Router();
 

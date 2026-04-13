@@ -1,7 +1,7 @@
 import { ApiError } from "../utils/index.js";
 
 // ! MIDDLEWARE TO CHECK PROJECT ROLE
-export const requireProjectRole = (allowedRoles = []) => {
+const requireProjectRole = (allowedRoles = []) => {
   return (req, res, next) => {
     const membership = req.projectMembership;
 
@@ -21,3 +21,5 @@ export const requireProjectRole = (allowedRoles = []) => {
     next();
   };
 };
+
+export default requireProjectRole;

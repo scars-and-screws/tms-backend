@@ -6,3 +6,5 @@ export { default as authenticate } from "./authenticate.js";
 export { default as requireVerifiedEmail } from "./requireVerifiedEmail.js";
 export { default as requireOrganizationMember } from "./requireOrganizationMember.js";
 export { default as requireOrganizationRole } from "./requireOrganizationRole.js";
+export { default as requireProjectMember } from "./requireProjectMember.js";
+export { default as requireProjectRole } from "./requireProjectRole.js";

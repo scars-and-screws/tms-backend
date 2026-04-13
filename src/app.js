@@ -11,7 +11,7 @@ import {
 } from "./core/middleware/index.js";
 import { authRoutes } from "./modules/auth/index.js";
 import { userRoutes } from "./modules/users/index.js";
-import { organizationRoutes } from "./modules/organizations/index.js";
+import { organizationRoutes } from "./modules/organizations/core/index.js";
 
 const app = express();
 

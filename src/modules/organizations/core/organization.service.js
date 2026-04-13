@@ -1,12 +1,16 @@
 import prisma from "../../../core/database/prisma.js";
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
-import { sanitizeOrganization } from "../index.js";
+import { sanitizeOrganization } from "./index.js";
 import { deleteFromCloudinary } from "../../../core/upload/index.js";
 import {
   findOrganizationById,
   findUserOrganizations,
-  findOrganizationByNameAndOwnerId
+  findOrganizationByNameAndOwnerId,
+  createOrganization,
+  createOrganizationMember,
+  updateOrganizationById,
+  deleteOrganizationById,
 } from "./organization.repository.js";
 import {
   ORGANIZATION_ROLES,
@@ -43,21 +47,17 @@ export const createOrganizationService = async (userId, data) => {
   }
 
   // 2️⃣ Create organization
-  const organization = await prisma.organization.create({
-    data: {
-      name,
-      description,
-      ownerId: userId,
-    },
+  const organization = await createOrganization({
+    name,
+    description,
+    ownerId: userId,
   });
 
   // 3️⃣ Create owner membership
-  await prisma.organizationMember.create({
-    data: {
-      userId,
-      organizationId: organization.id,
-      role: ORGANIZATION_ROLES.OWNER,
-    },
+  await createOrganizationMember({
+    userId,
+    organizationId: organization.id,
+    role: ORGANIZATION_ROLES.OWNER,
   });
 
   // 4️⃣ Log activity (non-blocking)
@@ -68,6 +68,8 @@ export const createOrganizationService = async (userId, data) => {
     metadata: {
       organizationName: name,
     },
+  }).catch(err => {
+    console.error("Failed to log activity for organization creation:", err);
   });
 
   // 5️⃣ Return sanitized organization
@@ -75,25 +77,32 @@ export const createOrganizationService = async (userId, data) => {
 };
 
 // ! UPDATE ORGANIZATION SERVICE
-
-export const updateOrganizationService = async (organizationId, data) => {
-  const organization = await prisma.organization.findUnique({
-    where: {
-      id: organizationId,
-    },
-  });
+export const updateOrganizationService = async (
+  organizationId,
+  userId,
+  data
+) => {
+  const organization = await findOrganizationById(organizationId);
 
   if (!organization) {
     throw new ApiError(404, "Organization not found");
   }
 
-  const updatedOrganization = await prisma.organization.update({
-    where: {
-      id: organizationId,
+  const updated = await updateOrganizationById(organizationId, data);
+
+  // Log activity (non-blocking)
+  await createActivityService({
+    actorId: userId,
+    type: ACTIVITY_TYPES.ORGANIZATION_UPDATED,
+    organizationId,
+    metadata: {
+      updatedFields: Object.keys(data),
     },
-    data,
+  }).catch(err => {
+    console.error("Failed to log activity for organization update:", err);
   });
-  return sanitizeOrganization(updatedOrganization);
+
+  return sanitizeOrganization(updated);
 };
 
 // ! TRANSFER ORGANIZATION OWNERSHIP SERVICE
@@ -238,11 +247,7 @@ export const deleteOrganizationService = async ({
   organizationName,
 }) => {
   // 1️⃣ Fetch organization
-  const organization = await prisma.organization.findUnique({
-    where: {
-      id: organizationId,
-    },
-  });
+  const organization = await findOrganizationById(organizationId);
 
   if (!organization) {
     throw new ApiError(404, "Organization not found");
@@ -268,9 +273,15 @@ export const deleteOrganizationService = async ({
   }
 
   // 5️⃣ Delete organization (cascades to members, projects, tasks, etc.)
-  await prisma.organization.delete({
-    where: {
-      id: organizationId,
-    },
+  await deleteOrganizationById(organizationId);
+
+  // 6️⃣ Log activity (non-blocking)
+  await createActivityService({
+    actorId,
+    type: ACTIVITY_TYPES.ORGANIZATION_DELETED,
+    organizationId,
+    metadata: { organizationName: organization.name },
+  }).catch(err => {
+    console.error("Failed to log activity for organization deletion:", err);
   });
 };

@@ -3,9 +3,11 @@ import { validate } from "../../../core/middleware/index.js";
 import {
   requestPasswordResetSchema,
   confirmPasswordResetSchema,
+} from "./passwordReset.validation.js";
+import {
   requestPasswordResetController,
   confirmPasswordResetController,
-} from "./index.js";
+} from "./passwordReset.controller.js";
 
 const router = Router();
 

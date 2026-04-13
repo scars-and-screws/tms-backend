@@ -2,7 +2,7 @@ import { ApiError, asyncHandler } from "../utils/index.js";
 import { findProjectMember } from "../../modules/projects/members/index.js";
 
 // ! MIDDLEWARE TO CHECK PROJECT MEMBERSHIP
-export const requireProjectMember = asyncHandler(async (req, res, next) => {
+const requireProjectMember = asyncHandler(async (req, res, next) => {
   const { projectId } = req.params;
   const userId = req.user.id;
 
@@ -19,3 +19,5 @@ export const requireProjectMember = asyncHandler(async (req, res, next) => {
   req.projectMembership = membership; // Attach membership info to the request object
   next();
 });
+
+export default requireProjectMember;

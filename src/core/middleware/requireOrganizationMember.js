@@ -1,4 +1,4 @@
-import { findOrganizationMember } from "../../modules/organizations/members/index.js";
+import { findOrganizationMember } from "../../modules/organizations/members/organizationMember.repository.js";
 import { ApiError, asyncHandler } from "../utils/index.js";
 
 // ! REQUIRE ORGANIZATION MEMBER MIDDLEWARE TO CHECK IF THE AUTHENTICATED USER IS A MEMBER OF THE ORGANIZATION THEY ARE TRYING TO ACCESS
