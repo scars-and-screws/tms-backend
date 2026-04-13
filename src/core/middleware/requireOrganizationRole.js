@@ -4,7 +4,7 @@ import { ApiError } from "../utils/index.js";
 const requireOrganizationRole = (allowedRoles = []) => {
   return (req, res, next) => {
     // The requireOrganizationMember middleware should have already been executed before this middleware, so we can access the organization membership information from the request object
-    const membership = req.organizationMember;
+    const membership = req.organizationMemberShip;
 
     // If the membership information is not available, it means the requireOrganizationMember middleware was not executed or did not find a membership record, so we throw a 500 Internal Server Error since this is a server-side issue
     if (!membership) {
