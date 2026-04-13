@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createProjectSchema,
+  deleteProjectSchema,
   projectIdParamSchema,
   updateProjectSchema,
 } from "./project.validation.js";
@@ -53,7 +54,7 @@ router.delete(
   "/:projectId",
   requireProjectMember,
   requireProjectRole(["ADMIN"]),
-  validate(projectIdParamSchema),
+  validate(deleteProjectSchema),
   deleteProjectController
 );
 

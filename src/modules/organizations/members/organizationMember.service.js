@@ -1,13 +1,20 @@
 import {
   createOrganizationMember,
-  findOrganizationMember,
   findOrganizationMemberById,
   updateOrganizationMemberRoleById,
   findUserByEmail,
+  findOrganizationMembers,
 } from "./organizationMember.repository.js";
+import {
+  deleteOrganizationMemberById,
+  findOrganizationMember,
+} from "../core/index.js";
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
-import { sanitizeOrganizationMember } from "./index.js";
+import {
+  mapOrganizationMemberList,
+  sanitizeOrganizationMember,
+} from "./index.js";
 import { ACTIVITY_TYPES } from "../../../core/constants/index.js";
 
 // ! ADD ORGANIZATION MEMBER SERVICE
@@ -54,7 +61,7 @@ export const addOrganizationMemberService = async ({
 
 // ! LIST ORGANIZATION MEMBERS SERVICE
 export const listOrganizationMembersService = async organizationId => {
-  const members = await findOrganizationMembersByOrganizationId(organizationId);
+  const members = await findOrganizationMembers(organizationId);
   return mapOrganizationMemberList(members);
 };
 
@@ -67,6 +74,11 @@ export const updateOrganizationMemberRoleService = async ({
 }) => {
   // 1️⃣ Fetch actor membership to check permissions
   const actor = await findOrganizationMember(actorId, organizationId);
+
+  if (!actor) {
+    throw new ApiError(403, "You do not have access to this organization");
+  }
+
   // 2️⃣ Fetch target membership
   const target = await findOrganizationMemberById(memberId);
 
@@ -108,19 +120,14 @@ export const removeOrganizationMemberService = async ({
   actorId,
 }) => {
   // 1️⃣ Fetch actor membership
-  const actor = await prisma.organizationMember.findUnique({
-    where: {
-      userId_organizationId: {
-        userId: actorId,
-        organizationId,
-      },
-    },
-  });
+  const actor = await findOrganizationMember(actorId, organizationId);
+
+  if (!actor) {
+    throw new ApiError(403, "You do not have access to this organization");
+  }
 
   // 2️⃣ Fetch target membership
-  const target = await prisma.organizationMember.findUnique({
-    where: { id: memberId },
-  });
+  const target = await findOrganizationMemberById(memberId);
 
   if (!target || target.organizationId !== organizationId) {
     throw new ApiError(404, "Member not found in this organization");
@@ -145,9 +152,7 @@ export const removeOrganizationMemberService = async ({
   }
 
   // 6️⃣ Remove membership
-  await prisma.organizationMember.delete({
-    where: { id: memberId },
-  });
+  await deleteOrganizationMemberById(target.id);
 
   // 7️⃣ Log activity
   await createActivityService({

@@ -4,8 +4,10 @@ import {
   ACTIVITY_TYPES,
   PROJECT_ROLES,
 } from "../../../core/constants/index.js";
-import { findOrganizationById } from "../../organizations/core/organization.repository.js";
-import { findOrganizationMember } from "../../organizations/members/organizationMember.repository.js";
+import {
+  findOrganizationById,
+  findOrganizationMember,
+} from "../../organizations/core/index.js";
 import {
   createProject,
   findProjectByNameAndOrg,
@@ -165,12 +167,17 @@ export const updateProjectService = async (
 export const deleteProjectService = async (
   projectId,
   organizationId,
-  userId
+  userId,
+  projectName
 ) => {
   const project = await findProjectById(projectId);
 
   if (!project || project.organizationId !== organizationId) {
     throw new ApiError(404, "Project not found");
+  }
+  // Name confirmation check
+  if (project.name !== projectName) {
+    throw new ApiError(400, "Project name confirmation does not match");
   }
 
   await deleteProjectById(projectId);

@@ -65,8 +65,9 @@ export const updateProjectController = asyncHandler(async (req, res) => {
 export const deleteProjectController = asyncHandler(async (req, res) => {
   const { projectId, organizationId } = req.params;
   const userId = req.user.id;
+  const { projectName } = req.body;
 
-  await deleteProjectService(projectId, organizationId, userId);
+  await deleteProjectService(projectId, organizationId, userId, projectName);
 
   return res
     .status(200)

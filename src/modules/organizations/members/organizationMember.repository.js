@@ -1,23 +1,19 @@
 import prisma from "../../../core/database/prisma.js";
-import { mapOrganizationMemberList } from "./index.js";
+
+const userSelect = {
+  id: true,
+  username: true,
+  email: true,
+  firstName: true,
+  lastName: true,
+  avatarUrl: true,
+};
 
 // ! FIND USER BY EMAIL
 export const findUserByEmail = async email => {
   return await prisma.user.findUnique({
     where: {
       email,
-    },
-  });
-};
-
-// ! FIND MEMBERSHIP BY USER ID AND ORGANIZATION ID
-export const findOrganizationMember = async (userId, organizationId) => {
-  return prisma.organizationMember.findUnique({
-    where: {
-      userId_organizationId: {
-        userId,
-        organizationId,
-      },
     },
   });
 };
@@ -35,14 +31,7 @@ export const createOrganizationMember = async data => {
     data,
     include: {
       user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          avatarUrl: true,
-        },
+        select: userSelect,
       },
     },
   });
@@ -55,14 +44,7 @@ export const updateOrganizationMemberRoleById = async (memberId, role) => {
     data: { role },
     include: {
       user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          avatarUrl: true,
-        },
+        select: userSelect,
       },
     },
   });
@@ -81,14 +63,7 @@ export const findOrganizationMembers = async organizationId => {
     where: { organizationId },
     include: {
       user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          avatarUrl: true,
-        },
+        select: userSelect,
       },
     },
     orderBy: {

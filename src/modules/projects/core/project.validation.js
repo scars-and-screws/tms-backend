@@ -49,6 +49,20 @@ export const projectIdParamSchema = {
     .strict(),
 };
 
+// ! DELETE PROJECT SCHEMA
+export const deleteProjectSchema = {
+  params: z
+    .object({
+      projectId: idSchema,
+    })
+    .strict(),
+  body: z
+    .object({
+      projectName: projectNameSchema,
+    })
+    .strict(),
+};
+
 // ! ORGANIZATION PARAM VALIDATION (FOR GETTING ALL PROJECTS IN AN ORGANIZATION)
 export const organizationIdParamSchema = {
   params: z
