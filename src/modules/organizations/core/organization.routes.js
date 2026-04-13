@@ -21,7 +21,7 @@ import {
   deleteOrganizationController,
   deleteOrganizationSchema,
 } from "./index.js";
-import { projectRoutes } from "../../projects/core/index.js";
+import projectRoutes from "../../projects/core/project.routes.js";
 
 const router = Router();
 

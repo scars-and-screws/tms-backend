@@ -18,6 +18,7 @@ import {
   requireProjectMember,
   requireProjectRole,
 } from "../../../core/middleware/index.js";
+import projectMemberRoutes from "../members/projectMember.routes.js";
 
 const router = Router({ mergeParams: true });
 
@@ -57,5 +58,8 @@ router.delete(
   validate(deleteProjectSchema),
   deleteProjectController
 );
+
+// ! NESTED ROUTES FOR PROJECT MEMBERS
+router.use("/:projectId/members", requireProjectMember, projectMemberRoutes);
 
 export default router;

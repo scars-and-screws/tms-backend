@@ -1,14 +1,27 @@
 import prisma from "../../../core/database/prisma.js";
 
-// ! ADD MEMBER TO PROJECT
+// 🔹 Reusable user select to prevent sensitive data leak
+const userSelect = {
+  id: true,
+  username: true,
+  email: true,
+  avatarUrl: true,
+};
+
+// ! CREATE PROJECT MEMBER
 export const createProjectMember = async data => {
   return prisma.projectMember.create({
     data,
+    include: {
+      user: {
+        select: userSelect,
+      },
+    },
   });
 };
 
-// ! FIND MEMBER (IMPORTANT FOR RBAC)
-export const findProjectMember = async (projectId, userId) => {
+// ! FIND PROJECT MEMBER (BY USER + PROJECT) → used for RBAC & duplicate check
+export const findProjectMember = async (userId, projectId) => {
   return prisma.projectMember.findUnique({
     where: {
       userId_projectId: {
@@ -19,44 +32,44 @@ export const findProjectMember = async (projectId, userId) => {
   });
 };
 
-// ! GET ALL MEMBERS
+// ! FIND PROJECT MEMBER BY ID → used in update/remove flows
+export const findProjectMemberById = async memberId => {
+  return prisma.projectMember.findUnique({
+    where: { id: memberId },
+  });
+};
+
+// ! GET ALL PROJECT MEMBERS
 export const findProjectMembers = async projectId => {
   return prisma.projectMember.findMany({
     where: { projectId },
     include: {
       user: {
-        select: {
-          id: true,
-          username: true,
-          email: true,
-          avatarUrl: true,
-        },
+        select: userSelect,
       },
+    },
+    orderBy: {
+      joinedAt: "asc",
     },
   });
 };
 
 // ! UPDATE MEMBER ROLE
-export const updateProjectMemberRole = async (projectId, userId, role) => {
+export const updateProjectMemberRoleById = async (memberId, role) => {
   return prisma.projectMember.update({
-    where: {
-      userId_projectId: {
-        userId,
-        projectId,
+    where: { id: memberId },
+    data: { role },
+    include: {
+      user: {
+        select: userSelect,
       },
     },
-    data: { role },
   });
 };
 
-// ! REMOVE MEMBER
-export const deleteProjectMember = async (projectId, userId) => {
+// ! REMOVE PROJECT MEMBER
+export const deleteProjectMemberById = async memberId => {
   return prisma.projectMember.delete({
-    where: {
-      userId_projectId: {
-        userId,
-        projectId,
-      },
-    },
+    where: { id: memberId },
   });
 };

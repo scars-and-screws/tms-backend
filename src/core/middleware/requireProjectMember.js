@@ -1,5 +1,5 @@
 import { ApiError, asyncHandler } from "../utils/index.js";
-import { findProjectMember } from "../../modules/projects/members/index.js";
+import { findProjectMember } from "../../modules/projects/members/projectMember.repository.js";
 
 // ! MIDDLEWARE TO CHECK PROJECT MEMBERSHIP
 const requireProjectMember = asyncHandler(async (req, res, next) => {
@@ -10,7 +10,7 @@ const requireProjectMember = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "Project ID is required");
   }
 
-  const membership = await findProjectMember(projectId, userId);
+  const membership = await findProjectMember(userId, projectId);
 
   if (!membership) {
     throw new ApiError(403, "You are not a member of this project");

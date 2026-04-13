@@ -11,7 +11,7 @@ export const addProjectMemberSchema = {
   body: z
     .object({
       userId: idSchema,
-      role: projectRoleSchema.optional(), // default MEMBER
+      role: projectRoleSchema.default("MEMBER"),
     })
     .strict(),
 };
