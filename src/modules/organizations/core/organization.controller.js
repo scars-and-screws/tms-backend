@@ -50,8 +50,10 @@ export const getOrganizationController = asyncHandler(async (req, res) => {
 export const updateOrganizationController = asyncHandler(async (req, res) => {
   const { organizationId } = req.params;
   const data = req.body;
+  const userId = req.user.id;
   const updatedOrganization = await updateOrganizationService(
     organizationId,
+    userId,
     data
   );
   return res

@@ -1,7 +1,6 @@
-import prisma from "../../../core/database/prisma.js";
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
-import { sanitizeOrganization } from "./index.js";
+import { sanitizeOrganization, mapOrganizationList } from "./index.js";
 import { deleteFromCloudinary } from "../../../core/upload/index.js";
 import {
   findOrganizationById,
@@ -11,6 +10,10 @@ import {
   createOrganizationMember,
   updateOrganizationById,
   deleteOrganizationById,
+  findOrganizationMember,
+  findUserById,
+  updateOrganizationMemberRole,
+  deleteOrganizationMemberById,
 } from "./organization.repository.js";
 import {
   ORGANIZATION_ROLES,
@@ -68,8 +71,6 @@ export const createOrganizationService = async (userId, data) => {
     metadata: {
       organizationName: name,
     },
-  }).catch(err => {
-    console.error("Failed to log activity for organization creation:", err);
   });
 
   // 5️⃣ Return sanitized organization
@@ -98,8 +99,6 @@ export const updateOrganizationService = async (
     metadata: {
       updatedFields: Object.keys(data),
     },
-  }).catch(err => {
-    console.error("Failed to log activity for organization update:", err);
   });
 
   return sanitizeOrganization(updated);
@@ -117,31 +116,17 @@ export const transferOrganizationOwnershipService = async ({
   }
 
   // 2️⃣ Fetch current owner membership
-  const ownerMembership = await prisma.organizationMember.findUnique({
-    where: {
-      userId_organizationId: {
-        userId: actorId,
-        organizationId,
-      },
-    },
-  });
+  const ownerMembership = await findOrganizationMember(actorId, organizationId);
 
   if (!ownerMembership || ownerMembership.role !== "OWNER") {
     throw new ApiError(403, "Only the owner can transfer ownership");
   }
 
   // 3️⃣ Fetch target (new owner) membership
-  const targetMembership = await prisma.organizationMember.findUnique({
-    where: {
-      userId_organizationId: {
-        userId: newOwnerId,
-        organizationId,
-      },
-    },
-    include: {
-      user: true,
-    },
-  });
+  const targetMembership = await findOrganizationMember(
+    newOwnerId,
+    organizationId
+  );
 
   if (!targetMembership) {
     throw new ApiError(
@@ -151,39 +136,20 @@ export const transferOrganizationOwnershipService = async ({
   }
 
   // 4️⃣ Ensure target (new owner) has verified email
-  if (!targetMembership.user.isEmailVerified) {
-    throw new ApiError(400, "The new owner must have verified email");
+  const user = await findUserById(newOwnerId);
+
+  if (!user.isEmailVerified) {
+    throw new ApiError(400, "The new owner must have a verified email address");
   }
 
   // 5️⃣ Update new owner role to OWNER
-  await prisma.organizationMember.update({
-    where: {
-      id: targetMembership.id,
-    },
-    data: {
-      role: "OWNER",
-    },
-  });
+  await updateOrganizationMemberRole(targetMembership.id, "OWNER");
 
   // 6️⃣ Demote current owner to ADMIN
-  await prisma.organizationMember.update({
-    where: {
-      id: ownerMembership.id,
-    },
-    data: {
-      role: "ADMIN",
-    },
-  });
+  await updateOrganizationMemberRole(ownerMembership.id, "ADMIN");
 
   // 7️⃣ Update organization ownerId
-  await prisma.organization.update({
-    where: {
-      id: organizationId,
-    },
-    data: {
-      ownerId: newOwnerId,
-    },
-  });
+  await updateOrganizationById(organizationId, { ownerId: newOwnerId });
 
   // 8️⃣ Log activity (non-blocking)
   await createActivityService({
@@ -203,14 +169,7 @@ export const transferOrganizationOwnershipService = async ({
 // ! LEAVE ORGANIZATION SERVICE
 export const leaveOrganizationService = async ({ organizationId, userId }) => {
   // 1️⃣ Fetch membership
-  const membership = await prisma.organizationMember.findUnique({
-    where: {
-      userId_organizationId: {
-        userId,
-        organizationId,
-      },
-    },
-  });
+  const membership = await findOrganizationMember(userId, organizationId);
 
   if (!membership) {
     throw new ApiError(404, "Membership not found");
@@ -225,11 +184,7 @@ export const leaveOrganizationService = async ({ organizationId, userId }) => {
   }
 
   // 3️⃣ Delete membership
-  await prisma.organizationMember.delete({
-    where: {
-      id: membership.id,
-    },
-  });
+  await deleteOrganizationMemberById(membership.id);
 
   // 4️⃣ Log activity (non-blocking)
   await createActivityService({
@@ -281,7 +236,5 @@ export const deleteOrganizationService = async ({
     type: ACTIVITY_TYPES.ORGANIZATION_DELETED,
     organizationId,
     metadata: { organizationName: organization.name },
-  }).catch(err => {
-    console.error("Failed to log activity for organization deletion:", err);
   });
 };
