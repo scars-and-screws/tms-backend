@@ -3,6 +3,7 @@ import {
   validate,
   requireProjectRole,
   requireProjectMember,
+  requireActiveProject,
 } from "../../../core/middleware/index.js";
 
 import {
@@ -22,6 +23,7 @@ const router = Router({ mergeParams: true });
 router.post(
   "/",
   requireProjectMember,
+  requireActiveProject,
   requireProjectRole(["ADMIN"]),
   validate(addProjectMemberSchema),
   addProjectMemberController
@@ -39,6 +41,7 @@ router.get(
 router.patch(
   "/:memberId",
   requireProjectMember,
+  requireActiveProject,
   requireProjectRole(["ADMIN"]),
   validate(updateProjectMemberRoleSchema),
   updateProjectMemberRoleController
@@ -48,6 +51,7 @@ router.patch(
 router.delete(
   "/:memberId",
   requireProjectMember,
+  requireActiveProject,
   requireProjectRole(["ADMIN"]),
   validate(removeProjectMemberSchema),
   removeProjectMemberController

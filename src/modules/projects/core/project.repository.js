@@ -32,7 +32,7 @@ export const findProjectWithMembers = async projectId => {
 // ! LIST PROJECTS BY ORGANIZATION
 export const findProjectsByOrganization = async organizationId => {
   return prisma.project.findMany({
-    where: { organizationId },
+    where: { organizationId, isArchived: false },
     orderBy: { createdAt: "desc" },
   });
 };

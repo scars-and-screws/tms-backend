@@ -22,6 +22,7 @@ import {
   requireOrganizationRole,
   requireProjectMember,
   requireProjectRole,
+  requireActiveProject,
 } from "../../../core/middleware/index.js";
 import {
   leaveProjectController,
@@ -54,13 +55,14 @@ router.get(
 router.patch(
   "/:projectId",
   requireProjectMember,
+  requireActiveProject,
   requireProjectRole(["ADMIN"]),
   validate(updateProjectSchema),
   updateProjectController
 );
 
 // ! ARCHIVE PROJECT
-router.post(
+router.patch(
   "/:projectId/archive",
   requireProjectMember,
   requireProjectRole(["ADMIN"]),
@@ -69,7 +71,7 @@ router.post(
 );
 
 // ! UNARCHIVE PROJECT
-router.post(
+router.patch(
   "/:projectId/unarchive",
   requireProjectMember,
   requireProjectRole(["ADMIN"]),
@@ -90,6 +92,7 @@ router.delete(
   "/:projectId",
   requireProjectMember,
   requireProjectRole(["ADMIN"]),
+  requireActiveProject,
   validate(deleteProjectSchema),
   deleteProjectController
 );
