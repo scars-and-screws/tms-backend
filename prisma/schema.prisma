@@ -195,6 +195,8 @@ model Project {
   organizationId String
   createdById    String
 
+  isArchived Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -209,6 +211,7 @@ model Project {
 
   @@index([organizationId])
   @@index([organizationId, createdAt])
+  @@index([organizationId, isArchived])
 }
 
 // ! PROJECT MEMBER MODEL
