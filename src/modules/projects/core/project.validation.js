@@ -59,6 +59,26 @@ export const getProjectIdParamSchema = {
     .strict(),
 };
 
+// ! ARCHIVE PROJECT SCHEMA
+export const archiveProjectSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+};
+
+// ! UNARCHIVE PROJECT SCHEMA
+export const unarchiveProjectSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+};
+
 // ! DELETE PROJECT SCHEMA
 export const deleteProjectSchema = {
   params: z

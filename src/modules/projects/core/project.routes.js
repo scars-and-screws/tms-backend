@@ -5,6 +5,8 @@ import {
   getProjectIdParamSchema,
   updateProjectSchema,
   listProjectsSchema,
+  archiveProjectSchema,
+  unarchiveProjectSchema,
 } from "./project.validation.js";
 import {
   createProjectController,
@@ -12,6 +14,8 @@ import {
   getProjectController,
   updateProjectController,
   deleteProjectController,
+  archiveProjectController,
+  unarchiveProjectController,
 } from "./project.controller.js";
 import {
   validate,
@@ -55,13 +59,22 @@ router.patch(
   updateProjectController
 );
 
-// ! DELETE PROJECT
-router.delete(
-  "/:projectId",
+// ! ARCHIVE PROJECT
+router.post(
+  "/:projectId/archive",
   requireProjectMember,
   requireProjectRole(["ADMIN"]),
-  validate(deleteProjectSchema),
-  deleteProjectController
+  validate(archiveProjectSchema),
+  archiveProjectController
+);
+
+// ! UNARCHIVE PROJECT
+router.post(
+  "/:projectId/unarchive",
+  requireProjectMember,
+  requireProjectRole(["ADMIN"]),
+  validate(unarchiveProjectSchema),
+  unarchiveProjectController
 );
 
 // ! LEAVE PROJECT
@@ -70,6 +83,15 @@ router.post(
   requireProjectMember,
   validate(leaveProjectSchema),
   leaveProjectController
+);
+
+// ! DELETE PROJECT
+router.delete(
+  "/:projectId",
+  requireProjectMember,
+  requireProjectRole(["ADMIN"]),
+  validate(deleteProjectSchema),
+  deleteProjectController
 );
 
 // ! NESTED ROUTES FOR PROJECT MEMBERS

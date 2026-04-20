@@ -45,6 +45,14 @@ export const updateProjectById = async (projectId, data) => {
   });
 };
 
+// ! SET PROJECT ARCHIVE STATUS
+export const setProjectArchiveStatus = async (projectId, isArchived) => {
+  return prisma.project.update({
+    where: { id: projectId },
+    data: { isArchived },
+  });
+};
+
 // ! DELETE PROJECT
 export const deleteProjectById = async projectId => {
   return prisma.project.delete({

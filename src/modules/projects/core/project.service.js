@@ -15,6 +15,7 @@ import {
   findProjectById,
   deleteProjectById,
   updateProjectById,
+  setProjectArchiveStatus,
 } from "./index.js";
 
 import { createProjectMember } from "../members/projectMember.repository.js";
@@ -162,6 +163,69 @@ export const updateProjectService = async (
     description: updated.description,
     createdAt: updated.createdAt,
   };
+};
+
+// ! ARCHIVE PROJECT SERVICE
+export const archiveProjectService = async (
+  projectId,
+  organizationId,
+  userId
+) => {
+  const project = await findProjectById(projectId);
+
+  if (!project || project.organizationId !== organizationId) {
+    throw new ApiError(404, "Project not found");
+  }
+  if (project.isArchived) {
+    throw new ApiError(400, "Project  already archived");
+  }
+
+  const updated = await setProjectArchiveStatus(projectId, true);
+
+  // Log activity (non-blocking)
+  await createActivityService({
+    actorId: userId,
+    type: ACTIVITY_TYPES.PROJECT_ARCHIVED,
+    organizationId,
+    projectId,
+    metadata: {
+      projectName: project.name,
+    },
+  });
+
+  return updated;
+};
+
+// ! UNARCHIVE PROJECT SERVICE
+export const unarchiveProjectService = async (
+  projectId,
+  organizationId,
+  userId
+) => {
+  const project = await findProjectById(projectId);
+
+  if (!project || project.organizationId !== organizationId) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  if (!project.isArchived) {
+    throw new ApiError(400, "Project is not archived");
+  }
+
+  const updated = await setProjectArchiveStatus(projectId, false);
+
+  // Log activity (non-blocking)
+  await createActivityService({
+    actorId: userId,
+    type: ACTIVITY_TYPES.PROJECT_UNARCHIVED,
+    organizationId,
+    projectId,
+    metadata: {
+      projectName: project.name,
+    },
+  });
+
+  return updated;
 };
 
 // ! DELETE PROJECT SERVICE
