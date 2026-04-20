@@ -42,12 +42,12 @@ export const listProjectMembersController = asyncHandler(async (req, res) => {
 export const updateProjectMemberRoleController = asyncHandler(
   async (req, res) => {
     const { memberId } = req.params;
-    const { newRole } = req.body;
+    const { role } = req.body;
     const actorId = req.user.id;
 
     const updated = await updateProjectMemberRoleService(
       memberId,
-      newRole,
+      role,
       actorId
     );
 

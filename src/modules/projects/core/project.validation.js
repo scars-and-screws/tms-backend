@@ -3,7 +3,6 @@ import {
   idSchema,
   projectNameSchema,
   descriptionSchema,
-  projectRoleSchema,
 } from "../../../core/validation/index.js";
 
 // ! CREATE PROJECT SCHEMA
@@ -21,10 +20,20 @@ export const createProjectSchema = {
     .strict(),
 };
 
+// ! LIST PROJECTS SCHEMA (VALIDATION FOR ORGANIZATION ID PARAM)
+export const listProjectsSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+    })
+    .strict(),
+};
+
 // ! UPDATE PROJECT SCHEMA
 export const updateProjectSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
     })
     .strict(),
@@ -41,9 +50,10 @@ export const updateProjectSchema = {
 };
 
 // ! PROJECT PARAM VALIDATION SCHEMA
-export const projectIdParamSchema = {
+export const getProjectIdParamSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
     })
     .strict(),
@@ -53,6 +63,7 @@ export const projectIdParamSchema = {
 export const deleteProjectSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
     })
     .strict(),

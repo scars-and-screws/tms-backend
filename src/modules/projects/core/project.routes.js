@@ -2,8 +2,9 @@ import { Router } from "express";
 import {
   createProjectSchema,
   deleteProjectSchema,
-  projectIdParamSchema,
+  getProjectIdParamSchema,
   updateProjectSchema,
+  listProjectsSchema,
 } from "./project.validation.js";
 import {
   createProjectController,
@@ -35,13 +36,13 @@ router.post(
 );
 
 // ! LIST PROJECTS
-router.get("/", listProjectsController);
+router.get("/", validate(listProjectsSchema), listProjectsController);
 
 // ! GET PROJECT
 router.get(
   "/:projectId",
   requireProjectMember,
-  validate(projectIdParamSchema),
+  validate(getProjectIdParamSchema),
   getProjectController
 );
 

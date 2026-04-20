@@ -13,11 +13,12 @@ import {
   addProjectMemberSchema,
   updateProjectMemberRoleSchema,
   removeProjectMemberSchema,
+  listProjectMembersSchema,
 } from "./index.js";
 
 const router = Router({ mergeParams: true });
 
-// ! ADD MEMBER
+// ! ADD PROJECT MEMBER
 router.post(
   "/",
   requireProjectMember,
@@ -26,10 +27,15 @@ router.post(
   addProjectMemberController
 );
 
-// ! LIST MEMBERS
-router.get("/", requireProjectMember, listProjectMembersController);
+// ! LIST PROJECT MEMBERS
+router.get(
+  "/",
+  requireProjectMember,
+  validate(listProjectMembersSchema),
+  listProjectMembersController
+);
 
-// ! UPDATE MEMBER ROLE
+// ! UPDATE PROJECT MEMBER ROLE
 router.patch(
   "/:memberId",
   requireProjectMember,
@@ -38,7 +44,7 @@ router.patch(
   updateProjectMemberRoleController
 );
 
-// ! REMOVE MEMBER
+// ! REMOVE PROJECT MEMBER
 router.delete(
   "/:memberId",
   requireProjectMember,

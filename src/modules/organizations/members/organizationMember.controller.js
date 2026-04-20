@@ -46,18 +46,16 @@ export const updateOrganizationMemberRoleController = asyncHandler(
     const { role } = req.body;
     const actorId = req.user.id;
 
-    const updatedMember = await updateOrganizationMemberRoleService({
+    const updated = await updateOrganizationMemberRoleService(
       organizationId,
       memberId,
-      newRole: role,
-      actorId,
-    });
+      role,
+      actorId
+    );
 
     return res
       .status(200)
-      .json(
-        new ApiResponse(200, updatedMember, "Member role updated successfully")
-      );
+      .json(new ApiResponse(200, updated, "Member role updated successfully"));
   }
 );
 

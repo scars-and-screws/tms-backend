@@ -66,12 +66,12 @@ export const listOrganizationMembersService = async organizationId => {
 };
 
 // ! UPDATE ORGANIZATION MEMBER ROLE SERVICE
-export const updateOrganizationMemberRoleService = async ({
+export const updateOrganizationMemberRoleService = async (
   organizationId,
   memberId,
   newRole,
-  actorId,
-}) => {
+  actorId
+) => {
   // 1️⃣ Fetch actor membership to check permissions
   const actor = await findOrganizationMember(actorId, organizationId);
 

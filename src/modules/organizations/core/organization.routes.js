@@ -1,5 +1,5 @@
 import { Router } from "express";
-import memberRoutes from "../members/organizationMember.routes.js";
+import OrganizationMemberRoutes from "../members/organizationMember.routes.js";
 import { logoRoutes } from "../logo/index.js";
 import {
   validate,
@@ -60,8 +60,12 @@ router.use(
   logoRoutes
 );
 
-// ! NESTED MEMBER ROUTES
-router.use("/:organizationId/members", requireOrganizationMember, memberRoutes);
+// ! NESTED ORGANIZATION MEMBER ROUTES
+router.use(
+  "/:organizationId/members",
+  requireOrganizationMember,
+  OrganizationMemberRoutes
+);
 
 // ! TRANSFER OWNERSHIP ROUTE
 router.post(

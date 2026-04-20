@@ -14,6 +14,7 @@ import {
   findProjectsByOrganization,
   findProjectById,
   deleteProjectById,
+  updateProjectById,
 } from "./index.js";
 
 import { createProjectMember } from "../members/projectMember.repository.js";
@@ -142,7 +143,7 @@ export const updateProjectService = async (
   }
 
   // Update the project
-  const updated = await updateProject(projectId, data);
+  const updated = await updateProjectById(projectId, data);
 
   // Log activity (non-blocking)
   await createActivityService({

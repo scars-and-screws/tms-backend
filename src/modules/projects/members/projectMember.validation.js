@@ -5,6 +5,7 @@ import { idSchema, projectRoleSchema } from "../../../core/validation/index.js";
 export const addProjectMemberSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
     })
     .strict(),
@@ -16,12 +17,23 @@ export const addProjectMemberSchema = {
     .strict(),
 };
 
+// ! LIST PROJECT MEMBERS SCHEMA (VALIDATION FOR PROJECT ID PARAM)
+export const listProjectMembersSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+};
+
 // ! UPDATE PROJECT MEMBER ROLE SCHEMA
 export const updateProjectMemberRoleSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
-      userId: idSchema,
+      memberId: idSchema,
     })
     .strict(),
   body: z
@@ -35,8 +47,9 @@ export const updateProjectMemberRoleSchema = {
 export const removeProjectMemberSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
-      userId: idSchema,
+      memberId: idSchema,
     })
     .strict(),
 };
@@ -45,6 +58,7 @@ export const removeProjectMemberSchema = {
 export const leaveProjectSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
     })
     .strict(),
