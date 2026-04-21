@@ -1,5 +1,4 @@
-// ! THIS 
-
+// ! THIS FILE IS NOT A MODULE, IT IS A BUNDLE OF ALL SECURITY-RELATED UTILITIES
 export { default as setRefreshTokenCookie } from "./cookies.js";
 export { default as getRefreshTokenExpiry } from "./expiry.js";
 export { default as hashToken } from "./hash.js";

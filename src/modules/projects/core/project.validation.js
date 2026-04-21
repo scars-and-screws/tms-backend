@@ -31,13 +31,17 @@ export const listProjectsSchema = {
   query: z
     .object({
       includeArchived: z
-        .string()
+        .enum(["true", "false"])
         .optional()
         .transform(val => val === "true"),
       onlyArchived: z
-        .string()
+        .enum(["true", "false"])
         .optional()
         .transform(val => val === "true"),
+    })
+    .refine(data => !(data.includeArchived && data.onlyArchived), {
+      message: "Cannot use includeArchived and onlyArchived together",
+      path: ["includeArchived"],
     })
     .strict(),
 };

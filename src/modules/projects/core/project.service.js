@@ -95,12 +95,12 @@ export const createProjectService = async ({
 // ! LIST PROJECTS SERVICE
 export const listProjectsService = async ({
   organizationId,
-  inclueArchived,
+  includeArchived,
   onlyArchived,
 }) => {
   const projects = await findProjectsByOrganization({
     organizationId,
-    inclueArchived,
+    includeArchived,
     onlyArchived,
   });
 
@@ -109,7 +109,9 @@ export const listProjectsService = async ({
     name: project.name,
     description: project.description,
     isArchived: project.isArchived,
+    organizationId: project.organizationId,
     createdAt: project.createdAt,
+    updatedAt: project.updatedAt,
   }));
 };
 
@@ -126,6 +128,8 @@ export const getProjectService = async (projectId, organizaitonId) => {
     description: project.description,
     isArchived: project.isArchived,
     createdAt: project.createdAt,
+    updatedAt: project.updatedAt,
+    organizationId: project.organizationId,
   };
 };
 

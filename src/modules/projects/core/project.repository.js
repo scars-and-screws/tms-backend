@@ -32,16 +32,21 @@ export const findProjectWithMembers = async projectId => {
 // ! LIST PROJECTS WITH OPTIONAL ARCHIVED FILTER
 export const findProjectsByOrganization = async ({
   organizationId,
-  inclueArchived = false,
+  includeArchived = false,
   onlyArchived = false,
 }) => {
   let where = { organizationId };
 
   if (onlyArchived) {
     where.isArchived = true;
-  } else if (!inclueArchived) {
+  } else if (!includeArchived) {
     where.isArchived = false;
   }
+  // Default is to include all projects regardless of archive status (no filter on isArchived)
+
+  // logging the filter being applied for debugging
+  console.log("Project filter:", where);
+
   return prisma.project.findMany({
     where,
     orderBy: { createdAt: "desc" },
