@@ -116,10 +116,10 @@ export const listProjectsService = async ({
 };
 
 // ! GET PROJECT SERVICE
-export const getProjectService = async (projectId, organizaitonId) => {
+export const getProjectService = async (projectId, organizationId) => {
   const project = await findProjectById(projectId);
 
-  if (!project || project.organizationId !== organizaitonId) {
+  if (!project || project.organizationId !== organizationId) {
     throw new ApiError(404, "Project not found");
   }
   return {
@@ -177,6 +177,8 @@ export const updateProjectService = async (
     description: updated.description,
     isArchived: updated.isArchived,
     createdAt: updated.createdAt,
+    updatedAt: updated.updatedAt,
+    organizationId: updated.organizationId,
   };
 };
 
