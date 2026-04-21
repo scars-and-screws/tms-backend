@@ -29,10 +29,21 @@ export const findProjectWithMembers = async projectId => {
   });
 };
 
-// ! LIST PROJECTS BY ORGANIZATION
-export const findProjectsByOrganization = async organizationId => {
+// ! LIST PROJECTS WITH OPTIONAL ARCHIVED FILTER
+export const findProjectsByOrganization = async ({
+  organizationId,
+  inclueArchived = false,
+  onlyArchived = false,
+}) => {
+  let where = { organizationId };
+
+  if (onlyArchived) {
+    where.isArchived = true;
+  } else if (!inclueArchived) {
+    where.isArchived = false;
+  }
   return prisma.project.findMany({
-    where: { organizationId, isArchived: false },
+    where,
     orderBy: { createdAt: "desc" },
   });
 };

@@ -27,6 +27,19 @@ export const listProjectsSchema = {
       organizationId: idSchema,
     })
     .strict(),
+
+  query: z
+    .object({
+      includeArchived: z
+        .string()
+        .optional()
+        .transform(val => val === "true"),
+      onlyArchived: z
+        .string()
+        .optional()
+        .transform(val => val === "true"),
+    })
+    .strict(),
 };
 
 // ! UPDATE PROJECT SCHEMA

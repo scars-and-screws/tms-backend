@@ -29,7 +29,13 @@ export const createProjectController = asyncHandler(async (req, res) => {
 export const listProjectsController = asyncHandler(async (req, res) => {
   const { organizationId } = req.params;
 
-  const projects = await listProjectsService(organizationId);
+  const { includeArchived, onlyArchived } = req.query;
+
+  const projects = await listProjectsService({
+    organizationId,
+    inclueArchived: includeArchived === "true",
+    onlyArchived: onlyArchived === "true",
+  });
 
   res
     .status(200)
