@@ -35,8 +35,8 @@ const router = Router({ mergeParams: true });
 // ! CREATE PROJECT
 router.post(
   "/",
-  requireOrganizationRole(["OWNER", "ADMIN"]),
   validate(createProjectSchema),
+  requireOrganizationRole(["OWNER", "ADMIN"]),
   createProjectController
 );
 
@@ -46,54 +46,54 @@ router.get("/", validate(listProjectsSchema), listProjectsController);
 // ! GET PROJECT
 router.get(
   "/:projectId",
-  requireProjectMember,
   validate(getProjectIdParamSchema),
+  requireProjectMember,
   getProjectController
 );
 
 // ! UPDATE PROJECT
 router.patch(
   "/:projectId",
+  validate(updateProjectSchema),
   requireProjectMember,
   requireActiveProject,
   requireProjectRole(["ADMIN"]),
-  validate(updateProjectSchema),
   updateProjectController
 );
 
 // ! ARCHIVE PROJECT
 router.patch(
   "/:projectId/archive",
+  validate(archiveProjectSchema),
   requireProjectMember,
   requireProjectRole(["ADMIN"]),
-  validate(archiveProjectSchema),
   archiveProjectController
 );
 
 // ! UNARCHIVE PROJECT
 router.patch(
   "/:projectId/unarchive",
+  validate(unarchiveProjectSchema),
   requireProjectMember,
   requireProjectRole(["ADMIN"]),
-  validate(unarchiveProjectSchema),
   unarchiveProjectController
 );
 
 // ! LEAVE PROJECT
 router.post(
   "/:projectId/leave",
-  requireProjectMember,
   validate(leaveProjectSchema),
+  requireProjectMember,
   leaveProjectController
 );
 
 // ! DELETE PROJECT
 router.delete(
   "/:projectId",
+  validate(deleteProjectSchema),
   requireProjectMember,
   requireProjectRole(["ADMIN"]),
   requireActiveProject,
-  validate(deleteProjectSchema),
   deleteProjectController
 );
 
