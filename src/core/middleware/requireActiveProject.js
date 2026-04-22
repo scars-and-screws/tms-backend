@@ -1,5 +1,5 @@
-import prisma from "../database/prisma.js";
 import { ApiError, asyncHandler } from "../utils/index.js";
+import { findProjectByIdMinimal } from "../../modules/projects/core/project.repository.js";
 
 // ! MIDDLEWARE TO CHECK IF THE PROJECT IS ACTIVE (NOT ARCHIVED)
 const requireActiveProject = asyncHandler(async (req, res, next) => {
@@ -8,10 +8,7 @@ const requireActiveProject = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "Project ID is required");
   }
 
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-    select: { isArchived: true },
-  });
+  const project = await findProjectByIdMinimal(projectId);
 
   if (!project) {
     throw new ApiError(404, "Project not found");

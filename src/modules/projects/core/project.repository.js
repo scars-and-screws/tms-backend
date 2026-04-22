@@ -14,6 +14,14 @@ export const findProjectById = async projectId => {
   });
 };
 
+// ! FIND PROJECT BY ID FOR MIDDLEWARE (SELECTING ONLY FIELDS NEEDED FOR ACCESS CHECKS)
+export const findProjectByIdMinimal = async projectId => {
+  return prisma.project.findUnique({
+    where: { id: projectId },
+    select: { id: true, isArchived: true },
+  });
+};
+
 // ! CHECK FOR DUPLICATE PROJECT NAME WITHIN SAME ORG
 export const findProjectByNameAndOrg = async (name, organizationId) => {
   return prisma.project.findFirst({
