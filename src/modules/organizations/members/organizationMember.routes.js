@@ -19,8 +19,8 @@ const router = Router({ mergeParams: true });
 //  ADD MEMBER TO ORGANIZATION
 router.post(
   "/",
-  requireOrganizationRole(["OWNER", "ADMIN"]),
   validate(addOrganizationMemberSchema),
+  requireOrganizationRole(["OWNER", "ADMIN"]),
   addOrganizationMemberController
 );
 
@@ -34,16 +34,16 @@ router.get(
 //  UPDATE ORGANIZATION MEMBER ROLE
 router.patch(
   "/:memberId",
-  requireOrganizationRole(["OWNER", "ADMIN"]),
   validate(updateOrganizationMemberRoleSchema),
+  requireOrganizationRole(["OWNER", "ADMIN"]),
   updateOrganizationMemberRoleController
 );
 
 // REMOVE ORGANIZATION MEMBER
 router.delete(
   "/:memberId",
-  requireOrganizationRole(["OWNER", "ADMIN"]),
   validate(removeOrganizationMemberSchema),
+  requireOrganizationRole(["OWNER", "ADMIN"]),
   removeOrganizationMemberController
 );
 
