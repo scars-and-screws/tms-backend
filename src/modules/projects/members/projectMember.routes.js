@@ -22,38 +22,38 @@ const router = Router({ mergeParams: true });
 // ! ADD PROJECT MEMBER
 router.post(
   "/",
+  validate(addProjectMemberSchema),
   requireProjectMember,
   requireActiveProject,
   requireProjectRole(["ADMIN"]),
-  validate(addProjectMemberSchema),
   addProjectMemberController
 );
 
 // ! LIST PROJECT MEMBERS
 router.get(
   "/",
-  requireProjectMember,
   validate(listProjectMembersSchema),
+  requireProjectMember,
   listProjectMembersController
 );
 
 // ! UPDATE PROJECT MEMBER ROLE
 router.patch(
   "/:memberId",
+  validate(updateProjectMemberRoleSchema),
   requireProjectMember,
   requireActiveProject,
   requireProjectRole(["ADMIN"]),
-  validate(updateProjectMemberRoleSchema),
   updateProjectMemberRoleController
 );
 
 // ! REMOVE PROJECT MEMBER
 router.delete(
   "/:memberId",
+  validate(removeProjectMemberSchema),
   requireProjectMember,
   requireActiveProject,
   requireProjectRole(["ADMIN"]),
-  validate(removeProjectMemberSchema),
   removeProjectMemberController
 );
 
