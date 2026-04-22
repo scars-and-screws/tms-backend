@@ -38,17 +38,17 @@ router.get("/", listUserOrganizationsController);
 // ! GET ORGANIZATION ROUTE
 router.get(
   "/:organizationId",
-  requireOrganizationMember,
   validate(organizationIdParamSchema),
+  requireOrganizationMember,
   getOrganizationController
 );
 
 // ! UPDATE ORGANIZATION ROUTE
 router.patch(
   "/:organizationId",
+  validate(updateOrganizationSchema),
   requireOrganizationMember,
   requireOrganizationRole(["OWNER", "ADMIN"]),
-  validate(updateOrganizationSchema),
   updateOrganizationController
 );
 
@@ -70,26 +70,26 @@ router.use(
 // ! TRANSFER OWNERSHIP ROUTE
 router.post(
   "/:organizationId/transfer-ownership",
+  validate(transferOrganizationOwnershipSchema),
   requireOrganizationMember,
   requireOrganizationRole(["OWNER"]),
-  validate(transferOrganizationOwnershipSchema),
   transferOrganizationOwnershipController
 );
 
 // ! LEAVE ORGANIZATION ROUTE
 router.post(
   "/:organizationId/leave",
-  requireOrganizationMember,
   validate(leaveOrganizationSchema),
+  requireOrganizationMember,
   leaveOrganizationController
 );
 
 // ! DELETE ORGANIZATION ROUTE
 router.delete(
   "/:organizationId",
+  validate(deleteOrganizationSchema),
   requireOrganizationMember,
   requireOrganizationRole(["OWNER"]),
-  validate(deleteOrganizationSchema),
   deleteOrganizationController
 );
 
