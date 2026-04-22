@@ -253,6 +253,13 @@ model Task {
   assigneeId  String?
   createdById String
 
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  position Int?
+
+  isArchived Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -262,15 +269,14 @@ model Task {
 
   createdBy User @relation("TaskCreator", fields: [createdById], references: [id])
 
-  comments TaskComment[]
-
-  files File[]
-
+  comments   TaskComment[]
+  files      File[]
   activities Activity[]
 
   @@index([projectId])
   @@index([assigneeId])
   @@index([projectId, status])
+  @@index([projectId, isArchived])
 }
 
 enum TaskStatus {
