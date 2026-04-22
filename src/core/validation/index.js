@@ -82,6 +82,40 @@ const projectRoleSchema = z.enum(["ADMIN", "MEMBER"], {
   errorMap: () => ({ message: "Role must be either ADMIN or MEMBER" }),
 });
 
+// ! TASK SCHEMAS
+// Task title
+const taskTitleSchema = z
+  .string()
+  .trim()
+  .min(2, { message: "Task title must be at least 2 characters" })
+  .max(200, { message: "Task title must be at most 200 characters" });
+
+// Task description
+const taskDescriptionSchema = z
+  .string()
+  .trim()
+  .max(1000, { message: "Task description must be at most 1000 characters" });
+
+// Task status
+const taskStatusSchema = z.enum(["TODO", "IN_PROGRESS", "DONE"], {
+  errorMap: () => ({
+    message: "Status must be one of TODO, IN_PROGRESS, or DONE",
+  }),
+});
+
+// Task priority
+const taskPrioritySchema = z.enum(["LOW", "MEDIUM", "HIGH"], {
+  errorMap: () => ({ message: "Priority must be one of LOW, MEDIUM, or HIGH" }),
+});
+
+// Date
+const dateSchema = z.string().datetime({ message: "Invalid date format" });
+
+// position for task ordering
+const positionSchema = z
+  .number()
+  .int()
+  .min(0, { message: "Position must be a non-negative integer" });
 export {
   usernameSchema,
   passwordSchema,
@@ -99,4 +133,10 @@ export {
   organizationNameSchema,
   descriptionSchema,
   organizationRoleSchema,
+  taskTitleSchema,
+  taskDescriptionSchema,
+  taskStatusSchema,
+  taskPrioritySchema,
+  dateSchema,
+  positionSchema,
 };
