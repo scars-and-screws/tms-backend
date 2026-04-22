@@ -8,9 +8,9 @@ const router = Router({ mergeParams: true });
 
 router.patch(
   "/",
+  validate(organizationIdParamSchema),
   upload.single("organization_logo"),
   validateUpload("organization_logo"),
-  validate(organizationIdParamSchema),
   uploadOrganizationLogoController
 );
 
