@@ -24,6 +24,18 @@ export const UPLOAD_CONFIG = {
   attachment: {
     folder: "attachments",
     maxSize: 10 * 1024 * 1024, // 10MB
-    allowedMimeTypes: ["application/pdf", "image/jpeg", "image/png"],
+    allowedMimeTypes: [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-powerpoint",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "text/plain",
+    ],
   },
 };
