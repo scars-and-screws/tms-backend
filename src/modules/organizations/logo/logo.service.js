@@ -5,12 +5,7 @@ import {
   deleteFromCloudinary,
 } from "../../../core/upload/index.js";
 
-export const uploadOrganizationLogoService = async (
-  organizationId,
-  file,
-) => {
-  console.log("FILE", file);
-  console.log("Organization ID", organizationId);
+export const uploadOrganizationLogoService = async (organizationId, file) => {
   if (!file) {
     throw new ApiError(400, "Organization logo file is required");
   }

@@ -14,9 +14,11 @@ export const uploadToCloudinary = async (file, type) => {
         resolve({
           url: result.secure_url,
           publicId: result.public_id,
-          fileName: result.original_filename,
-          MimeType: result.format,
-          size: result.bytes,
+
+          // Store original file name and MIME type for reference
+          fileName: file.originalname,
+          mimeType: file.mimetype,
+          size: file.size,
         });
       }
     );

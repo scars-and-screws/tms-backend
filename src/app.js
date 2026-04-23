@@ -13,6 +13,7 @@ import { authRoutes } from "./modules/auth/index.js";
 import { userRoutes } from "./modules/users/index.js";
 import { organizationRoutes } from "./modules/organizations/core/index.js";
 import taskRoutes from "./modules/projects/tasks/core/task.routes.js";
+import attachmentRoutes from "./modules/projects/tasks/attachments/attachment.routes.js";
 
 const app = express();
 
@@ -37,6 +38,14 @@ app.use(
 );
 // PROTECTED ROUTES - AUTHENTICATION +VERIFIED EMAIL +TASK ACCESS
 app.use("/api/v1/tasks", authenticate, requireVerifiedEmail, taskRoutes);
+
+// PROTECTED ROUTES - AUTHENTICATION +VERIFIED EMAIL +ATTACHMENT ACCESS
+app.use(
+  "/api/v1/attachments",
+  authenticate,
+  requireVerifiedEmail,
+  attachmentRoutes
+);
 
 // ERROR HANDLER
 app.use(notFound);

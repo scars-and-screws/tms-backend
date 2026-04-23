@@ -1,6 +1,6 @@
 export const UPLOAD_CONFIG = {
   avatar: {
-    folder: "avatars",
+    folder: "users/avatars",
     maxSize: 2 * 1024 * 1024, // 2MB
     allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
     transformations: [
@@ -22,7 +22,7 @@ export const UPLOAD_CONFIG = {
   },
 
   attachment: {
-    folder: "attachments",
+    folder: "tasks/attachments",
     maxSize: 10 * 1024 * 1024, // 10MB
     allowedMimeTypes: [
       "application/pdf",
