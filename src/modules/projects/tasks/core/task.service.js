@@ -20,14 +20,14 @@ export const createTaskService = async (projectId, userId, data) => {
   const { title, description, priority, dueDate, assigneeId } = data;
 
   // 1️⃣ Check user is project member
-  const membership = await findProjectMember(projectId, userId);
+  const membership = await findProjectMember(userId, projectId);
   if (!membership) {
     throw new ApiError(403, "User is not a member of this project");
   }
 
   // 2️⃣ Check assignee is also a project member if assigneeId is provided
   if (assigneeId) {
-    const assigneeMembership = await findProjectMember(projectId, assigneeId);
+    const assigneeMembership = await findProjectMember(assigneeId, projectId);
     if (!assigneeMembership) {
       throw new ApiError(400, "Assignee must be a project member");
     }
@@ -40,8 +40,8 @@ export const createTaskService = async (projectId, userId, data) => {
     priority,
     dueDate: dueDate ? new Date(dueDate) : null,
     projectId,
-    createdBy: userId,
-    assigneeId: assigneeId || null,
+    createdById: userId,
+    assigneeId: assigneeId ?? null, // explicitly set to null if not provided
   });
 
   // 4️⃣ Log activity (non-blocking)
@@ -80,7 +80,7 @@ export const updateTaskService = async (taskId, userId, data) => {
   }
 
   //  1️⃣ Check project membership
-  const membership = await findProjectMember(task.projectId, userId);
+  const membership = await findProjectMember(userId, task.projectId);
   if (!membership) {
     throw new ApiError(403, "User is not a member of this project");
   }
@@ -110,7 +110,7 @@ export const deleteTaskService = async (taskId, userId) => {
   }
 
   //  1️⃣ Check project membership and role (only ADMIN can delete)
-  const membership = await findProjectMember(task.projectId, userId);
+  const membership = await findProjectMember(userId, task.projectId);
   if (!membership || membership.role !== "ADMIN") {
     throw new ApiError(403, "Only project admins can delete tasks");
   }
@@ -138,10 +138,15 @@ export const assignTaskService = async (taskId, assigneeId, userId) => {
     throw new ApiError(404, "Task not found");
   }
 
+  // Prevent re-assigning to the same user
+  if (task.assigneeId === assigneeId) {
+    throw new ApiError(400, "Task is already assigned to this user");
+  }
+
   //  1️⃣ Check assignee is project member
   const assigneeMembership = await findProjectMember(
-    task.projectId,
-    assigneeId
+    assigneeId,
+    task.projectId
   );
   if (!assigneeMembership) {
     throw new ApiError(400, "Assignee must be a project member");

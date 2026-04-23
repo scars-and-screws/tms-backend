@@ -3,7 +3,8 @@ import { findProjectByIdMinimal } from "../../modules/projects/core/project.repo
 
 // ! MIDDLEWARE TO CHECK IF THE PROJECT IS ACTIVE (NOT ARCHIVED)
 const requireActiveProject = asyncHandler(async (req, res, next) => {
-  const { projectId } = req.params;
+  const projectId = req.params.projectId || req.projectId;
+
   if (!projectId) {
     throw new ApiError(400, "Project ID is required");
   }

@@ -1,15 +1,15 @@
-import Prisma from "../../../../core/database/prisma.js";
+import prisma from "../../../../core/database/prisma.js";
 
 // ! CREATE TASK
 export const createTask = async data => {
-  return Prisma.task.create({
+  return prisma.task.create({
     data,
   });
 };
 
 // ! FIND TASK BY ID
 export const findTaskById = async taskId => {
-  return Prisma.task.findUnique({
+  return prisma.task.findUnique({
     where: {
       id: taskId,
     },
@@ -34,7 +34,7 @@ export const findTaskById = async taskId => {
 
 // ! FIND TASKS BY ID MINIMAL FOR MIDDLEWARE
 export const findTaskByIdMinimal = async taskId => {
-  return Prisma.task.findUnique({
+  return prisma.task.findUnique({
     where: {
       id: taskId,
     },
@@ -62,7 +62,7 @@ export const findTasksByProjectId = async ({
   if (priority) where.priority = priority;
   if (assigneeId) where.assigneeId = assigneeId;
 
-  return Prisma.task.findMany({
+  return prisma.task.findMany({
     where,
     orderBy: {
       position: "asc",
@@ -72,7 +72,7 @@ export const findTasksByProjectId = async ({
 
 // ! UPDATE TASK
 export const updateTask = async (taskId, data) => {
-  return Prisma.task.update({
+  return prisma.task.update({
     where: {
       id: taskId,
     },
@@ -82,7 +82,7 @@ export const updateTask = async (taskId, data) => {
 
 // ! DELETE TASK
 export const deleteTask = async taskId => {
-  return Prisma.task.delete({
+  return prisma.task.delete({
     where: {
       id: taskId,
     },
@@ -91,7 +91,7 @@ export const deleteTask = async taskId => {
 
 // ! ASSIGN TASK
 export const assignTask = async (taskId, assigneeId) => {
-  return Prisma.task.update({
+  return prisma.task.update({
     where: {
       id: taskId,
     },
@@ -103,7 +103,7 @@ export const assignTask = async (taskId, assigneeId) => {
 
 // ! UPDATE TASK STATUS
 export const updateTaskStatus = async (taskId, status) => {
-  return Prisma.task.update({
+  return prisma.task.update({
     where: {
       id: taskId,
     },
@@ -116,7 +116,7 @@ export const updateTaskStatus = async (taskId, status) => {
 
 // ! ARCHIVE TASK
 export const archiveTask = async taskId => {
-  return Prisma.task.update({
+  return prisma.task.update({
     where: {
       id: taskId,
     },
@@ -128,7 +128,7 @@ export const archiveTask = async taskId => {
 
 // ! UNARCHIVE TASK
 export const unarchiveTask = async taskId => {
-  return Prisma.task.update({
+  return prisma.task.update({
     where: {
       id: taskId,
     },

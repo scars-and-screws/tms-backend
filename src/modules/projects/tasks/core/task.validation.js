@@ -13,6 +13,7 @@ import {
 export const createTaskSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
     })
     .strict(),
@@ -99,6 +100,7 @@ export const deleteTaskSchema = {
 export const listTasksSchema = {
   params: z
     .object({
+      organizationId: idSchema,
       projectId: idSchema,
     })
     .strict(),

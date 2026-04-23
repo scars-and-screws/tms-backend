@@ -14,13 +14,14 @@ const requireTaskAccess = asyncHandler(async (req, res, next) => {
   }
 
   // 2️⃣ Check project membership
-  const membership = await findProjectMember(task.projectId, userId);
+  const membership = await findProjectMember(userId, task.projectId);
   if (!membership) {
     throw new ApiError(403, "User does not have access to this task");
   }
 
   // 3️⃣ attach task adn project membership to request for reuse in controllers
   req.task = task;
+  req.projectId = task.projectId;
   req.projectMembership = membership;
   next();
 });
