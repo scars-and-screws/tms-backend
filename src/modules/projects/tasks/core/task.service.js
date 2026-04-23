@@ -1,4 +1,4 @@
-import { ApiError } from "../../../../core/utils";
+import { ApiError } from "../../../../core/utils/index.js";
 import {
   createTask,
   findTaskById,

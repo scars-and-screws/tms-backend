@@ -1,4 +1,4 @@
-import { Prisma } from "../../../../core/database/prisma.js";
+import Prisma from "../../../../core/database/prisma.js";
 
 // ! CREATE TASK
 export const createTask = async data => {

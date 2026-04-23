@@ -111,3 +111,21 @@ export const listTasksSchema = {
     })
     .strict(),
 };
+
+// ! ARCHIVE TASK
+export const archiveTaskSchema = {
+  params: z
+    .object({
+      taskId: idSchema,
+    })
+    .strict(),
+};
+
+// ! UNARCHIVE TASK
+export const unarchiveTaskSchema = {
+  params: z
+    .object({
+      taskId: idSchema,
+    })
+    .strict(),
+};

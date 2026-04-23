@@ -12,6 +12,7 @@ import {
 import { authRoutes } from "./modules/auth/index.js";
 import { userRoutes } from "./modules/users/index.js";
 import { organizationRoutes } from "./modules/organizations/core/index.js";
+import taskRoutes from "./modules/projects/tasks/core/task.routes.js";
 
 const app = express();
 
@@ -34,6 +35,8 @@ app.use(
   requireVerifiedEmail,
   organizationRoutes
 );
+// PROTECTED ROUTES - AUTHENTICATION +VERIFIED EMAIL +TASK ACCESS
+app.use("/api/v1/tasks", authenticate, requireVerifiedEmail, taskRoutes);
 
 // ERROR HANDLER
 app.use(notFound);

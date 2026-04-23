@@ -29,7 +29,7 @@ import {
   leaveProjectSchema,
 } from "../members/index.js";
 import projectMemberRoutes from "../members/projectMember.routes.js";
-
+import taskProjectRoutes from "../tasks/core/task.project.routes.js";
 const router = Router({ mergeParams: true });
 
 // ! CREATE PROJECT
@@ -99,5 +99,8 @@ router.delete(
 
 // ! NESTED ROUTES FOR PROJECT MEMBERS
 router.use("/:projectId/members", projectMemberRoutes);
+
+// ! NESTED ROUTES FOR TASKS
+router.use("/:projectId/tasks", taskProjectRoutes);
 
 export default router;
