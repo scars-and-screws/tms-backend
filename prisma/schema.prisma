@@ -122,18 +122,22 @@ model File {
   size     Int
 
   uploadedById String
-  projectId    String?
-  taskId       String?
+
+  projectId String?
+  taskId    String?
+  commentId String?
 
   createdAt DateTime @default(now())
 
   uploadedBy User @relation(fields: [uploadedById], references: [id])
 
-  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  task    Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  project Project?     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task    Task?        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  comment TaskComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
   @@index([taskId])
+  @@index([commentId])
   @@index([uploadedById])
 }
 
@@ -298,14 +302,18 @@ model TaskComment {
   taskId   String
   authorId String
 
-  content String
+  content String @db.Text
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   author User @relation(fields: [authorId], references: [id])
 
+  files File[]
+
   @@index([taskId])
+  @@index([authorId])
 }
 
 // ! ACTIVITY MODEL
