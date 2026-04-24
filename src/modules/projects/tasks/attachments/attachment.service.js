@@ -53,7 +53,7 @@ export const deleteAttachmentService = async (fileId, userId, role) => {
     throw new ApiError(404, "Attachment not found");
   }
 
-  // permisson check: only uploader or admin can delete
+  // permission check: only uploader or admin can delete
   if (file.uploadedById !== userId && role !== "ADMIN") {
     throw new ApiError(
       403,
