@@ -12,3 +12,4 @@ export { default as requireActiveProject } from "./requireActiveProject.js";
 export { default as requireTaskAccess } from "./requireTaskAccess.js";
 export { default as requireActiveTask } from "./requireActiveTask.js";
 export { default as requireAttachmentAccess } from "./requireAttachmentAccess.js";
+export { default as requireCommentAccess } from "./requireCommentAccess.js";
