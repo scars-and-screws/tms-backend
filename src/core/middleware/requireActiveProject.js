@@ -5,6 +5,16 @@ import { findProjectByIdMinimal } from "../../modules/projects/core/project.repo
 const requireActiveProject = asyncHandler(async (req, res, next) => {
   const projectId = req.params.projectId || req.projectId;
 
+  if (!projectId && req.task) {
+    // If projectId is not in params, try to get it from the task (for comment routes)
+    projectId = req.task?.projectId;
+  }
+
+  if (!projectId && req.comment) {
+    // If projectId is not in params, try to get it from the comment's task (for comment routes)
+    projectId = req.comment.task?.projectId;
+  }
+
   if (!projectId) {
     throw new ApiError(400, "Project ID is required");
   }
