@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { upload, validateUpload } from "../../../../core/upload/index.js";
 import {
-  uploadAttachmentController,
-  listAttachmentsController,
-} from "./attachment.controller.js";
+  uploadTaskAttachmentController,
+  listTaskAttachmentsController,
+} from "./taskAttachment.controller.js";
 
 import { validate } from "../../../../core/middleware/index.js";
 
-import { attachmentParamSchema } from "./attachment.validation.js";
+import { taskAttachmentParamSchema } from "./taskAttachment.validation.js";
 
 import {
   requireTaskAccess,
@@ -20,21 +20,21 @@ const router = Router({ mergeParams: true });
 // ! UPLOAD ATTACHMENT ROUTE
 router.post(
   "/",
-  validate(attachmentParamSchema),
+  validate(taskAttachmentParamSchema),
   requireTaskAccess,
   requireActiveProject,
   requireActiveTask,
   upload.array("files", 5), // allow up to 5 files
   validateUpload("attachment"),
-  uploadAttachmentController
+  uploadTaskAttachmentController
 );
 
 // ! LIST ATTACHMENTS ROUTE
 router.get(
   "/",
-  validate(attachmentParamSchema),
+  validate(taskAttachmentParamSchema),
   requireTaskAccess,
-  listAttachmentsController
+  listTaskAttachmentsController
 );
 
 export default router;

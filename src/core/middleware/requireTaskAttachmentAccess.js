@@ -1,20 +1,20 @@
 import { ApiError, asyncHandler } from "../utils/index.js";
-import { findFileWithTaskProject } from "../../modules/projects/tasks/attachments/attachment.repository.js";
+import { findFileWithTaskProject } from "../../modules/projects/tasks/attachments/taskAttachment.repository.js";
 import { findProjectMember } from "../../modules/projects/members/projectMember.repository.js";
 
-const requireAttachmentAccess = asyncHandler(async (req, res, next) => {
+const requireTaskAttachmentAccess = asyncHandler(async (req, res, next) => {
   const { fileId } = req.params;
   const userId = req.user.id;
 
   const file = await findFileWithTaskProject(fileId);
 
   if (!file) {
-    throw new ApiError(404, "Attachment not found");
+    throw new ApiError(404, "Task attachment not found");
   }
 
   const projectId = file.task?.projectId;
   if (!projectId) {
-    throw new ApiError(400, "Invalid attachment data");
+    throw new ApiError(400, "Invalid task attachment data");
   }
 
   const membership = await findProjectMember(userId, projectId);
@@ -29,4 +29,4 @@ const requireAttachmentAccess = asyncHandler(async (req, res, next) => {
   next();
 });
 
-export default requireAttachmentAccess;
+export default requireTaskAttachmentAccess;

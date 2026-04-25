@@ -11,5 +11,5 @@ export { default as requireProjectRole } from "./requireProjectRole.js";
 export { default as requireActiveProject } from "./requireActiveProject.js";
 export { default as requireTaskAccess } from "./requireTaskAccess.js";
 export { default as requireActiveTask } from "./requireActiveTask.js";
-export { default as requireAttachmentAccess } from "./requireAttachmentAccess.js";
+export { default as requireTaskAttachmentAccess } from "./requireTaskAttachmentAccess.js";
 export { default as requireCommentAccess } from "./requireCommentAccess.js";

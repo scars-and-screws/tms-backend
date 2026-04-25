@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { idSchema } from "../../../../core/validation/index.js";
 
-// ! ATTACHMENT PARAM VALIDATION SCHEMA
-export const attachmentParamSchema = {
+// ! TASK ATTACHMENT PARAM VALIDATION SCHEMA
+export const taskAttachmentParamSchema = {
   params: z
     .object({
       organizationId: idSchema,
@@ -12,8 +12,8 @@ export const attachmentParamSchema = {
     .strict(),
 };
 
-// ! DELETE ATTACHMENT PARAM VALIDATION SCHEMA
-export const deleteAttachmentParamSchema = {
+// ! DELETE TASK ATTACHMENT PARAM VALIDATION SCHEMA
+export const deleteTaskAttachmentParamSchema = {
   params: z
     .object({
       fileId: idSchema,

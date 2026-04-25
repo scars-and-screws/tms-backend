@@ -8,12 +8,12 @@ import {
   findFilesByTaskId,
   findFileById,
   deleteFile,
-} from "./attachment.repository.js";
+} from "./taskAttachment.repository.js";
 
-// ! UPLOAD ATTACHMENT SERVICE
-export const uploadAttachmentService = async (files, taskId, userId) => {
+// ! UPLOAD  TASK ATTACHMENT SERVICE
+export const uploadTaskAttachmentService = async (files, taskId, userId) => {
   if (!files || files.length === 0) {
-    throw new ApiError(400, "At least one attachment file is required");
+    throw new ApiError(400, "At least one task attachment file is required");
   }
 
   let uploadedFiles;
@@ -41,23 +41,23 @@ export const uploadAttachmentService = async (files, taskId, userId) => {
   );
 };
 
-// ! LIST ATTACHMENTS SERVICE
-export const listAttachmentsService = async taskId => {
+// ! LIST TASK ATTACHMENTS SERVICE
+export const listTaskAttachmentsService = async taskId => {
   return findFilesByTaskId(taskId);
 };
 
-// ! DELETE ATTACHMENT SERVICE
-export const deleteAttachmentService = async (fileId, userId, role) => {
+// ! DELETE TASK ATTACHMENT SERVICE
+export const deleteTaskAttachmentService = async (fileId, userId, role) => {
   const file = await findFileById(fileId);
   if (!file) {
-    throw new ApiError(404, "Attachment not found");
+    throw new ApiError(404, "Task attachment not found");
   }
 
   // permission check: only uploader or admin can delete
   if (file.uploadedById !== userId && role !== "ADMIN") {
     throw new ApiError(
       403,
-      "You do not have permission to delete this attachment"
+      "You do not have permission to delete this task attachment"
     );
   }
 
