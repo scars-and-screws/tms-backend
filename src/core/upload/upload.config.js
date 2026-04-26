@@ -1,5 +1,7 @@
+import { UPLOAD_TYPES } from "../constants/index.js";
+
 export const UPLOAD_CONFIG = {
-  avatar: {
+  [UPLOAD_TYPES.AVATAR]: {
     folder: "users/avatars",
     maxSize: 2 * 1024 * 1024, // 2MB
     allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -10,7 +12,7 @@ export const UPLOAD_CONFIG = {
     ],
   },
 
-  organization_logo: {
+  [UPLOAD_TYPES.ORGANIZATION_LOGO]: {
     folder: "organizations/logos",
     maxSize: 2 * 1024 * 1024, // 2MB
     allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -21,7 +23,7 @@ export const UPLOAD_CONFIG = {
     ],
   },
 
-  attachment: {
+  [UPLOAD_TYPES.ATTACHMENT]: {
     folder: "tasks/attachments",
     maxSize: 10 * 1024 * 1024, // 10MB
     allowedMimeTypes: [

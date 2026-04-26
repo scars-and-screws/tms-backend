@@ -12,8 +12,17 @@ export const validateUpload = type => {
     // normalize files to an array for easier processing
     const files = req.files ? req.files : req.file ? [req.file] : [];
 
-    if (!files || files.length === 0) {
+    if (!files.length) {
       return next(new ApiError(400, "No files uploaded"));
+    }
+
+    if (files.length > 5) {
+      return next(
+        new ApiError(
+          400,
+          "Maximum 5 files allowed per upload. Please upload in batches if you have more files."
+        )
+      );
     }
 
     for (const file of files) {
@@ -22,12 +31,7 @@ export const validateUpload = type => {
 
       // filename length check
       if (file.originalname.length > 100) {
-        return next(
-          new ApiError(
-            400,
-            "File name is too long. Maximum length is 100 characters"
-          )
-        );
+        return next(new ApiError(400, "File name is too long"));
       }
 
       // validate mimetype against allowed types for this upload type

@@ -6,6 +6,8 @@ import {
   deleteAttachmentController,
 } from "./attachment.controller.js";
 
+import { UPLOAD_TYPES } from "../../../../core/constants/uploadTypes.js";
+
 import { validate } from "../../../../core/middleware/index.js";
 
 import {
@@ -29,7 +31,7 @@ router.post(
   requireActiveProject,
   requireActiveTask,
   upload.array("files", 5), // allow up to 5 files
-  validateUpload("attachment"),
+  validateUpload(UPLOAD_TYPES.ATTACHMENT),
   uploadTaskAttachmentController
 );
 

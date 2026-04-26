@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { upload, validateUpload } from "../../../../core/upload/index.js";
 
+import { UPLOAD_TYPES } from "../../../../core/constants/uploadTypes.js";
+
 import {
   uploadCommentAttachmentController,
   listCommentAttachmentsController,
@@ -28,7 +30,7 @@ router.post(
   requireActiveProject,
   requireActiveTask,
   upload.array("files", 5),
-  validateUpload("attachment"),
+  validateUpload(UPLOAD_TYPES.ATTACHMENT),
   uploadCommentAttachmentController
 );
 
