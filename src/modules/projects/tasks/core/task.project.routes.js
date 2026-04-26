@@ -27,9 +27,6 @@ router.post(
   createTaskController
 );
 
-// ! ATTACHMENT ROUTES
-router.use("/:taskId/attachments", taskAttachmentRoutes);
-
 // ! LIST TASKS (read allowed even if archived)
 router.get(
   "/",
@@ -37,6 +34,9 @@ router.get(
   requireProjectMember,
   listTasksController
 );
+
+// ! ATTACHMENT ROUTES
+router.use("/:taskId/attachments", taskAttachmentRoutes);
 
 // ! COMMENT ROUTES
 router.use("/:taskId/comments", commentTaskRoutes);

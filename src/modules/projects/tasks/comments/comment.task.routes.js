@@ -17,6 +17,8 @@ import {
   requireActiveTask,
 } from "../../../../core/middleware/index.js";
 
+import commentAttachmentRoutes from "../attachments/attachment.comment.routes.js";
+
 const router = Router({ mergeParams: true });
 
 // ! CREATE COMMENT
@@ -36,5 +38,8 @@ router.get(
   requireTaskAccess,
   listCommentsController
 );
+
+// ! COMMENT ATTACHMENT ROUTES
+router.use("/:commentId/attachments", commentAttachmentRoutes);
 
 export default router;

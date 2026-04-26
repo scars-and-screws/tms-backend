@@ -1,51 +1,50 @@
 import { Router } from "express";
 import { upload, validateUpload } from "../../../../core/upload/index.js";
+
 import {
-  uploadTaskAttachmentController,
-  listTaskAttachmentsController,
+  uploadCommentAttachmentController,
+  listCommentAttachmentsController,
   deleteAttachmentController,
 } from "./attachment.controller.js";
-
-import { validate } from "../../../../core/middleware/index.js";
-
 import {
-  taskAttachmentParamSchema,
-  deleteTaskAttachmentParamSchema,
+  commentAttachmentParamSchema,
+  deleteCommentAttachmentParamSchema,
 } from "./attachment.validation.js";
 
 import {
-  requireTaskAccess,
+  validate,
+  requireCommentAccess,
   requireActiveProject,
   requireActiveTask,
 } from "../../../../core/middleware/index.js";
 
 const router = Router({ mergeParams: true });
 
-// ! UPLOAD ATTACHMENT ROUTE
+// ! UPLOAD COMMENT ATTACHMENT
 router.post(
   "/",
-  validate(taskAttachmentParamSchema),
-  requireTaskAccess,
+  validate(commentAttachmentParamSchema),
+  requireCommentAccess,
   requireActiveProject,
   requireActiveTask,
-  upload.array("files", 5), // allow up to 5 files
+  upload.array("files", 5),
   validateUpload("attachment"),
-  uploadTaskAttachmentController
+  uploadCommentAttachmentController
 );
 
-// ! LIST ATTACHMENTS ROUTE
+// ! LIST COMMENT ATTACHMENTS
 router.get(
   "/",
-  validate(taskAttachmentParamSchema),
-  requireTaskAccess,
-  listTaskAttachmentsController
+  validate(commentAttachmentParamSchema),
+  requireCommentAccess,
+  listCommentAttachmentsController
 );
 
-// ! DELETE ATTACHMENT ROUTE
+// ! DELETE COMMENT ATTACHMENT
 router.delete(
   "/:fileId",
-  validate(deleteTaskAttachmentParamSchema),
-  requireTaskAccess,
+  validate(deleteCommentAttachmentParamSchema),
+  requireCommentAccess,
   requireActiveProject,
   requireActiveTask,
   deleteAttachmentController

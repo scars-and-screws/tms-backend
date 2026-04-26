@@ -36,3 +36,11 @@ export const findFileWithTaskProject = fileId => {
 export const deleteFile = fileId => {
   return prisma.file.delete({ where: { id: fileId } });
 };
+
+// ! FIND FILES BY COMMENT ID
+export const findFilesByCommentId = commentId => {
+  return prisma.file.findMany({
+    where: { commentId },
+    orderBy: { createdAt: "desc" },
+  });
+};
