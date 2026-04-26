@@ -1,5 +1,5 @@
 import { asyncHandler, ApiResponse } from "../../../core/utils/index.js";
-import { uploadOrganizationLogoService } from "./index.js";
+import { uploadOrganizationLogoService } from "./logo.service.js";
 
 export const uploadOrganizationLogoController = asyncHandler(
   async (req, res) => {

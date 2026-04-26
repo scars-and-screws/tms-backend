@@ -1,6 +1,6 @@
 import { Router } from "express";
 import OrganizationMemberRoutes from "../members/organizationMember.routes.js";
-import { logoRoutes } from "../logo/index.js";
+import logoRoutes from "../logo/logo.routes.js";
 import {
   validate,
   requireOrganizationMember,
