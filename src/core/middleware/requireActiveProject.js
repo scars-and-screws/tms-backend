@@ -3,7 +3,7 @@ import { findProjectByIdMinimal } from "../../modules/projects/core/project.repo
 
 // ! MIDDLEWARE TO CHECK IF THE PROJECT IS ACTIVE (NOT ARCHIVED)
 const requireActiveProject = asyncHandler(async (req, res, next) => {
-  const projectId = req.params.projectId || req.projectId;
+  let projectId = req.params.projectId || req.projectId;
 
   if (!projectId && req.task) {
     // If projectId is not in params, try to get it from the task (for comment routes)
