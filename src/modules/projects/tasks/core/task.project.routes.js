@@ -13,7 +13,7 @@ import {
   requireActiveProject,
 } from "../../../../core/middleware/index.js";
 
-import attachmentTaskRoutes from "../attachments/taskAttachment.task.routes.js";
+import taskAttachmentRoutes from "../attachments/attachment.task.routes.js";
 import commentTaskRoutes from "../comments/comment.task.routes.js";
 
 const router = Router({ mergeParams: true });
@@ -28,7 +28,7 @@ router.post(
 );
 
 // ! ATTACHMENT ROUTES
-router.use("/:taskId/attachments", attachmentTaskRoutes);
+router.use("/:taskId/attachments", taskAttachmentRoutes);
 
 // ! LIST TASKS (read allowed even if archived)
 router.get(

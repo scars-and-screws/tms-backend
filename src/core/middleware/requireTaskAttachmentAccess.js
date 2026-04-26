@@ -1,5 +1,5 @@
 import { ApiError, asyncHandler } from "../utils/index.js";
-import { findFileWithTaskProject } from "../../modules/projects/tasks/attachments/taskAttachment.repository.js";
+import { findFileWithTaskProject } from "../../modules/projects/tasks/attachments/attachment.repository.js";
 import { findProjectMember } from "../../modules/projects/members/projectMember.repository.js";
 
 const requireTaskAttachmentAccess = asyncHandler(async (req, res, next) => {

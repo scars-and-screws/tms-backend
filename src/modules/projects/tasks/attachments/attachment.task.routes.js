@@ -3,11 +3,11 @@ import { upload, validateUpload } from "../../../../core/upload/index.js";
 import {
   uploadTaskAttachmentController,
   listTaskAttachmentsController,
-} from "./taskAttachment.controller.js";
+} from "./attachment.controller.js";
 
 import { validate } from "../../../../core/middleware/index.js";
 
-import { taskAttachmentParamSchema } from "./taskAttachment.validation.js";
+import { taskAttachmentParamSchema } from "./attachment.validation.js";
 
 import {
   requireTaskAccess,

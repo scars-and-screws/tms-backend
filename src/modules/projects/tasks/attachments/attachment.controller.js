@@ -3,7 +3,7 @@ import {
   uploadTaskAttachmentService,
   listTaskAttachmentsService,
   deleteTaskAttachmentService,
-} from "./taskAttachment.service.js";
+} from "./attachment.service.js";
 
 // ! UPLOAD TASK ATTACHMENT CONTROLLER
 export const uploadTaskAttachmentController = asyncHandler(async (req, res) => {

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { deleteTaskAttachmentController } from "./taskAttachment.controller.js";
-import { deleteTaskAttachmentParamSchema } from "./taskAttachment.validation.js";
+import { deleteTaskAttachmentController } from "./attachment.controller.js";
+import { deleteTaskAttachmentParamSchema } from "./attachment.validation.js";
 import { validate } from "../../../../core/middleware/index.js";
 import { requireTaskAttachmentAccess } from "../../../../core/middleware/index.js";
 

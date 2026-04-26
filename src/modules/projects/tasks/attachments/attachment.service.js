@@ -8,7 +8,7 @@ import {
   findFilesByTaskId,
   findFileById,
   deleteFile,
-} from "./taskAttachment.repository.js";
+} from "./attachment.repository.js";
 
 // ! UPLOAD  TASK ATTACHMENT SERVICE
 export const uploadTaskAttachmentService = async (files, taskId, userId) => {
