@@ -1,19 +1,25 @@
-import prisma from "../../../core/database/prisma.js";
 import { ApiError, sanitizeUser } from "../../../core/utils/index.js";
 import { hashPassword, comparePassword } from "../../../core/security/index.js";
+
+import {
+  findUserById,
+  findUserByUsername,
+  updateUser,
+} from "./profile.repository.js";
+
 import {
   createSessionService,
   revokeAllSessionsService,
-} from "../../auth/session/index.js";
+} from "../../auth/session/session.service.js";
 
 // ! CURRENT USER PROFILE SERVICE
 export const getProfileService = async userId => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
+  const user = await findUserById(userId);
+
   if (!user) {
     throw new ApiError(404, "User not found");
   }
+
   return sanitizeUser(user);
 };
 
@@ -21,18 +27,14 @@ export const getProfileService = async userId => {
 export const updateProfileService = async (userId, data) => {
   // Check if username is being updated and if it's already taken
   if (data.username) {
-    const existingUsername = await prisma.user.findUnique({
-      where: { username: data.username },
-    });
-    if (existingUsername && existingUsername.id !== userId) {
+    const existing = await findUserByUsername(data.username);
+
+    if (existing && existing.id !== userId) {
       throw new ApiError(409, "Username already taken");
     }
   }
 
-  const updatedUser = await prisma.user.update({
-    where: { id: userId },
-    data,
-  });
+  const updatedUser = await updateUser(userId, data);
 
   return sanitizeUser(updatedUser);
 };
@@ -40,28 +42,31 @@ export const updateProfileService = async (userId, data) => {
 // ! CHANGE PASSWORD SERVICE
 export const changePasswordService = async (userId, data, meta) => {
   const { currentPassword, newPassword } = data;
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
+
+  const user = await findUserById(userId);
 
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-  const validPassword = await comparePassword(
-    currentPassword,
-    user.passwordHash
-  );
-  if (!validPassword) {
+
+  const isValid = await comparePassword(currentPassword, user.passwordHash);
+
+  if (!isValid) {
     throw new ApiError(401, "Current password is incorrect");
   }
 
-  const newPasswordHash = await hashPassword(newPassword);
-  await prisma.user.update({
-    where: { id: userId },
-    data: { passwordHash: newPasswordHash },
-  });
+  if (currentPassword === newPassword) {
+    throw new ApiError(400, "New password must be different");
+  }
+
+  const passwordHash = await hashPassword(newPassword);
+
+  await updateUser(userId, { passwordHash });
+
   // Revoke all existing sessions after password change
   await revokeAllSessionsService(userId);
+  // Create a new session for the user after password change
   const { accessToken, refreshToken } = await createSessionService(user, meta);
+
   return { user, accessToken, refreshToken };
 };

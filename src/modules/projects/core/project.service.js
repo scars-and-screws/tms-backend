@@ -1,13 +1,16 @@
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
+
 import {
   ACTIVITY_TYPES,
   PROJECT_ROLES,
 } from "../../../core/constants/index.js";
+
 import {
   findOrganizationById,
   findOrganizationMember,
-} from "../../organizations/core/index.js";
+} from "../../organizations/core/organization.repository.js";
+
 import {
   createProject,
   findProjectByNameAndOrg,
@@ -16,7 +19,7 @@ import {
   deleteProjectById,
   updateProjectById,
   setProjectArchiveStatus,
-} from "./index.js";
+} from "./project.repository.js";
 
 import { createProjectMember } from "../members/projectMember.repository.js";
 

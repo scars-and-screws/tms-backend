@@ -1,26 +1,34 @@
 import { Router } from "express";
+
 import OrganizationMemberRoutes from "../members/organizationMember.routes.js";
+
 import logoRoutes from "../logo/logo.routes.js";
+
 import {
   validate,
   requireOrganizationMember,
   requireOrganizationRole,
 } from "../../../core/middleware/index.js";
+
 import {
   createOrganizationController,
-  createOrganizationSchema,
   getOrganizationController,
   listUserOrganizationsController,
-  organizationIdParamSchema,
   transferOrganizationOwnershipController,
-  transferOrganizationOwnershipSchema,
   updateOrganizationController,
-  updateOrganizationSchema,
   leaveOrganizationController,
-  leaveOrganizationSchema,
   deleteOrganizationController,
+} from "./organization.controller.js";
+
+import {
+  organizationIdParamSchema,
+  createOrganizationSchema,
+  transferOrganizationOwnershipSchema,
+  updateOrganizationSchema,
+  leaveOrganizationSchema,
   deleteOrganizationSchema,
-} from "./index.js";
+} from "./organization.validation.js";
+
 import projectRoutes from "../../projects/core/project.routes.js";
 
 const router = Router();

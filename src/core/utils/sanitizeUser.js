@@ -1,3 +1,5 @@
+import { DEFAULT_AVATAR_URL } from "../constants/defaultAvatar.js";
+
 const sanitizeUser = user => {
   if (!user) return null;
 
@@ -9,7 +11,7 @@ const sanitizeUser = user => {
     firstName: user.firstName,
     lastName: user.lastName,
 
-    avatarUrl: user.avatarUrl,
+    avatarUrl: user.avatarUrl || DEFAULT_AVATAR_URL,
     bio: user.bio,
     headline: user.headline,
     skills: user.skills,

@@ -1,13 +1,26 @@
-import prisma from "../../../core/database/prisma.js";
-import { hashPassword, comparePassword } from "../../../core/security/index.js";
+import {
+  hashPassword,
+  comparePassword,
+  generateTempToken,
+  generateFingerprint,
+} from "../../../core/security/index.js";
+
+import { findTrustedDevice } from "../trusted-device/trusted-device.repository.js";
 
 import { ApiError } from "../../../core/utils/index.js";
-import { createSessionService } from "../session/index.js";
-import { sendEmailVerificationService } from "../verification/index.js";
-import { createOtpRecord, OTP_PURPOSE } from "../../../core/otp/index.js";
-import { sendMail, verificationTemplate } from "../../../core/mail/index.js";
 
-// ! USER REGISTER SERVICE
+import {
+  findUserByIdentifier,
+  findUserByEmailOrUsername,
+  createUser,
+} from "./auth.repository.js";
+
+import { sendLoginOtpService } from "../two-factor/two-factor.service.js";
+
+import { createSessionService } from "../session/session.service.js";
+import { sendEmailVerificationService } from "../verification/verification.service.js";
+
+// ! REGISTER SERVICE
 export const registerService = async (data, meta) => {
   const {
     username,
@@ -21,13 +34,9 @@ export const registerService = async (data, meta) => {
   } = data;
 
   // * 1️⃣ Check if user already exists
-  const existingUser = await prisma.user.findFirst({
-    where: {
-      OR: [{ email }, { username }],
-    },
-  });
+  const existing = await findUserByEmailOrUsername(email, username);
 
-  if (existingUser) {
+  if (existing) {
     throw new ApiError(409, "User with this email or username already exists");
   }
 
@@ -35,22 +44,20 @@ export const registerService = async (data, meta) => {
   const passwordHash = await hashPassword(password);
 
   // * 3️⃣ Create the user
-  const user = await prisma.user.create({
-    data: {
-      username,
-      email,
-      passwordHash,
-      firstName,
-      lastName,
-      bio,
-      headline,
-      skills: skills || [],
-    },
+  const user = await createUser({
+    username,
+    email,
+    passwordHash,
+    firstName,
+    lastName,
+    bio,
+    headline,
+    skills: skills || [],
   });
 
   const { accessToken, refreshToken } = await createSessionService(user, meta);
 
-  // * 6️⃣ Send verification email (don't block registration if email fails)
+  // * 6️⃣ Send verification mail (non-blocking)
   try {
     await sendEmailVerificationService(user.id);
   } catch (err) {
@@ -60,45 +67,48 @@ export const registerService = async (data, meta) => {
   return { user, accessToken, refreshToken };
 };
 
-// ! USER LOGIN SERVICE
+// ! LOGIN SERVICE
 export const loginService = async ({ identifier, password }, meta) => {
   // * 1️⃣ Find user by email OR username
 
-  const user = await prisma.user.findFirst({
-    where: {
-      OR: [{ email: identifier }, { username: identifier }],
-    },
-  });
+  const user = await findUserByIdentifier(identifier);
 
   if (!user) throw new ApiError(401, "Invalid credentials");
 
   // * 2️⃣ Compare password
-  const isPasswordValid = await comparePassword(password, user.passwordHash);
+  const isValid = await comparePassword(password, user.passwordHash);
 
-  if (!isPasswordValid) {
+  if (!isValid) {
     throw new ApiError(401, "Invalid credentials");
   }
+  // * 3️⃣ Check if device is trusted
+  const deviceId = meta.deviceId;
+  const fingerprint = generateFingerprint(deviceId, meta.userAgent);
 
-  // * 3️⃣ Check 2FA
+  const trustedDevice = await findTrustedDevice(user.id, deviceId);
+
+  if (trustedDevice && trustedDevice.fingerprint === fingerprint) {
+    //  DEVICE IS TRUSTED, SKIP 2FA AND LOGIN DIRECTLY
+    return finalizeLoginService(user, meta);
+  }
+
+  // * 4️⃣ Check 2FA
   if (user.twoFactorEnabled) {
-    const otp = await createOtpRecord({
+    await sendLoginOtpService(user);
+
+    const tempToken = generateTempToken({
       userId: user.id,
-      purpose: OTP_PURPOSE.TWO_FACTOR,
+      purpose: "TWO_FACTOR",
     });
 
-    await sendMail({
-      to: user.email,
-      subject: "Your 2FA Code",
-      html: verificationTemplate(otp),
-    });
-    return { twofactorRequired: true, tempUserId: user.id };
+    return { require2FA: true, tempToken };
   }
 
   // * 4️⃣ Finalize login (create session and return tokens)
-  return await finalizeLoginService(user, meta);
+  return finalizeLoginService(user, meta);
 };
 
-// ! FINALIZE LOGIN
+// ! FINALIZE LOGIN SERVICE
 export const finalizeLoginService = async (user, meta) => {
   const { accessToken, refreshToken } = await createSessionService(user, meta);
   return { user, accessToken, refreshToken };

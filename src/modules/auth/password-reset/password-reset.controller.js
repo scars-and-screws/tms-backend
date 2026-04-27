@@ -2,12 +2,15 @@ import { asyncHandler, ApiResponse } from "../../../core/utils/index.js";
 import {
   requestPasswordResetService,
   confirmPasswordResetService,
-} from "./index.js";
+} from "./password-reset.service.js";
 
+// ! REQUEST PASSWORD RESET CONTROLLER
 export const requestPasswordResetController = asyncHandler(async (req, res) => {
   const { email } = req.body;
+
   await requestPasswordResetService(email);
-  res.json(
+
+  return res.json(
     new ApiResponse(
       200,
       null,
@@ -16,8 +19,11 @@ export const requestPasswordResetController = asyncHandler(async (req, res) => {
   );
 });
 
+// ! CONFIRM PASSWORD RESET CONTROLLER
 export const confirmPasswordResetController = asyncHandler(async (req, res) => {
   const { email, otp, newPassword } = req.body;
+
   await confirmPasswordResetService(email, otp, newPassword);
-  res.json(new ApiResponse(200, null, "Password reset successful"));
+
+  return res.json(new ApiResponse(200, null, "Password reset successful"));
 });

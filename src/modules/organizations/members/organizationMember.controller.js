@@ -4,7 +4,7 @@ import {
   listOrganizationMembersService,
   updateOrganizationMemberRoleService,
   removeOrganizationMemberService,
-} from "./index.js";
+} from "./organizationMember.service.js";
 
 // ! ADD ORGANIZATION MEMBER CONTROLLER
 export const addOrganizationMemberController = asyncHandler(

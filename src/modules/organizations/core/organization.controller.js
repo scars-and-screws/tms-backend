@@ -7,7 +7,7 @@ import {
   transferOrganizationOwnershipService,
   leaveOrganizationService,
   deleteOrganizationService,
-} from "./index.js";
+} from "./organization.service.js";
 
 // ! CREATE ORGANIZATION CONTROLLER
 export const createOrganizationController = asyncHandler(async (req, res) => {

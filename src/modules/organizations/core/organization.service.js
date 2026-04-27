@@ -1,7 +1,13 @@
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
-import { sanitizeOrganization, mapOrganizationList } from "./index.js";
+
+import {
+  sanitizeOrganization,
+  mapOrganizationList,
+} from "./organization.helper.js";
+
 import { deleteFromCloudinary } from "../../../core/upload/index.js";
+
 import {
   findOrganizationById,
   findUserOrganizations,
@@ -15,6 +21,7 @@ import {
   updateOrganizationMemberRole,
   deleteOrganizationMemberById,
 } from "./organization.repository.js";
+
 import {
   ORGANIZATION_ROLES,
   ACTIVITY_TYPES,

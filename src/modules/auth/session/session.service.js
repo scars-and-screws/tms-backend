@@ -10,27 +10,27 @@ import {
 import {
   countUserSessions,
   findOldestSession,
-  createSessionRecord,
   findSessionByTokenHash,
   deleteSessionById,
   deleteSessionByHash,
   deleteAllUserSessions,
   findUserSessions,
-  verifySessionFingerprint,
-  formatSessions,
-  upserSession,
-} from "./index.js";
+  upsertSession,
+} from "./session.repository.js";
+
+import { formatSessions } from "./session.helper.js";
+
+import { verifySessionFingerprint } from "./session.security.js";
 
 // ! CREATE SESSION SERVICE
 export const createSessionService = async (user, meta) => {
   const { deviceId, userAgent, ipAddress } = meta;
 
-  // 1️⃣ Ensure deviceId exists
   if (!deviceId) {
     throw new ApiError(400, "Device ID is required");
   }
 
-  // 2️⃣  Enforce max sessions (only for different devices)
+  // 1️⃣ Enforce max sessions
   const sessionCount = await countUserSessions(user.id);
 
   if (sessionCount >= MAX_SESSIONS) {
@@ -41,14 +41,14 @@ export const createSessionService = async (user, meta) => {
     }
   }
 
-  // 5️⃣ Generate tokens d
+  // 2️⃣ Generate tokens
   const payload = buildTokenPayload(user);
 
   const { accessToken, refreshToken, tokenHash } =
     generateSessionTokens(payload);
 
-  // 6️⃣ Create session record in DB
-  await upserSession({
+  // 3️⃣ Save session
+  await upsertSession({
     userId: user.id,
     deviceId,
     tokenHash,
@@ -67,49 +67,42 @@ export const rotateSessionService = async (refreshToken, meta) => {
     throw new ApiError(401, "Refresh token required");
   }
 
-  // 1️⃣ Verify JWT signature
+  // 1️⃣ Verify token
   const decoded = verifyRefreshToken(refreshToken);
 
-  // 2️⃣ Hash the provided refresh token to find the session
+  // 2️⃣ Find session
   const tokenHash = hashToken(refreshToken);
+  const session = await findSessionByTokenHash(tokenHash);
 
-  const existingSession = await findSessionByTokenHash(tokenHash);
-
-  // 3️⃣ If no session found, possible token reuse - revoke all sessions
-  if (!existingSession) {
+  // 🚨 TOKEN REUSE DETECTED
+  if (!session) {
     await deleteAllUserSessions(decoded.id);
-    throw new ApiError(401, "Session reuse detected. All sessions revoked.");
+    throw new ApiError(401, "Session reuse detected. Logged out everywhere.");
   }
 
-  // 4️⃣ Verify session fingerprint to prevent token theft
-  const isFingerprintValid = verifySessionFingerprint(existingSession, meta);
+  // 3️⃣ Fingerprint check
+  const isValid = verifySessionFingerprint(session, meta);
 
-  if (!isFingerprintValid) {
+  if (!isValid) {
     await deleteAllUserSessions(decoded.id);
-    throw new ApiError(
-      401,
-      "Device mismatch detected. Possible token theft. All sessions revoked.  Please log in again."
-    );
+    throw new ApiError(401, "Device mismatch. Logged out everywhere.");
   }
 
-  // 5️⃣ Expiration check
-  if (existingSession.expiresAt < new Date()) {
-    await deleteSessionById(existingSession.id);
-    throw new ApiError(401, "Refresh token expired. Please log in again.");
+  // 4️⃣ Expiry check
+  if (session.expiresAt < new Date()) {
+    await deleteSessionById(session.id);
+    throw new ApiError(401, "Session expired");
   }
 
-  // 6️⃣ JWT payload user ID check
-  if (decoded.id !== existingSession.userId) {
-    console.log("Decoded", decoded);
-    console.log("ExistingUser", existingSession);
-    throw new ApiError(401, "Token user mismatch");
+  // 5️⃣ User mismatch check
+  if (decoded.id !== session.userId) {
+    throw new ApiError(401, "Token mismatch");
   }
 
-  // 7️⃣ Token rotation - delete old session
-  await deleteSessionById(existingSession.id);
+  // 6️⃣ Rotate session
+  await deleteSessionById(session.id);
 
-  // 8️⃣ Create new session
-  return createSessionService(existingSession.user, meta);
+  return createSessionService(session.user, meta);
 };
 
 // ! REVOKE SESSION SERVICE
@@ -150,17 +143,17 @@ export const terminateSessionService = async (
   }
 
   const tokenHash = hashToken(refreshToken);
+  const currentSession = await findSessionByTokenHash(tokenHash);
 
-  const session = await findSessionByTokenHash(tokenHash);
-
-  if (!session || session.userId !== userId) {
-    throw new ApiError(401, "Invalid session token");
+  if (!currentSession || currentSession.userId !== userId) {
+    throw new ApiError(401, "Invalid session");
   }
 
-  if (session && session.id === sessionId) {
+  // 🚫 Prevent deleting current session
+  if (currentSession.id === sessionId) {
     throw new ApiError(
       400,
-      "Cannot terminate current session. Use logout or logout all instead."
+      "Cannot terminate current session. Use logout instead."
     );
   }
 

@@ -24,10 +24,8 @@ import {
   requireProjectRole,
   requireActiveProject,
 } from "../../../core/middleware/index.js";
-import {
-  leaveProjectController,
-  leaveProjectSchema,
-} from "../members/index.js";
+import { leaveProjectController } from "../members/projectMember.controller.js";
+import { leaveProjectSchema } from "../members/projectMember.validation.js";
 import projectMemberRoutes from "../members/projectMember.routes.js";
 import taskProjectRoutes from "../tasks/core/task.project.routes.js";
 const router = Router({ mergeParams: true });

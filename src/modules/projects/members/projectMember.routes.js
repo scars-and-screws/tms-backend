@@ -11,11 +11,14 @@ import {
   listProjectMembersController,
   updateProjectMemberRoleController,
   removeProjectMemberController,
+} from "./projectMember.controller.js";
+
+import {
   addProjectMemberSchema,
   updateProjectMemberRoleSchema,
   removeProjectMemberSchema,
   listProjectMembersSchema,
-} from "./index.js";
+} from "./projectMember.validation.js";
 
 const router = Router({ mergeParams: true });
 

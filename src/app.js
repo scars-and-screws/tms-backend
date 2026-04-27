@@ -3,15 +3,17 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+
 import {
   errorHandler,
   notFound,
   authenticate,
   requireVerifiedEmail,
 } from "./core/middleware/index.js";
-import { authRoutes } from "./modules/auth/index.js";
-import { userRoutes } from "./modules/users/index.js";
-import { organizationRoutes } from "./modules/organizations/core/index.js";
+
+import authRoutes from "./modules/auth/core/auth.routes.js";
+import userRoutes from "./modules/users/profile/profile.routes.js";
+import organizationRoutes from "./modules/organizations/core/organization.routes.js";
 import taskRoutes from "./modules/projects/tasks/core/task.routes.js";
 import commentRoutes from "./modules/projects/tasks/comments/comment.routes.js";
 const app = express();

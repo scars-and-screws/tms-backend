@@ -8,6 +8,8 @@ const requiredEnv = [
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
   "CLOUDINARY_URL",
+  "JWT_TEMP_TOKEN_SECRET",
+  "JWT_TEMP_TOKEN_EXPIRATION",
 ];
 // Check for required environment variables and throw an error if any are missing to prevent the application from crashing later on due to missing configuration
 requiredEnv.forEach(env => {
@@ -26,6 +28,9 @@ export const JWT_ACCESS_TOKEN_EXPIRATION =
   process.env.JWT_ACCESS_TOKEN_EXPIRATION || "15m";
 export const JWT_REFRESH_TOKEN_EXPIRATION =
   process.env.JWT_REFRESH_TOKEN_EXPIRATION || "7d";
+export const JWT_TEMP_TOKEN_SECRET = process.env.JWT_TEMP_TOKEN_SECRET;
+export const JWT_TEMP_TOKEN_EXPIRATION =
+  process.env.JWT_TEMP_TOKEN_EXPIRATION || "5m";
 export const MAX_SESSIONS = parseInt(process.env.MAX_SESSIONS) || 7;
 export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;

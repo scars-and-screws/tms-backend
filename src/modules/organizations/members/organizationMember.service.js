@@ -5,16 +5,20 @@ import {
   findUserByEmail,
   findOrganizationMembers,
 } from "./organizationMember.repository.js";
+
 import {
   deleteOrganizationMemberById,
   findOrganizationMember,
-} from "../core/index.js";
+} from "../core/organization.repository.js";
+
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
+
 import {
   mapOrganizationMemberList,
   sanitizeOrganizationMember,
-} from "./index.js";
+} from "./organizationMember.helper.js";
+
 import { ACTIVITY_TYPES } from "../../../core/constants/index.js";
 
 // ! ADD ORGANIZATION MEMBER SERVICE

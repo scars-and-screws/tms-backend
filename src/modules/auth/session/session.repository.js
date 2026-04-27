@@ -68,7 +68,7 @@ export const findSessionByDevice = async (userId, deviceId) => {
 };
 
 // ! UPSERT SESSION (atomic create or update for same device)
-export const upserSession = async ({
+export const upsertSession = async ({
   userId,
   deviceId,
   tokenHash,

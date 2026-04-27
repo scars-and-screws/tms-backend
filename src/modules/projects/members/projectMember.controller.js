@@ -1,11 +1,12 @@
 import { asyncHandler, ApiResponse } from "../../../core/utils/index.js";
+
 import {
   addProjectMemberService,
   listProjectMembersService,
   updateProjectMemberRoleService,
   removeProjectMemberService,
   leaveProjectService,
-} from "./index.js";
+} from "./projectMember.service.js";
 
 // ! ADD PROJECT MEMBER CONTROLLER
 export const addProjectMemberController = asyncHandler(async (req, res) => {

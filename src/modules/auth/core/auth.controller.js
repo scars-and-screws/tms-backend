@@ -4,6 +4,7 @@ import {
   setRefreshTokenCookie,
   setDeviceCookie,
 } from "../../../core/security/index.js";
+import { buildAuthMeta } from "../shared/auth.utils.js";
 import {
   asyncHandler,
   ApiResponse,
@@ -16,19 +17,13 @@ import {
   revokeSessionService,
   rotateSessionService,
   terminateSessionService,
-} from "../session/index.js";
+} from "../session/session.service.js";
 
-import { loginService, registerService } from "../index.js";
+import { loginService, registerService } from "./auth.service.js";
 
 // ! CONTROLLER FOR USER REGISTRATION
 export const registerController = asyncHandler(async (req, res) => {
-  let deviceId = req.cookies.deviceId;
-
-  if (!deviceId) {
-    deviceId = generateDeviceId();
-    setDeviceCookie(res, deviceId);
-  }
-  const meta = { ...getRequestMeta(req), deviceId };
+  const meta = buildAuthMeta(req, res);
   const { user, accessToken, refreshToken } = await registerService(
     req.body,
     meta
@@ -50,21 +45,16 @@ export const registerController = asyncHandler(async (req, res) => {
 
 // ! CONTROLLER FOR USER LOGIN
 export const loginController = asyncHandler(async (req, res) => {
-  let deviceId = req.cookies.deviceId;
-  if (!deviceId) {
-    deviceId = generateDeviceId();
-    setDeviceCookie(res, deviceId);
-  }
-  const meta = { ...getRequestMeta(req), deviceId };
+  const meta = buildAuthMeta(req, res);
 
   const result = await loginService(req.body, meta);
 
   // If 2FA required
-  if (result.twofactorRequired) {
+  if (result.require2FA) {
     return res.status(200).json(
       new ApiResponse(200, {
         twofactorRequired: true,
-        tempUserId: result.tempUserId,
+        tempToken: result.tempToken,
       })
     );
   }
@@ -81,10 +71,7 @@ export const loginController = asyncHandler(async (req, res) => {
 
 // ! CONTROLLER FOR REFRESHING TOKENS
 export const refreshController = asyncHandler(async (req, res) => {
-  const meta = {
-    ...getRequestMeta(req),
-    deviceId: req.cookies.deviceId,
-  };
+  const meta = buildAuthMeta(req, res);
 
   const oldRefreshToken = req.cookies.refreshToken;
 

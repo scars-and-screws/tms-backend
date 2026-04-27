@@ -1,6 +1,6 @@
 import { ApiError } from "../../../core/utils/index.js";
-import { findProjectById } from "../core/index.js";
-import { findOrganizationMember } from "../../organizations/core/index.js";
+import { findProjectById } from "../core/project.repository.js";
+import { findOrganizationMember } from "../../organizations/core/organization.repository.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
 import { ACTIVITY_TYPES } from "../../../core/constants/index.js";
 import {

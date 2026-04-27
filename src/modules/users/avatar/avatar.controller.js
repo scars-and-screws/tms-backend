@@ -1,5 +1,5 @@
 import { ApiResponse, asyncHandler } from "../../../core/utils/index.js";
-import { uploadAvatarService } from "./index.js";
+import { uploadAvatarService } from "./avatar.service.js";
 
 // ! UPLOAD AVATAR CONTROLLER
 export const uploadAvatarController = asyncHandler(async (req, res) => {
@@ -8,7 +8,7 @@ export const uploadAvatarController = asyncHandler(async (req, res) => {
 
   const result = await uploadAvatarService(userId, file);
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, result, "Avatar uploaded successfully"));
 });

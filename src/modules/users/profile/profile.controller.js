@@ -4,40 +4,52 @@ import {
   buildAuthResponse,
   getRequestMeta,
 } from "../../../core/utils/index.js";
+
 import {
   getProfileService,
   changePasswordService,
   updateProfileService,
-} from "../index.js";
+} from "./profile.service.js";
+
 import { setRefreshTokenCookie } from "../../../core/security/index.js";
 
-// ! CONTROLLER FOR GETTING CURRENT USER PROFILE
+// ! GET PROFILE CONTROLLER
 export const getProfileController = asyncHandler(async (req, res) => {
-  const user = await getProfileService(req.user.id);
+  const userId = req.user.id;
+
+  const user = await getProfileService(userId);
 
   return res
     .status(200)
     .json(new ApiResponse(200, user, "Profile fetched successfully"));
 });
 
-// ! CONTROLLER FOR UPDATING USER PROFILE
+// ! UPDATE PROFILE CONTROLLER
 export const updateProfileController = asyncHandler(async (req, res) => {
-  const updatedUser = await updateProfileService(req.user.id, req.body);
+  const userId = req.user.id;
+  const data = req.body;
+
+  const updatedUser = await updateProfileService(userId, data);
+
   return res
     .status(200)
     .json(new ApiResponse(200, updatedUser, "Profile updated successfully"));
 });
 
-// ! CONTROLLER FOR CHANGING PASSWORD
+// ! CHANGE PASSWORD CONTROLLER
 export const changePasswordController = asyncHandler(async (req, res) => {
   const meta = getRequestMeta(req);
+  const userId = req.user.id;
+  const data = req.body;
+
   const { user, accessToken, refreshToken } = await changePasswordService(
-    req.user.id,
-    req.body,
+    userId,
+    data,
     meta
   );
 
   setRefreshTokenCookie(res, refreshToken);
+
   return res
     .status(200)
     .json(

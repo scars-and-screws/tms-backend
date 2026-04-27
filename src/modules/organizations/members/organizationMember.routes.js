@@ -1,14 +1,18 @@
 import { Router } from "express";
 import {
-  addOrganizationMemberSchema,
-  listOrganizationMembersSchema,
-  updateOrganizationMemberRoleSchema,
-  removeOrganizationMemberSchema,
   addOrganizationMemberController,
   listOrganizationMembersController,
   updateOrganizationMemberRoleController,
   removeOrganizationMemberController,
-} from "./index.js";
+} from "./organizationMember.controller.js";
+
+import {
+  addOrganizationMemberSchema,
+  listOrganizationMembersSchema,
+  updateOrganizationMemberRoleSchema,
+  removeOrganizationMemberSchema,
+} from "./organizationMember.validation.js";
+
 import {
   requireOrganizationRole,
   validate,
