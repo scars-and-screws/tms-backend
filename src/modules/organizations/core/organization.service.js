@@ -54,7 +54,7 @@ export const createOrganizationService = async (userId, data) => {
   if (existing) {
     throw new ApiError(
       400,
-      "You already created an organizaiton with this name"
+      "You already created an organization with this name"
     );
   }
 
