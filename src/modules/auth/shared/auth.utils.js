@@ -7,7 +7,7 @@ import {
 } from "../../../core/security/index.js";
 
 import { getRequestMeta } from "../../../core/utils/index.js";
-import { JWT_TEMP_TOKEN_EXPIRATION } from "../../../core/config/env.js";
+import { JWT_TEMP_TOKEN_EXPIRATION, JWT_TEMP_TOKEN_SECRET } from "../../../core/config/env.js";
 
 export const buildAuthMeta = (req, res) => {
   let deviceId = req.cookies.deviceId;
@@ -40,7 +40,7 @@ export const safeVerifyTempToken = token => {
 export const safeDecodeTempToken = token => {
   try {
     // ignore expiration for decoding
-    return jwt.verify(token, JWT_TEMP_TOKEN_EXPIRATION, {
+    return jwt.verify(token, JWT_TEMP_TOKEN_SECRET, {
       ignoreExpiration: true,
     });
   } catch (err) {
