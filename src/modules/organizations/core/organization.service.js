@@ -38,7 +38,9 @@ export const getOrganizationService = async organizationId => {
 
 // ! LIST USER ORGANIZATIONS SERVICE
 export const listUserOrganizationsService = async userId => {
+
   const memberships = await findUserOrganizations(userId);
+
   return mapOrganizationList(memberships);
 };
 

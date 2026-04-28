@@ -73,7 +73,7 @@ export const updateOrganizationMemberRole = async (id, role) => {
   });
 };
 
-// ! RETRIVE USER BY ID FOR EMAIL VERIFICATION CHECK
+// ! RETRIEVE USER BY ID FOR EMAIL VERIFICATION CHECK
 export const findUserById = async userId => {
   return prisma.user.findUnique({
     where: { id: userId },
