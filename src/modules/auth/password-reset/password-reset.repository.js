@@ -16,7 +16,7 @@ export const updateUserPassword = async (userId, passwordHash) => {
 };
 
 // ! DELETE ALL SESSIONS
-export const deleteuserSessions = async userId => {
+export const deleteUserSessions = async userId => {
   return await prisma.refreshToken.deleteMany({
     where: { userId },
   });

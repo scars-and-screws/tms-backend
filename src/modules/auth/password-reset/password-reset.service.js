@@ -8,7 +8,7 @@ import { OTP_PURPOSE } from "../../../core/constants/index.js";
 import {
   findUserByEmail,
   updateUserPassword,
-  deleteuserSessions,
+  deleteUserSessions,
 } from "./password-reset.repository.js";
 
 // ! REQUEST PASSWORD RESET SERVICE
@@ -18,10 +18,10 @@ export const requestPasswordResetService = async email => {
   // 🔒 Prevent email enumeration
   if (!user) return;
 
-  const otp = await createOtpRecord({
-    userId: user.id,
-    purpose: OTP_PURPOSE.PASSWORD_RESET,
-  });
+  const otp = await createOtpRecord(
+    user.id,
+    OTP_PURPOSE.PASSWORD_RESET
+  );
 
   await sendMail({
     to: email,
@@ -39,11 +39,11 @@ export const confirmPasswordResetService = async (email, otp, newPassword) => {
   }
 
   // 1️⃣ Verify OTP
-  await verifyOtpRecord({
-    userId: user.id,
+  await verifyOtpRecord(
+    user.id,
     otp,
-    purpose: OTP_PURPOSE.PASSWORD_RESET,
-  });
+    OTP_PURPOSE.PASSWORD_RESET
+  );
 
   // 2️⃣ Hash new password
   const passwordHash = await hashPassword(newPassword);
@@ -52,5 +52,5 @@ export const confirmPasswordResetService = async (email, otp, newPassword) => {
   await updateUserPassword(user.id, passwordHash);
 
   // 4️⃣ Revoke all sessions (security 🔥)
-  await deleteuserSessions(user.id);
+  await deleteUserSessions(user.id);
 };
