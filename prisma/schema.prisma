@@ -43,10 +43,11 @@ model User {
   assignedTasks Task[] @relation("TaskAssignee")
   createdTasks  Task[] @relation("TaskCreator")
 
-  taskComments   TaskComment[]
-  uploadedFiles  File[]
-  activities     Activity[]
-  trustedDevices TrustedDevice[]
+  taskComments    TaskComment[]
+  uploadedFiles   File[]
+  activities      Activity[]
+  trustedDevices  TrustedDevice[]
+  commentMentions CommentMention[]
 
   @@index([createdAt])
 }
@@ -285,10 +286,26 @@ model TaskComment {
   task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  files File[]
+  files    File[]
+  mentions CommentMention[]
 
   @@index([taskId])
   @@index([authorId])
+}
+
+// ? ================= COMMENT MENTION =================
+model CommentMention {
+  id String @id @default(uuid())
+
+  commentId String
+  userId    String
+
+  comment TaskComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId]) // prevent duplicates
+  @@index([commentId])
+  @@index([userId])
 }
 
 // ? ================= ACTIVITY =================
@@ -376,5 +393,5 @@ enum ActivityType {
   TASK_DELETED
 
   COMMENT_ADDED
-  FILE_UPLOADED
+  COMMENT_DELETED
 }

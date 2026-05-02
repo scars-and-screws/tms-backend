@@ -13,6 +13,7 @@ import {
 } from "./task.repository.js";
 import { findProjectMember } from "../../members/projectMember.repository.js";
 import { createActivityService } from "../../../../core/activity/activity.service.js";
+import { buildChanges } from "../../../../core/activity/activity.helper.js";
 import { ACTIVITY_TYPES } from "../../../../core/constants/index.js";
 
 // ! CREATE TASK SERVICE
@@ -51,7 +52,15 @@ export const createTaskService = async (projectId, userId, data) => {
     projectId,
     taskId: task.id,
     metadata: {
-      title,
+      entity: {
+        id: task.id,
+        title,
+      },
+      extra: {
+        priority,
+        dueDate,
+        assigneeId,
+      },
     },
   });
 
@@ -88,6 +97,9 @@ export const updateTaskService = async (taskId, userId, data) => {
   // 2️⃣ update task
   const updated = await updateTask(taskId, data);
 
+  // Build changes for activity log
+  const changes = buildChanges(task, updated);
+
   // 3️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
@@ -95,7 +107,11 @@ export const updateTaskService = async (taskId, userId, data) => {
     projectId: task.projectId,
     taskId,
     metadata: {
-      title: data.title || task.title,
+      entity: {
+        id: task.id,
+        title: task.title,
+      },
+      changes,
     },
   });
 
@@ -124,7 +140,10 @@ export const deleteTaskService = async (taskId, userId) => {
     projectId: task.projectId,
     taskId,
     metadata: {
-      title: task.title,
+      entity: {
+        id: task.id,
+        title: task.title,
+      },
     },
   });
 
@@ -162,8 +181,16 @@ export const assignTaskService = async (taskId, assigneeId, userId) => {
     projectId: task.projectId,
     taskId,
     metadata: {
-      title: task.title,
-      assigneeId,
+      entity: {
+        id: task.id,
+        title: task.title,
+      },
+      changes: {
+        assigneeId: {
+          before: task.assigneeId,
+          after: assigneeId,
+        },
+      },
     },
   });
 
@@ -187,8 +214,16 @@ export const updateTaskStatusService = async (taskId, status, userId) => {
     projectId: task.projectId,
     taskId,
     metadata: {
-      title: task.title,
-      status,
+      entity: {
+        id: task.id,
+        title: task.title,
+      },
+      changes: {
+        status: {
+          before: task.status,
+          after: status,
+        },
+      },
     },
   });
   return updated;
@@ -211,7 +246,16 @@ export const archiveTaskService = async (taskId, userId) => {
     projectId: task.projectId,
     taskId,
     metadata: {
-      title: task.title,
+      entity: {
+        id: task.id,
+        title: task.title,
+      },
+      changes: {
+        isArchived: {
+          before: false,
+          after: true,
+        },
+      },
     },
   });
   return true;
@@ -234,7 +278,16 @@ export const unarchiveTaskService = async (taskId, userId) => {
     projectId: task.projectId,
     taskId,
     metadata: {
-      title: task.title,
+      entity: {
+        id: task.id,
+        title: task.title,
+      },
+      changes: {
+        isArchived: {
+          before: true,
+          after: false,
+        },
+      },
     },
   });
   return true;

@@ -51,6 +51,16 @@ export const findCommentsByTaskId = async taskId => {
           size: true,
         },
       },
+      mentions: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      },
     },
   });
 };

@@ -1,5 +1,6 @@
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
+import { buildChanges } from "../../../core/activity/activity.helper.js";
 
 import {
   ACTIVITY_TYPES,
@@ -81,7 +82,10 @@ export const createProjectService = async ({
     organizationId,
     projectId: project.id,
     metadata: {
-      projectName: name,
+      entity: {
+        id: project.id,
+        name: project.name,
+      },
     },
   });
 
@@ -163,6 +167,8 @@ export const updateProjectService = async (
   // Update the project
   const updated = await updateProjectById(projectId, data);
 
+  const changes = buildChanges(project, updated);
+
   // Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
@@ -170,7 +176,11 @@ export const updateProjectService = async (
     organizationId,
     projectId,
     metadata: {
-      updatedFields: Object.keys(data),
+      entity: {
+        id: updated.id,
+        name: project.name,
+      },
+      changes,
     },
   });
 
@@ -209,7 +219,16 @@ export const archiveProjectService = async (
     organizationId,
     projectId,
     metadata: {
-      projectName: project.name,
+      entity: {
+        id: updated.id,
+        name: project.name,
+      },
+      changes: {
+        isArchived: {
+          before: false,
+          after: true,
+        },
+      },
     },
   });
 
@@ -241,7 +260,16 @@ export const unarchiveProjectService = async (
     organizationId,
     projectId,
     metadata: {
-      projectName: project.name,
+      entity: {
+        id: updated.id,
+        name: project.name,
+      },
+      changes: {
+        isArchived: {
+          before: true,
+          after: false,
+        },
+      },
     },
   });
 
@@ -274,7 +302,10 @@ export const deleteProjectService = async (
     organizationId,
     projectId,
     metadata: {
-      projectName: project.name,
+      entity: {
+        id: project.id,
+        name: project.name,
+      },
     },
   });
 

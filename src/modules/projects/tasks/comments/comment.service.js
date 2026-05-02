@@ -7,13 +7,58 @@ import {
   deleteComment,
 } from "./comment.repository.js";
 
+import { extractMentions } from "./comment.utils.js";
+import { createCommentMentions } from "./comment.mention.repository.js";
+import { findUsersByUsernames } from "../../../auth/core/auth.repository.js";
+
+import { createActivityService } from "../../../../core/activity/activity.service.js";
+import { ACTIVITY_TYPES } from "../../../../core/constants/index.js";
+
 // ! CREATE COMMENT SERVICE
 export const createCommentService = async (taskId, userId, content) => {
-  return createComment({
+  // 1️⃣ Create comment
+  const comment = await createComment({
     taskId,
     authorId: userId,
     content,
   });
+
+  // 2️⃣ Extract mentions from content
+  const usernames = extractMentions(content);
+
+  if (usernames.length > 0) {
+    // 3️⃣ Find mentioned users by usernames
+    const users = await findUsersByUsernames(usernames);
+
+    // 4️⃣ Prepare mention records
+    const mentionsData = users.map(user => ({
+      commentId: comment.id,
+      userId: user.id,
+    }));
+
+    // 5️⃣ Save mentions
+    await createCommentMentions(mentionsData);
+
+    // 6️⃣ Future : send notifications to mentioned users (non-blocking)
+  }
+
+  // 7️⃣ Log activity (non-blocking)
+  createActivityService({
+    actorId: userId,
+    type: ACTIVITY_TYPES.COMMENT_ADDED,
+    taskId,
+    metadata: {
+      entity: {
+        id: comment.id,
+      },
+      extra: {
+        preview: content.slice(0, 50), // small preview
+        mentions: usernames, // for frontend
+      },
+    },
+  });
+
+  return comment;
 };
 
 // ! LIST COMMENTS SERVICE
@@ -56,5 +101,17 @@ export const deleteCommentService = async (commentId, userId, role) => {
 
   // 3️⃣ Delete the comment
   await deleteComment(commentId);
+
+  // 4️⃣ Log activity (non-blocking)
+  createActivityService({
+    actorId: userId,
+    type: ACTIVITY_TYPES.COMMENT_DELETED,
+    taskId: comment.taskId,
+    metadata: {
+      entity: {
+        id: comment.id,
+      },
+    },
+  });
   return true;
 };

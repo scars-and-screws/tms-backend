@@ -1,5 +1,6 @@
 import { ApiError } from "../../../core/utils/index.js";
 import { createActivityService } from "../../../core/activity/activity.service.js";
+import { buildChanges } from "../../../core/activity/activity.helper.js";
 
 import {
   sanitizeOrganization,
@@ -38,7 +39,6 @@ export const getOrganizationService = async organizationId => {
 
 // ! LIST USER ORGANIZATIONS SERVICE
 export const listUserOrganizationsService = async userId => {
-
   const memberships = await findUserOrganizations(userId);
 
   return mapOrganizationList(memberships);
@@ -100,13 +100,20 @@ export const updateOrganizationService = async (
 
   const updated = await updateOrganizationById(organizationId, data);
 
+  // Build changes for activity metadata
+  const changes = buildChanges(organization, updated);
+
   // Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
     type: ACTIVITY_TYPES.ORGANIZATION_UPDATED,
     organizationId,
     metadata: {
-      updatedFields: Object.keys(data),
+      entity: {
+        id: organizationId,
+        name: organization.name,
+      },
+      changes,
     },
   });
 
@@ -166,7 +173,12 @@ export const transferOrganizationOwnershipService = async ({
     type: ACTIVITY_TYPES.OWNERSHIP_TRANSFERRED,
     organizationId,
     metadata: {
-      newOwnerId,
+      changes: {
+        owner: {
+          before: actorId,
+          after: newOwnerId,
+        },
+      },
     },
   });
 
@@ -200,7 +212,17 @@ export const leaveOrganizationService = async ({ organizationId, userId }) => {
     actorId: userId,
     type: ACTIVITY_TYPES.MEMBER_LEFT,
     organizationId,
-    metadata: { userId },
+    metadata: {
+      entity: {
+        id: userId,
+      },
+      changes: {
+        role: {
+          before: membership.role,
+          after: null,
+        },
+      },
+    },
   });
 };
 
@@ -244,6 +266,11 @@ export const deleteOrganizationService = async ({
     actorId,
     type: ACTIVITY_TYPES.ORGANIZATION_DELETED,
     organizationId,
-    metadata: { organizationName: organization.name },
+    metadata: {
+      entity: {
+        id: organizationId,
+        name: organization.name,
+      },
+    },
   });
 };

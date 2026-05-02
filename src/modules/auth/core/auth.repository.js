@@ -24,3 +24,17 @@ export const createUser = async data => {
     data,
   });
 };
+// ! FIND USER BY USERNAME
+export const findUsersByUsernames = async usernames => {
+  return prisma.user.findMany({
+    where: {
+      username: {
+        in: usernames,
+      },
+    },
+    select: {
+      id: true,
+      username: true,
+    },
+  });
+};

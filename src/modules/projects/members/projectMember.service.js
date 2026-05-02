@@ -70,8 +70,12 @@ export const addProjectMemberService = async (
     organizationId: project.organizationId,
     projectId,
     metadata: {
-      memberId: userId,
-      role,
+      entity: {
+        id: userId,
+      },
+      extra: {
+        role,
+      },
     },
   });
 
@@ -113,8 +117,15 @@ export const updateProjectMemberRoleService = async (
     type: ACTIVITY_TYPES.PROJECT_MEMBER_ROLE_UPDATED,
     projectId: member.projectId,
     metadata: {
-      memberId: member.userId,
-      newRole,
+      entity: {
+        id: member.userId,
+      },
+      changes: {
+        role: {
+          before: member.role,
+          after: newRole,
+        },
+      },
     },
   });
 
@@ -143,7 +154,9 @@ export const removeProjectMemberService = async (memberId, actorId) => {
     type: ACTIVITY_TYPES.PROJECT_MEMBER_REMOVED,
     projectId: member.projectId,
     metadata: {
-      memberId: member.userId,
+      entity: {
+        id: member.userId,
+      },
     },
   });
 };
@@ -182,7 +195,9 @@ export const leaveProjectService = async (projectId, userId) => {
     type: ACTIVITY_TYPES.PROJECT_MEMBER_LEFT,
     projectId,
     metadata: {
-      memberId: member.userId,
+      entity: {
+        id: userId,
+      },
     },
   });
 

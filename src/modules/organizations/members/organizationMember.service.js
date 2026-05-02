@@ -55,8 +55,13 @@ export const addOrganizationMemberService = async ({
     type: ACTIVITY_TYPES.MEMBER_ADDED,
     organizationId,
     metadata: {
-      memberId: user.id,
-      role,
+      entity: {
+        id: user.id,
+        email: user.email,
+      },
+      extra: {
+        role,
+      },
     },
   });
 
@@ -109,8 +114,15 @@ export const updateOrganizationMemberRoleService = async (
     type: ACTIVITY_TYPES.MEMBER_ROLE_UPDATED,
     organizationId,
     metadata: {
-      memberId: target.userId,
-      role: newRole,
+      entity: {
+        id: target.userId,
+      },
+      changes: {
+        role: {
+          before: target.role,
+          after: newRole,
+        },
+      },
     },
   });
 
@@ -164,7 +176,9 @@ export const removeOrganizationMemberService = async ({
     type: ACTIVITY_TYPES.MEMBER_REMOVED,
     organizationId,
     metadata: {
-      memberId: target.userId,
+      entity: {
+        id: target.userId,
+      },
     },
   });
 };
