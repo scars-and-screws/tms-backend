@@ -10,7 +10,6 @@ import {
 } from "./task.controller.js";
 
 import {
-  createTaskSchema,
   updateTaskSchema,
   assignTaskSchema,
   getTaskSchema,
@@ -70,7 +69,6 @@ router.patch(
   requireTaskAccess,
   requireActiveProject,
   requireActiveTask,
-  requireProjectRole(["ADMIN"]),
   assignTaskController
 );
 

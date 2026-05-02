@@ -11,6 +11,7 @@ import {
   listProjectMembersController,
   updateProjectMemberRoleController,
   removeProjectMemberController,
+  searchProjectMembersController,
 } from "./projectMember.controller.js";
 
 import {
@@ -18,6 +19,7 @@ import {
   updateProjectMemberRoleSchema,
   removeProjectMemberSchema,
   listProjectMembersSchema,
+  searchProjectMembersSchema,
 } from "./projectMember.validation.js";
 
 const router = Router({ mergeParams: true });
@@ -30,6 +32,14 @@ router.post(
   requireActiveProject,
   requireProjectRole(["ADMIN"]),
   addProjectMemberController
+);
+
+// ! SEARCH PROJECT MEMBERS (MENTIONS)
+router.get(
+  "/search",
+  validate(searchProjectMembersSchema),
+  requireProjectMember,
+  searchProjectMembersController
 );
 
 // ! LIST PROJECT MEMBERS

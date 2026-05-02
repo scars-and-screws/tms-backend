@@ -32,6 +32,11 @@ export const createTaskService = async (projectId, userId, data) => {
     if (!assigneeMembership) {
       throw new ApiError(400, "Assignee must be a project member");
     }
+
+    // ROLE BASED ASSIGNMENT: Only ADMIN can assign tasks to others, MEMBER can only assign to themselves
+    if (membership.role !== "ADMIN" && assigneeId !== userId) {
+      throw new ApiError(403, "You can only assign tasks to yourself");
+    }
   }
 
   // 3️⃣ Create task
@@ -42,7 +47,7 @@ export const createTaskService = async (projectId, userId, data) => {
     dueDate: dueDate ? new Date(dueDate) : null,
     projectId,
     createdById: userId,
-    assigneeId: assigneeId ?? null, // explicitly set to null if not provided
+    assigneeId: assigneeId ?? userId, // Default to self if no assignee provided
   });
 
   // 4️⃣ Log activity (non-blocking)
@@ -156,6 +161,16 @@ export const assignTaskService = async (taskId, assigneeId, userId) => {
   if (!task) {
     throw new ApiError(404, "Task not found");
   }
+  // Get actor membership
+  const membership = await findProjectMember(userId, task.projectId);
+  if (!membership) {
+    throw new ApiError(403, "User is not a member of this project");
+  }
+
+  // ROLE-BASED ASSIGNMENT: Only ADMIN can assign tasks to others, MEMBER can only assign to themselves
+  if (membership.role !== "ADMIN" && assigneeId !== userId) {
+    throw new ApiError(403, "You can only assign tasks to yourself");
+  }
 
   // Prevent re-assigning to the same user
   if (task.assigneeId === assigneeId) {
@@ -167,6 +182,7 @@ export const assignTaskService = async (taskId, assigneeId, userId) => {
     assigneeId,
     task.projectId
   );
+
   if (!assigneeMembership) {
     throw new ApiError(400, "Assignee must be a project member");
   }

@@ -27,6 +27,22 @@ export const listProjectMembersSchema = {
     .strict(),
 };
 
+// ! SEARCH PROJECT MEMBERS (MENTIONS)
+export const searchProjectMembersSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+
+  query: z
+    .object({
+      query: z.string().min(0).max(50).optional(),
+    })
+    .strict(),
+};
+
 // ! UPDATE PROJECT MEMBER ROLE SCHEMA
 export const updateProjectMemberRoleSchema = {
   params: z

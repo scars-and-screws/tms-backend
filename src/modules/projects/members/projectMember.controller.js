@@ -6,6 +6,7 @@ import {
   updateProjectMemberRoleService,
   removeProjectMemberService,
   leaveProjectService,
+  searchProjectMembersService,
 } from "./projectMember.service.js";
 
 // ! ADD PROJECT MEMBER CONTROLLER
@@ -37,6 +38,18 @@ export const listProjectMembersController = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(200, members, "Project members retrieved successfully")
     );
+});
+
+// ! SEARCH PROJECT MEMBERS CONTROLLER (MENTIONS)
+export const searchProjectMembersController = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+  const { query } = req.body;
+
+  const ussers = await searchProjectMembersService(projectId, query);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "Project members search successful"));
 });
 
 // ! UPDATE PROJECT MEMBER ROLE CONTROLLER

@@ -11,6 +11,7 @@ import {
   updateProjectMemberRoleById,
   deleteProjectMemberById,
   countProjectAdmins,
+  searchProjectMembers,
 } from "./projectMember.repository.js";
 
 // ! ADD PROJECT MEMBER SERVICE
@@ -85,6 +86,14 @@ export const addProjectMemberService = async (
 // ! LIST PROJECT MEMBERS SERVICE
 export const listProjectMembersService = async projectId => {
   return await findProjectMembers(projectId);
+};
+
+// ! SEARCH PROJECT MEMBERS SERVICE (FOR MENTIONS)
+export const searchProjectMembersService = async (projectId, query) => {
+  const members = await searchProjectMembers(projectId, query);
+
+  // flatten user data for frontend
+  return members.map(m => m.user); // return array of users instead of memberships
 };
 
 // ! UPDATE PROJECT MEMBER ROLE SERVICE

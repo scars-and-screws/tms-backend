@@ -54,6 +54,31 @@ export const findProjectMembers = async projectId => {
   });
 };
 
+// ! SEARCH PROJECT MEMBERS (FOR MENTIONS)
+export const searchProjectMembers = async (projectId, query) => {
+  return prisma.projectMember.findMany({
+    where: {
+      projectId,
+      user: {
+        username: {
+          contains: query || "",
+          mode: "insensitive",
+        },
+      },
+    },
+    select: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+    },
+    take: 5, //  limit results for better performance
+  });
+};
+
 // ! UPDATE MEMBER ROLE
 export const updateProjectMemberRoleById = async (memberId, role) => {
   return prisma.projectMember.update({
