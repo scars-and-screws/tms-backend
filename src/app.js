@@ -16,6 +16,8 @@ import userRoutes from "./modules/users/profile/profile.routes.js";
 import organizationRoutes from "./modules/organizations/core/organization.routes.js";
 import taskRoutes from "./modules/projects/tasks/core/task.routes.js";
 import commentRoutes from "./modules/projects/tasks/comments/comment.routes.js";
+import notificationRoutes from "./modules/notifications/notification.routes.js";
+
 const app = express();
 
 // MIDDLEWARE
@@ -42,6 +44,14 @@ app.use("/api/v1/tasks", authenticate, requireVerifiedEmail, taskRoutes);
 
 // PROTECTED ROUTES - AUTHENTICATION +VERIFIED EMAIL +COMMENT ACCESS
 app.use("/api/v1/comments", authenticate, requireVerifiedEmail, commentRoutes);
+
+// PROTECTED ROUTES - AUTHENTICATION +VERIFIED EMAIL +NOTIFICATION ACCESS
+app.use(
+  "/api/v1/notifications",
+  authenticate,
+  requireVerifiedEmail,
+  notificationRoutes
+);
 
 // ERROR HANDLER
 app.use(notFound);

@@ -15,6 +15,18 @@ import { findProjectMember } from "../../members/projectMember.repository.js";
 import { createActivityService } from "../../../../core/activity/activity.service.js";
 import { buildChanges } from "../../../../core/activity/activity.helper.js";
 import { ACTIVITY_TYPES } from "../../../../core/constants/index.js";
+import { createNotificationService } from "../../../notifications/notification.service.js";
+import {
+  NOTIFICATION_TYPES,
+  ENTITY_TYPES,
+} from "../../../notifications/notification.constants.js";
+import { getProjectAdmins } from "../../../projects/members/projectMember.repository.js";
+
+// ? Helper function to send notifications, avoiding self-notifications
+const notify = async (payload, actorId) => {
+  if (payload.userId === actorId) return;
+  return createNotificationService(payload);
+};
 
 // ! CREATE TASK SERVICE
 export const createTaskService = async (projectId, userId, data) => {
@@ -48,7 +60,46 @@ export const createTaskService = async (projectId, userId, data) => {
     projectId,
     createdById: userId,
     assigneeId: assigneeId ?? userId, // Default to self if no assignee provided
+    assignedById: userId,
   });
+
+  // 🔔 Create a notification for the assignee
+  await notify(
+    {
+      userId: task.assigneeId,
+      type: NOTIFICATION_TYPES.TASK_ASSIGNED,
+      title: "Task Assigned",
+      message: `You were assigned to task "${task.title}"`,
+      entityId: task.id,
+      entityType: ENTITY_TYPES.TASK,
+    },
+    userId
+  );
+
+  // 🔔 Notify admins (only if member created the task)
+  if (membership.role !== "ADMIN") {
+    // Find all admins in the project
+    const admins = await getProjectAdmins(projectId);
+
+    // Create notifications for each admin
+    await Promise.all(
+      admins
+        .filter(admin => admin.user.id !== userId)
+        .map(admin =>
+          notify(
+            {
+              userId: admin.user.id,
+              type: NOTIFICATION_TYPES.TASK_CREATED,
+              title: "New Task Created",
+              message: `A new task "${task.title}" was created`,
+              entityId: task.id,
+              entityType: ENTITY_TYPES.TASK,
+            },
+            userId
+          )
+        )
+    );
+  }
 
   // 4️⃣ Log activity (non-blocking)
   createActivityService({
@@ -188,7 +239,37 @@ export const assignTaskService = async (taskId, assigneeId, userId) => {
   }
 
   // 2️⃣ assign task
-  const updated = await assignTask(taskId, assigneeId);
+  const updated = await assignTask(taskId, assigneeId, userId);
+
+  // 🔔 Create a notification for the new assignee
+
+  if (assigneeId !== userId) {
+    await notify(
+      {
+        userId: assigneeId,
+        type: NOTIFICATION_TYPES.TASK_ASSIGNED,
+        title: "Task Assigned",
+        message: `You were assigned "${task.title}"`,
+        entityId: task.id,
+        entityType: ENTITY_TYPES.TASK,
+      },
+      userId
+    );
+  }
+  // 🔔 Notify previous assignee if exists and different from new assignee
+  if (task.assigneeId && task.assigneeId !== assigneeId) {
+    await notify(
+      {
+        userId: task.assigneeId,
+        type: NOTIFICATION_TYPES.TASK_UNASSIGNED,
+        title: "Task Unassigned",
+        message: `You were removed from task "${task.title}"`,
+        entityId: task.id,
+        entityType: ENTITY_TYPES.TASK,
+      },
+      userId
+    );
+  }
 
   // 3️⃣ Log activity (non-blocking)
   createActivityService({
@@ -223,6 +304,56 @@ export const updateTaskStatusService = async (taskId, status, userId) => {
   //  1️⃣ update task status
   const updated = await updateTaskStatus(taskId, status);
 
+  // 🔔 Send notification if status is DONE
+  if (task.status !== "DONE" && status === "DONE") {
+    // Only notify if the user updating the status is not the creator (to avoid self-notifications)
+    if (task.createdById !== userId) {
+      await notify(
+        {
+          userId: task.createdById,
+          type: NOTIFICATION_TYPES.TASK_COMPLETED,
+          title: "Task Completed",
+          message: `"${task.title}" has been completed`,
+          entityId: task.id,
+          entityType: ENTITY_TYPES.TASK,
+        },
+        userId
+      );
+    }
+
+    if (
+      task.assignedById &&
+      task.assignedById !== task.createdById &&
+      task.assignedById !== userId
+    ) {
+      await notify(
+        {
+          userId: task.assignedById,
+          type: NOTIFICATION_TYPES.TASK_COMPLETED,
+          title: "Task Completed",
+          message: `"${task.title}" has been completed`,
+          entityId: task.id,
+          entityType: ENTITY_TYPES.TASK,
+        },
+        userId
+      );
+    }
+
+    // If assignee !== updater
+    if (task.assigneeId && task.assigneeId !== userId) {
+      await notify(
+        {
+          userId: task.assigneeId,
+          type: NOTIFICATION_TYPES.TASK_COMPLETED,
+          title: "Task Completed",
+          message: `"${task.title}" has been completed`,
+          entityId: task.id,
+          entityType: ENTITY_TYPES.TASK,
+        },
+        userId
+      );
+    }
+  }
   // 2️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,

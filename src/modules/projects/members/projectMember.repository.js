@@ -108,3 +108,18 @@ export const countProjectAdmins = async projectId => {
     },
   });
 };
+
+// ! GET PROJECT ADMINS (for notification purposes)
+export const getProjectAdmins = async projectId => {
+  return prisma.projectMember.findMany({
+    where: {
+      projectId,
+      role: "ADMIN",
+    },
+    include: {
+      user: {
+        select: userSelect,
+      },
+    },
+  });
+};

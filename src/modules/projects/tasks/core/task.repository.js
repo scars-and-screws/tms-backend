@@ -90,13 +90,14 @@ export const deleteTask = async taskId => {
 };
 
 // ! ASSIGN TASK
-export const assignTask = async (taskId, assigneeId) => {
+export const assignTask = async (taskId, assigneeId, assignedById) => {
   return prisma.task.update({
     where: {
       id: taskId,
     },
     data: {
       assigneeId,
+      assignedById,
     },
   });
 };
