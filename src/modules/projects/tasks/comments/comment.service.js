@@ -23,51 +23,108 @@ import { notify } from "./comment.notification.js";
 
 // ! CREATE COMMENT SERVICE
 export const createCommentService = async (taskId, userId, content) => {
-  // 1️⃣ Create comment
+  // 1️⃣ Create the comment
   const comment = await createComment({
     taskId,
     authorId: userId,
     content,
   });
 
-  // Fetch task data for notifications
-  const taskData = await findTaskNotificationData(taskId);
+  // 2️⃣ Extract mentioned usernames from comment content
 
-  // ? NORMAL COMMENT NOTIFICATIONS - creator, assignee, assigner
-  // 1️⃣ Collect recipients (creator, assignee, assigner) - use a Set to avoid duplicates
-  const recipients = new Set();
-  if (task.createdById) {
-    recipients.add(task.createdById);
-  }
-
-  if (task.assigneeId) {
-    recipients.add(task.assigneeId);
-  }
-
-  if (task.assignedById) {
-    recipients.add(task.assignedById);
-  }
-
-  // 2️⃣ Extract mentions from content
   const usernames = extractMentions(content);
 
-  if (usernames.length > 0) {
-    // 3️⃣ Find mentioned users by usernames
-    const users = await findUsersByUsernames(usernames);
+  // Store mentioned users and IDs for later use
+  let users = [];
+  let mentionedUserIds = new Set();
 
-    // 4️⃣ Prepare mention records
+  // 3️⃣ Process mentions if any usernames were found
+  if (usernames.length > 0) {
+    // Find users by usernames
+    users = await findUsersByUsernames(usernames);
+
+    // Prepare mention records for DB
     const mentionsData = users.map(user => ({
       commentId: comment.id,
       userId: user.id,
     }));
 
-    // 5️⃣ Save mentions
+    // Save mentions in database
     await createCommentMentions(mentionsData);
 
-    // 6️⃣ Future : send notifications to mentioned users (non-blocking)
+    // Store mentioned user IDs in a Set
+    // Used later to avoid duplicate notifications
+    mentionedUserIds = new Set(users.map(user => user.id));
   }
 
-  // 7️⃣ Log activity (non-blocking)
+  // 4️⃣ Get task data needed for notifications
+  const taskData = await findTaskNotificationData(taskId);
+
+  // Safety check
+  if (!taskData) {
+    throw new ApiError(404, "Task not found");
+  }
+
+  // 5️⃣ Collect task-related notification recipients
+  // Using Set automatically removes duplicates
+  const recipients = new Set();
+
+  // Task creator
+  if (taskData.createdById) {
+    recipients.add(taskData.createdById);
+  }
+
+  // Current assignee
+  if (taskData.assigneeId) {
+    recipients.add(taskData.assigneeId);
+  }
+
+  // User who assigned the task
+  if (taskData.assignedById) {
+    recipients.add(taskData.assignedById);
+  }
+
+  // 6️⃣ Remove mentioned users from generic notifications
+  // Because they will receive special "mention" notifications
+  const filteredRecipients = [...recipients].filter(
+    recipientId => !mentionedUserIds.has(recipientId)
+  );
+
+  // 7️⃣ Send generic comment notifications
+  await Promise.all(
+    filteredRecipients.map(recipientId =>
+      notify(
+        {
+          userId: recipientId,
+          type: NOTIFICATION_TYPES.COMMENT_ADDED,
+          title: "New Comment",
+          message: `New comment on task "${taskData.title}"`,
+          entityId: taskData.id,
+          entityType: ENTITY_TYPES.TASK,
+        },
+        userId // actorId (used to prevent self-notifications)
+      )
+    )
+  );
+
+  // 8️⃣ Send mention notifications
+  await Promise.all(
+    users.map(user =>
+      notify(
+        {
+          userId: user.id,
+          type: NOTIFICATION_TYPES.MENTIONED_IN_COMMENT,
+          title: "Mentioned in Comment",
+          message: `You were mentioned in task "${taskData.title}"`,
+          entityId: taskData.id,
+          entityType: ENTITY_TYPES.TASK,
+        },
+        userId
+      )
+    )
+  );
+
+  // 9️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
     type: ACTIVITY_TYPES.COMMENT_ADDED,
@@ -77,15 +134,15 @@ export const createCommentService = async (taskId, userId, content) => {
         id: comment.id,
       },
       extra: {
-        preview: content.slice(0, 50), // small preview
-        mentions: usernames, // for frontend
+        preview: content.slice(0, 50),
+        mentions: usernames,
       },
     },
   });
 
+  // 🔟 Return created comment
   return comment;
 };
-
 // ! LIST COMMENTS SERVICE
 export const listCommentsService = async taskId => {
   return findCommentsByTaskId(taskId);
