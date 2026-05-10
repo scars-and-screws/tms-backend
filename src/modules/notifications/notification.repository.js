@@ -17,7 +17,7 @@ export const findUserNotifications = userId => {
 // ! MARK AS READ
 export const markNotificationAsRead = (notificationId, userId) => {
   return prisma.notification.update({
-    where: { id: notificationId },
+    where: { id: notificationId, userId },
     data: { isRead: true },
   });
 };

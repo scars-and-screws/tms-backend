@@ -13,8 +13,14 @@ export const notificationStreamController = (req, res) => {
   // Add user to clients map
   addClient(userId, res);
 
+  // Heartbeat to keep connection alive
+  const interval = setInterval(() => {
+    res.write(": heartbeat\n\n");
+  }, 30000);
+
   // Remove on disconnect
   req.on("close", () => {
-    removeClient(userId);
+    clearInterval(interval);
+    removeClient(userId, res);
   });
 };

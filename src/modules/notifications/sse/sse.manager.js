@@ -1,21 +1,40 @@
 // Stores connected users
-const clients = new Map(); // userId → response
+// userId -> Set(res)
+const clients = new Map();
 
-// Add connection
+// Add new SSE connection
 export const addClient = (userId, res) => {
-  clients.set(userId, res);
+  // Create set if user doesn't exist
+  if (!clients.has(userId)) {
+    clients.set(userId, new Set());
+  }
+
+  // Add this connection
+  clients.get(userId).add(res);
 };
 
-// Remove connection
-export const removeClient = userId => {
-  clients.delete(userId);
+// Remove SSE connection
+export const removeClient = (userId, res) => {
+  const userConnections = clients.get(userId);
+
+  if (!userConnections) return;
+
+  // Remove this specific connection
+  userConnections.delete(res);
+
+  // Cleanup empty sets
+  if (userConnections.size === 0) {
+    clients.delete(userId);
+  }
 };
 
-// Send notification to a specific user
+// Send notification to all active connections
 export const sendToUser = (userId, data) => {
-  const client = clients.get(userId);
+  const userConnections = clients.get(userId);
 
-  if (client) {
-    client.write(`data: ${JSON.stringify(data)}\n\n`); // Send data as SSE format
+  if (!userConnections) return;
+
+  for (const client of userConnections) {
+    client.write(`data: ${JSON.stringify(data)}\n\n`);
   }
 };
