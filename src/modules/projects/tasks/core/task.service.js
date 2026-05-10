@@ -21,6 +21,7 @@ import {
   ENTITY_TYPES,
 } from "../../../notifications/notification.constants.js";
 import { getProjectAdmins } from "../../../projects/members/projectMember.repository.js";
+import { buildTaskUpdateData } from "./task.helper.js";
 
 // ? Helper function to send notifications, avoiding self-notifications
 const notify = async (payload, actorId) => {
@@ -64,18 +65,20 @@ export const createTaskService = async (projectId, userId, data) => {
   });
 
   // 🔔 Create a notification for the assignee
-  await notify(
-    {
-      userId: task.assigneeId,
-      type: NOTIFICATION_TYPES.TASK_ASSIGNED,
-      title: "Task Assigned",
-      message: `You were assigned to task "${task.title}"`,
-      entityId: task.id,
-      entityType: ENTITY_TYPES.TASK,
-    },
-    userId
-  );
 
+  if (task.assigneeId !== userId) {
+    await notify(
+      {
+        userId: task.assigneeId,
+        type: NOTIFICATION_TYPES.TASK_ASSIGNED,
+        title: "Task Assigned",
+        message: `You were assigned to task "${task.title}"`,
+        entityId: task.id,
+        entityType: ENTITY_TYPES.TASK,
+      },
+      userId
+    );
+  }
   // 🔔 Notify admins (only if member created the task)
   if (membership.role !== "ADMIN") {
     // Find all admins in the project
@@ -83,21 +86,19 @@ export const createTaskService = async (projectId, userId, data) => {
 
     // Create notifications for each admin
     await Promise.all(
-      admins
-        .filter(admin => admin.user.id !== userId)
-        .map(admin =>
-          notify(
-            {
-              userId: admin.user.id,
-              type: NOTIFICATION_TYPES.TASK_CREATED,
-              title: "New Task Created",
-              message: `A new task "${task.title}" was created`,
-              entityId: task.id,
-              entityType: ENTITY_TYPES.TASK,
-            },
-            userId
-          )
+      admins.map(admin =>
+        notify(
+          {
+            userId: admin.user.id,
+            type: NOTIFICATION_TYPES.TASK_CREATED,
+            title: "New Task Created",
+            message: `A new task "${task.title}" was created`,
+            entityId: task.id,
+            entityType: ENTITY_TYPES.TASK,
+          },
+          userId
         )
+      )
     );
   }
 
@@ -140,23 +141,28 @@ export const getTaskService = async taskId => {
 // ! UPDATE TASK SERVICE
 export const updateTaskService = async (taskId, userId, data) => {
   const task = await findTaskById(taskId);
+
   if (!task) {
     throw new ApiError(404, "Task not found");
   }
 
   //  1️⃣ Check project membership
   const membership = await findProjectMember(userId, task.projectId);
+
   if (!membership) {
     throw new ApiError(403, "User is not a member of this project");
   }
 
-  // 2️⃣ update task
-  const updated = await updateTask(taskId, data);
+  // 2️⃣ Prevent protected fields from being updated
+  const updateData = buildTaskUpdateData(data);
 
-  // Build changes for activity log
+  // 3️⃣ update task
+  const updated = await updateTask(taskId, updateData);
+
+  // 4️⃣ Build activity changes
   const changes = buildChanges(task, updated);
 
-  // 3️⃣ Log activity (non-blocking)
+  // 5️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
     type: ACTIVITY_TYPES.TASK_UPDATED,
@@ -257,7 +263,11 @@ export const assignTaskService = async (taskId, assigneeId, userId) => {
     );
   }
   // 🔔 Notify previous assignee if exists and different from new assignee
-  if (task.assigneeId && task.assigneeId !== assigneeId) {
+  if (
+    task.assigneeId &&
+    task.assigneeId !== assigneeId &&
+    task.assigneeId !== userId
+  ) {
     await notify(
       {
         userId: task.assigneeId,
@@ -301,7 +311,14 @@ export const updateTaskStatusService = async (taskId, status, userId) => {
     throw new ApiError(404, "Task not found");
   }
 
-  //  1️⃣ update task status
+  //  1️⃣ Check project membership
+  const membership = await findProjectMember(userId, task.projectId);
+
+  if (!membership) {
+    throw new ApiError(403, "User is not a member of this project");
+  }
+
+  //  2️⃣ update task status
   const updated = await updateTaskStatus(taskId, status);
 
   // 🔔 Send notification if status is DONE
@@ -346,7 +363,7 @@ export const updateTaskStatusService = async (taskId, status, userId) => {
           userId: task.assigneeId,
           type: NOTIFICATION_TYPES.TASK_COMPLETED,
           title: "Task Completed",
-          message: `"${task.title}" has been completed`,
+          message: `"${task.title}" was marked as completed`,
           entityId: task.id,
           entityType: ENTITY_TYPES.TASK,
         },
@@ -354,7 +371,7 @@ export const updateTaskStatusService = async (taskId, status, userId) => {
       );
     }
   }
-  // 2️⃣ Log activity (non-blocking)
+  // 3️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
     type: ACTIVITY_TYPES.TASK_STATUS_UPDATED,
@@ -382,11 +399,27 @@ export const archiveTaskService = async (taskId, userId) => {
   if (!task) {
     throw new ApiError(404, "Task not found");
   }
+  // 1️⃣ Check project membership
+  const membership = await findProjectMember(userId, task.projectId);
 
-  //  1️⃣ archive task
+  if (!membership) {
+    throw new ApiError(403, "User is not a member of this project");
+  }
+
+  // 2️⃣ Archive is admin-only action
+  if (membership.role !== "ADMIN") {
+    throw new ApiError(403, "Only project admins can archive tasks");
+  }
+
+  // 3️⃣ Prevent archiving an already archived task
+  if (task.isArchived) {
+    throw new ApiError(400, "Task is already archived");
+  }
+
+  //  4️⃣ archive task
   await archiveTask(taskId);
 
-  // 2️⃣ Log activity (non-blocking)
+  // 5️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
     type: ACTIVITY_TYPES.TASK_ARCHIVED,
@@ -415,10 +448,27 @@ export const unarchiveTaskService = async (taskId, userId) => {
     throw new ApiError(404, "Task not found");
   }
 
-  //  1️⃣ unarchive task
+  //  1️⃣ Check project membership
+  const membership = await findProjectMember(userId, task.projectId);
+
+  if (!membership) {
+    throw new ApiError(403, "User is not a member of this project");
+  }
+
+  // 2️⃣ Archive is admin-only action
+  if (membership.role !== "ADMIN") {
+    throw new ApiError(403, "Only project admins can unarchive tasks");
+  }
+
+  // 3️⃣ Prevent unarchiving an active task
+  if (!task.isArchived) {
+    throw new ApiError(400, "Task is not archived");
+  }
+
+  // 4️⃣ unarchive task
   await unarchiveTask(taskId);
 
-  // 2️⃣ Log activity (non-blocking)
+  // 5️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
     type: ACTIVITY_TYPES.TASK_UNARCHIVED,
