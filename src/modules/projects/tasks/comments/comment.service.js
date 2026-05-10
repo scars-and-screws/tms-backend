@@ -14,6 +14,13 @@ import { findUsersByUsernames } from "../../../auth/core/auth.repository.js";
 import { createActivityService } from "../../../../core/activity/activity.service.js";
 import { ACTIVITY_TYPES } from "../../../../core/constants/index.js";
 
+import { findTaskNotificationData } from "../core/task.repository.js";
+import {
+  NOTIFICATION_TYPES,
+  ENTITY_TYPES,
+} from "../../../notifications/notification.constants.js";
+import { notify } from "./comment.notification.js";
+
 // ! CREATE COMMENT SERVICE
 export const createCommentService = async (taskId, userId, content) => {
   // 1️⃣ Create comment
@@ -22,6 +29,24 @@ export const createCommentService = async (taskId, userId, content) => {
     authorId: userId,
     content,
   });
+
+  // Fetch task data for notifications
+  const taskData = await findTaskNotificationData(taskId);
+
+  // ? NORMAL COMMENT NOTIFICATIONS - creator, assignee, assigner
+  // 1️⃣ Collect recipients (creator, assignee, assigner) - use a Set to avoid duplicates
+  const recipients = new Set();
+  if (task.createdById) {
+    recipients.add(task.createdById);
+  }
+
+  if (task.assigneeId) {
+    recipients.add(task.assigneeId);
+  }
+
+  if (task.assignedById) {
+    recipients.add(task.assignedById);
+  }
 
   // 2️⃣ Extract mentions from content
   const usernames = extractMentions(content);

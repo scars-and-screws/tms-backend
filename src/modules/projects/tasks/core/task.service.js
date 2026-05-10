@@ -22,12 +22,7 @@ import {
 } from "../../../notifications/notification.constants.js";
 import { getProjectAdmins } from "../../../projects/members/projectMember.repository.js";
 import { buildTaskUpdateData } from "./task.helper.js";
-
-// ? Helper function to send notifications, avoiding self-notifications
-const notify = async (payload, actorId) => {
-  if (payload.userId === actorId) return;
-  return createNotificationService(payload);
-};
+import { notify } from "./task.notification.js";
 
 // ! CREATE TASK SERVICE
 export const createTaskService = async (projectId, userId, data) => {

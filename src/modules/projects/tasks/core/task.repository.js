@@ -138,3 +138,19 @@ export const unarchiveTask = async taskId => {
     },
   });
 };
+
+// ! FIND TASK NOTIFICATION DATA
+export const findTaskNotificationData = async taskId => {
+  return prisma.task.findUnique({
+    where: {
+      id: taskId,
+    },
+    select: {
+      id: true,
+      title: true,
+      createdById: true,
+      assigneeId: true,
+      assignedById: true,
+    },
+  });
+};
