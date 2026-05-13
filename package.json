@@ -31,7 +31,7 @@
     "resend": "^6.9.2",
     "streamifier": "^0.1.1",
     "ua-parser-js": "^2.0.9",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "prettier": "^3.8.1",
