@@ -4,13 +4,20 @@ import {
   listNotificationsController,
   markNotificationAsReadController,
 } from "./notification.controller.js";
-import { notificationIdParamSchema } from "./notification.validation.js";
+import {
+  notificationIdParamSchema,
+  listNotificationsQuerySchema,
+} from "./notification.validation.js";
 import { notificationStreamController } from "./sse/sse.controller.js";
 
 const router = Router();
 
 // GET NOTIFICATIONS
-router.get("/", listNotificationsController);
+router.get(
+  "/",
+  validate(listNotificationsQuerySchema),
+  listNotificationsController
+);
 router.get("/stream", notificationStreamController);
 
 // MARK AS READ
