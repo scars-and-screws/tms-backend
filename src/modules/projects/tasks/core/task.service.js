@@ -12,9 +12,11 @@ import {
   unarchiveTask,
 } from "./task.repository.js";
 import { findProjectMember } from "../../members/projectMember.repository.js";
-import { createActivityService } from "../../../../core/activity/activity.service.js";
+import {
+  createActivityService,
+  ACTIVITY_TYPES,
+} from "../../../../core/activity/index.js";
 import { buildChanges } from "../../../../core/activity/activity.helper.js";
-import { ACTIVITY_TYPES } from "../../../../core/constants/index.js";
 import { createNotificationService } from "../../../notifications/notification.service.js";
 import {
   NOTIFICATION_TYPES,

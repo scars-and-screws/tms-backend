@@ -11,8 +11,10 @@ import { extractMentions } from "./comment.utils.js";
 import { createCommentMentions } from "./comment.mention.repository.js";
 import { findUsersByUsernames } from "../../../auth/core/auth.repository.js";
 
-import { createActivityService } from "../../../../core/activity/activity.service.js";
-import { ACTIVITY_TYPES } from "../../../../core/constants/index.js";
+import {
+  createActivityService,
+  ACTIVITY_TYPES,
+} from "../../../../core/activity/index.js";
 
 import { findTaskNotificationData } from "../core/task.repository.js";
 import {

@@ -1,4 +1,4 @@
-import { UPLOAD_TYPES } from "../constants/index.js";
+import { UPLOAD_TYPES } from "./upload.constants.js";
 
 export const UPLOAD_CONFIG = {
   [UPLOAD_TYPES.AVATAR]: {

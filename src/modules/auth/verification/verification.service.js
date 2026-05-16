@@ -10,8 +10,11 @@ import {
   markEmailVerified,
 } from "./verification.repository.js";
 
-import { createOtpRecord, verifyOtpRecord } from "../../../core/otp/index.js";
-import { OTP_PURPOSE } from "../../../core/constants/index.js";
+import {
+  createOtpRecord,
+  verifyOtpRecord,
+  OTP_PURPOSE,
+} from "../../../core/otp/index.js";
 
 // ! SERVICE TO SEND VERIFICATION OTP
 export const sendEmailVerificationService = async userId => {

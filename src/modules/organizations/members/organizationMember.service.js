@@ -12,14 +12,15 @@ import {
 } from "../core/organization.repository.js";
 
 import { ApiError } from "../../../core/utils/index.js";
-import { createActivityService } from "../../../core/activity/activity.service.js";
+import {
+  createActivityService,
+  ACTIVITY_TYPES,
+} from "../../../core/activity/index.js";
 
 import {
   mapOrganizationMemberList,
   sanitizeOrganizationMember,
 } from "./organizationMember.helper.js";
-
-import { ACTIVITY_TYPES } from "../../../core/constants/index.js";
 
 // ! ADD ORGANIZATION MEMBER SERVICE
 export const addOrganizationMemberService = async ({

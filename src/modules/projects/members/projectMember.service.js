@@ -1,8 +1,10 @@
 import { ApiError } from "../../../core/utils/index.js";
 import { findProjectById } from "../core/project.repository.js";
 import { findOrganizationMember } from "../../organizations/core/organization.repository.js";
-import { createActivityService } from "../../../core/activity/activity.service.js";
-import { ACTIVITY_TYPES } from "../../../core/constants/index.js";
+import {
+  createActivityService,
+  ACTIVITY_TYPES,
+} from "../../../core/activity/index.js";
 import {
   createProjectMember,
   findProjectMember,

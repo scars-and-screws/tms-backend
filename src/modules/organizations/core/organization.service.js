@@ -1,5 +1,9 @@
 import { ApiError } from "../../../core/utils/index.js";
-import { createActivityService } from "../../../core/activity/activity.service.js";
+import {
+  createActivityService,
+  ACTIVITY_TYPES,
+} from "../../../core/activity/index.js";
+
 import { buildChanges } from "../../../core/activity/activity.helper.js";
 
 import {
@@ -22,11 +26,7 @@ import {
   updateOrganizationMemberRole,
   deleteOrganizationMemberById,
 } from "./organization.repository.js";
-
-import {
-  ORGANIZATION_ROLES,
-  ACTIVITY_TYPES,
-} from "../../../core/constants/index.js";
+import { ORGANIZATION_ROLES } from "./organization.constants.js";
 
 // ! GET ORGANIZATION SERVICE
 export const getOrganizationService = async organizationId => {

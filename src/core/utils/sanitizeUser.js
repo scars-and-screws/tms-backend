@@ -1,4 +1,4 @@
-import { DEFAULT_AVATAR_URL } from "../constants/defaultAvatar.js";
+import { DEFAULT_AVATAR_URL } from "../../modules/users/avatar/avatar.constants.js";
 
 const sanitizeUser = user => {
   if (!user) return null;

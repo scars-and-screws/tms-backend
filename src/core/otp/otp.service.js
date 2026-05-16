@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import prisma from "../database/prisma.js";
 import { ApiError } from "../utils/index.js";
-import { OTP_PURPOSE } from "../constants/index.js";
+import { OTP_PURPOSE } from "./otp.constants.js";
 import { OTP_CONFIG } from "../config/otp.config.js";
 
 //  GENERATE  OTP

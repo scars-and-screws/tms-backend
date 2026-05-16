@@ -1,11 +1,11 @@
 import { ApiError } from "../../../core/utils/index.js";
-import { createActivityService } from "../../../core/activity/activity.service.js";
+import {
+  createActivityService,
+  ACTIVITY_TYPES,
+} from "../../../core/activity/index.js";
 import { buildChanges } from "../../../core/activity/activity.helper.js";
 
-import {
-  ACTIVITY_TYPES,
-  PROJECT_ROLES,
-} from "../../../core/constants/index.js";
+import { PROJECT_ROLES } from "./project.constants.js";
 
 import {
   findOrganizationById,

@@ -1,5 +1,8 @@
-import { createOtpRecord, verifyOtpRecord } from "../../../core/otp/index.js";
-import { OTP_PURPOSE } from "../../../core/constants/index.js";
+import {
+  createOtpRecord,
+  verifyOtpRecord,
+  OTP_PURPOSE,
+} from "../../../core/otp/index.js";
 
 import { upsertTrustedDevice } from "../trusted-device/trusted-device.repository.js";
 import { generateFingerprint } from "../../../core/security/index.js";

@@ -6,3 +6,5 @@ export { validateUpload } from "./upload.validation.js";
 export { uploadToCloudinary, deleteFromCloudinary } from "./upload.service.js";
 
 export { UPLOAD_CONFIG } from "./upload.config.js";
+
+export { UPLOAD_TYPES } from "./upload.constants.js";

@@ -1,12 +1,14 @@
 import { Router } from "express";
-import { upload, validateUpload } from "../../../../core/upload/index.js";
+import {
+  upload,
+  validateUpload,
+  UPLOAD_TYPES,
+} from "../../../../core/upload/index.js";
 import {
   uploadTaskAttachmentController,
   listTaskAttachmentsController,
   deleteAttachmentController,
 } from "./attachment.controller.js";
-
-import { UPLOAD_TYPES } from "../../../../core/constants/uploadTypes.js";
 
 import { validate } from "../../../../core/middleware/index.js";
 

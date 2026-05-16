@@ -1,9 +1,11 @@
 import { hashPassword } from "../../../core/security/index.js";
 
 import { sendMail, passwordResetTemplate } from "../../../core/mail/index.js";
-import { createOtpRecord, verifyOtpRecord } from "../../../core/otp/index.js";
-
-import { OTP_PURPOSE } from "../../../core/constants/index.js";
+import {
+  createOtpRecord,
+  verifyOtpRecord,
+  OTP_PURPOSE,
+} from "../../../core/otp/index.js";
 
 import {
   findUserByEmail,
@@ -18,10 +20,7 @@ export const requestPasswordResetService = async email => {
   // 🔒 Prevent email enumeration
   if (!user) return;
 
-  const otp = await createOtpRecord(
-    user.id,
-    OTP_PURPOSE.PASSWORD_RESET
-  );
+  const otp = await createOtpRecord(user.id, OTP_PURPOSE.PASSWORD_RESET);
 
   await sendMail({
     to: email,
@@ -39,11 +38,7 @@ export const confirmPasswordResetService = async (email, otp, newPassword) => {
   }
 
   // 1️⃣ Verify OTP
-  await verifyOtpRecord(
-    user.id,
-    otp,
-    OTP_PURPOSE.PASSWORD_RESET
-  );
+  await verifyOtpRecord(user.id, otp, OTP_PURPOSE.PASSWORD_RESET);
 
   // 2️⃣ Hash new password
   const passwordHash = await hashPassword(newPassword);
