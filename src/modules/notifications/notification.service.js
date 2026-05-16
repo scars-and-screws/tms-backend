@@ -4,6 +4,11 @@ import {
   markNotificationAsRead,
 } from "./notification.repository.js";
 
+import {
+  getPagination,
+  buildPaginationMeta,
+} from "../../core/pagination/pagination.utils.js";
+
 import { sendToUser } from "./sse/sse.manager.js";
 
 import { ApiError } from "../../core/utils/index.js";
@@ -23,8 +28,33 @@ export const createNotificationService = async data => {
 };
 
 // ! LIST NOTIFICATIONS SERVICE
-export const listNotificationsService = async userId => {
-  return findUserNotifications(userId);
+export const listNotificationsService = async (userId, query) => {
+  // 1️⃣ Get normalized pagination values
+  const pagination = getPagination(query);
+
+  // 2️⃣ Fetch notifications + total count in parallel
+  const [notifications, total] = await Promise.all([
+    findUserNotifications({
+      userId,
+      skip: pagination.skip,
+      limit: pagination.limit,
+    }),
+
+    countUserNotifications(userId),
+  ]);
+
+  // 3️⃣ Build pagination metadata
+  const paginationMeta = buildPaginationMeta({
+    total,
+    page: pagination.page,
+    limit: pagination.limit,
+  });
+
+  // 4️⃣ Return consistent paginated response
+  return {
+    notifications,
+    pagination: paginationMeta,
+  };
 };
 
 // ! MARK NOTIFICATION AS READ SERVICE
