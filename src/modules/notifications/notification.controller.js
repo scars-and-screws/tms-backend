@@ -6,11 +6,11 @@ import {
 
 // ! LIST NOTIFICATIONS CONTROLLER
 export const listNotificationsController = asyncHandler(async (req, res) => {
-  const notifications = await listNotificationsService(req.user.id);
+  const result = await listNotificationsService(req.user.id, req.query);
 
   return res
     .status(200)
-    .json(new ApiResponse(200, notifications, "Notifications retrieved"));
+    .json(new ApiResponse(200, result, "Notifications retrieved"));
 });
 
 // ! MARK NOTIFICATION AS READ CONTROLLER
