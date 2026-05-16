@@ -5,12 +5,22 @@ export const createNotification = data => {
   return prisma.notification.create({ data });
 };
 
-// ! GET USER NOTIFICATIONS
-export const findUserNotifications = userId => {
+// ! GET USER NOTIFICATIONS WITH PAGINATION
+export const findUserNotifications = (userId, skip, limit) => {
   return prisma.notification.findMany({
     where: { userId },
+
     orderBy: { createdAt: "desc" },
-    take: 20,
+
+    skip,
+    take: limit,
+  });
+};
+
+// ! COUNT USER NOTIFICATIONS
+export const countUserNotifications = userId => {
+  return prisma.notification.count({
+    where: { userId },
   });
 };
 
