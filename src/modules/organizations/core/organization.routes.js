@@ -29,6 +29,8 @@ import {
   deleteOrganizationSchema,
 } from "./organization.validation.js";
 
+import organizationActivityRoutes from "../../../core/activity/organization.activity.routes.js";
+
 import projectRoutes from "../../projects/core/project.routes.js";
 
 const router = Router();
@@ -100,6 +102,9 @@ router.delete(
   requireOrganizationRole(["OWNER"]),
   deleteOrganizationController
 );
+
+// ! ORGANIZATION ACTIVITY ROUTES
+router.use("/:organizationId/activities", organizationActivityRoutes);
 
 // ! NESTED PROJECT ROUTES
 router.use(

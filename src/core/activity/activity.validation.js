@@ -31,3 +31,17 @@ export const taskActivityParamsSchema = {
 export const taskActivityQuerySchema = {
   query: paginationQuerySchema,
 };
+
+// ! ORGANIZATION ACTIVITY PARAMS VALIDATION
+export const organizationActivityParamsSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+    })
+    .strict(),
+};
+
+// ! ORGANIZATION ACTIVITY QUERY VALIDATION
+export const organizationActivityQuerySchema = {
+  query: paginationQuerySchema,
+};

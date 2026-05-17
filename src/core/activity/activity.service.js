@@ -9,6 +9,8 @@ import {
   countProjectActivities,
   findTaskActivities,
   countTaskActivities,
+  findOrganizationActivities,
+  countOrganizationActivities,
 } from "./activity.repository.js";
 
 // ! CREATE ACTIVITY SERVICE
@@ -79,6 +81,39 @@ export const listTaskActivitiesService = async ({ taskId, query }) => {
     }),
 
     countTaskActivities(taskId),
+  ]);
+
+  // 3️⃣ Build pagination metadata
+  const paginationMeta = buildPaginationMeta({
+    total,
+    page: pagination.page,
+    limit: pagination.limit,
+  });
+
+  // 4️⃣ Return response
+  return {
+    activities,
+    pagination: paginationMeta,
+  };
+};
+
+// ! LIST ORGANIZATION ACTIVITIES SERVICE
+export const listOrganizationActivitiesService = async ({
+  organizationId,
+  query,
+}) => {
+  // 1️⃣ Normalize pagination
+  const pagination = getPagination(query);
+
+  // 2️⃣ Fetch activities + total count
+  const [activities, total] = await Promise.all([
+    findOrganizationActivities({
+      organizationId,
+      skip: pagination.skip,
+      limit: pagination.limit,
+    }),
+
+    countOrganizationActivities(organizationId),
   ]);
 
   // 3️⃣ Build pagination metadata

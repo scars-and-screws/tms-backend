@@ -76,3 +76,42 @@ export const countTaskActivities = async taskId => {
     },
   });
 };
+
+// ! FIND ORGANIZATION ACTIVITIES
+export const findOrganizationActivities = async ({
+  organizationId,
+  skip,
+  limit,
+}) => {
+  return prisma.activity.findMany({
+    where: {
+      organizationId,
+    },
+
+    include: {
+      actor: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    skip,
+    take: limit,
+  });
+};
+
+// ! COUNT ORGANIZATION ACTIVITIES
+export const countOrganizationActivities = async organizationId => {
+  return prisma.activity.count({
+    where: {
+      organizationId,
+    },
+  });
+};

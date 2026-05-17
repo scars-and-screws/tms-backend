@@ -3,6 +3,7 @@ import { asyncHandler, ApiResponse } from "../utils/index.js";
 import {
   listProjectActivitiesService,
   listTaskActivitiesService,
+  listOrganizationActivitiesService,
 } from "./activity.service.js";
 
 // ! LIST PROJECT ACTIVITIES CONTROLLER
@@ -38,3 +39,23 @@ export const listTaskActivitiesController = asyncHandler(async (req, res) => {
       new ApiResponse(200, result, "Task activities retrieved successfully")
     );
 });
+
+// ! LIST ORGANIZATION ACTIVITIES CONTROLLER
+export const listOrganizationActivitiesController = asyncHandler(
+  async (req, res) => {
+    const result = await listOrganizationActivitiesService({
+      organizationId: req.params.organizationId,
+      query: req.query,
+    });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          result,
+          "Organization activities retrieved successfully"
+        )
+      );
+  }
+);
