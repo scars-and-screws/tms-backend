@@ -28,7 +28,7 @@ import { leaveProjectController } from "../members/projectMember.controller.js";
 import { leaveProjectSchema } from "../members/projectMember.validation.js";
 import projectMemberRoutes from "../members/projectMember.routes.js";
 import taskProjectRoutes from "../tasks/core/task.project.routes.js";
-import projectActivityRoutes from "../../../core/activity/activity.routes.js";
+import projectActivityRoutes from "../../../core/activity/project.activity.routes.js";
 
 const router = Router({ mergeParams: true });
 

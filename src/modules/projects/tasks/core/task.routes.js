@@ -29,6 +29,8 @@ import {
   requireActiveTask,
 } from "../../../../core/middleware/index.js";
 
+import taskActivityRoutes from "../../../../core/activity/task.activity.routes.js";
+
 const router = Router({ mergeParams: true });
 
 // ! TASK-BASED ROUTES (need taskId in params)
@@ -101,5 +103,8 @@ router.patch(
   requireProjectRole(["ADMIN"]),
   unarchiveTaskController
 );
+
+// TASK ACTIVITY
+router.use("/:taskId/activities", taskActivityRoutes);
 
 export default router;

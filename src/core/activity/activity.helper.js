@@ -16,3 +16,16 @@ export const buildChanges = (oldData, newData) => {
 
   return changes;
 };
+
+// ! BUILD STANDARDIZED ACTIVITY METADATA
+// export const buildActivityMetadata = ({
+//   entity = {},
+//   changes = {},
+//   extra = {},
+// }) => {
+//   return {
+//     entity,
+//     changes,
+//     extra,
+//   };
+// };

@@ -41,3 +41,38 @@ export const countProjectActivities = async projectId => {
     },
   });
 };
+
+// ! FIND TASK ACTIVITIES
+export const findTaskActivities = async ({ taskId, skip, limit }) => {
+  return prisma.activity.findMany({
+    where: {
+      taskId,
+    },
+
+    include: {
+      actor: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    skip,
+    take: limit,
+  });
+};
+
+// ! COUNT TASK ACTIVITIES
+export const countTaskActivities = async taskId => {
+  return prisma.activity.count({
+    where: {
+      taskId,
+    },
+  });
+};

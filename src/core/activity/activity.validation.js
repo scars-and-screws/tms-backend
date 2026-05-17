@@ -17,3 +17,17 @@ export const projectActivityParamsSchema = {
 export const projectActivityQuerySchema = {
   query: paginationQuerySchema,
 };
+
+// ! TASK ACTIVITY PARAMS VALIDATION
+export const taskActivityParamsSchema = {
+  params: z
+    .object({
+      taskId: idSchema,
+    })
+    .strict(),
+};
+
+// ! TASK ACTIVITY QUERY VALIDATION
+export const taskActivityQuerySchema = {
+  query: paginationQuerySchema,
+};
