@@ -3,10 +3,13 @@ export const buildChanges = (oldData, newData) => {
   const changes = {};
 
   for (const key in newData) {
-    if (oldData[key] !== newData[key]) {
+    const oldValue = oldData[key];
+    const newValue = newData[key];
+
+    if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
       changes[key] = {
-        before: oldData[key],
-        after: newData[key],
+        before: oldValue,
+        after: newValue,
       };
     }
   }

@@ -6,3 +6,38 @@ export const createActivity = async data => {
     data,
   });
 };
+
+// ! FIND PROJECT ACTIVITIES
+export const findProjectActivities = async ({ projectId, skip, limit }) => {
+  return prisma.activity.findMany({
+    where: {
+      projectId,
+    },
+
+    include: {
+      actor: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    skip,
+    take: limit,
+  });
+};
+
+// ! COUNT PROJECT ACTIVITIES
+export const countProjectActivities = async projectId => {
+  return prisma.activity.count({
+    where: {
+      projectId,
+    },
+  });
+};

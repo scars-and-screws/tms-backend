@@ -28,6 +28,8 @@ import { leaveProjectController } from "../members/projectMember.controller.js";
 import { leaveProjectSchema } from "../members/projectMember.validation.js";
 import projectMemberRoutes from "../members/projectMember.routes.js";
 import taskProjectRoutes from "../tasks/core/task.project.routes.js";
+import projectActivityRoutes from "../../../core/activity/activity.routes.js";
+
 const router = Router({ mergeParams: true });
 
 // ! CREATE PROJECT
@@ -94,6 +96,9 @@ router.delete(
   requireActiveProject,
   deleteProjectController
 );
+
+// ! PROJECT ACTIVITY
+router.use("/:projectId/activities", projectActivityRoutes);
 
 // ! NESTED ROUTES FOR PROJECT MEMBERS
 router.use("/:projectId/members", projectMemberRoutes);
