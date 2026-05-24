@@ -2,8 +2,9 @@ import { ApiError } from "../../../core/utils/index.js";
 import {
   createActivityService,
   ACTIVITY_TYPES,
+  buildChanges,
+  buildProjectEntity,
 } from "../../../core/activity/index.js";
-import { buildChanges } from "../../../core/activity/activity.helper.js";
 
 import { PROJECT_ROLES } from "./project.constants.js";
 
@@ -78,14 +79,17 @@ export const createProjectService = async ({
   // 7️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.PROJECT_CREATED,
+
     organizationId,
+
     projectId: project.id,
-    metadata: {
-      entity: {
-        id: project.id,
-        name: project.name,
-      },
+
+    entity: buildProjectEntity(project),
+
+    extra: {
+      description,
     },
   });
 
@@ -172,16 +176,16 @@ export const updateProjectService = async (
   // Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.PROJECT_UPDATED,
+
     organizationId,
+
     projectId,
-    metadata: {
-      entity: {
-        id: updated.id,
-        name: project.name,
-      },
-      changes,
-    },
+
+    entity: buildProjectEntity(project),
+
+    changes,
   });
 
   return {
@@ -215,21 +219,24 @@ export const archiveProjectService = async (
   // Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.PROJECT_ARCHIVED,
+
     organizationId,
+
     projectId,
-    metadata: {
-      entity: {
-        id: updated.id,
-        name: project.name,
+
+    entity: buildProjectEntity(project),
+
+    changes: buildChanges(
+      {
+        isArchived: false,
       },
-      changes: {
-        isArchived: {
-          before: false,
-          after: true,
-        },
-      },
-    },
+
+      {
+        isArchived: true,
+      }
+    ),
   });
 
   return updated;
@@ -256,21 +263,24 @@ export const unarchiveProjectService = async (
   // Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.PROJECT_UNARCHIVED,
+
     organizationId,
+
     projectId,
-    metadata: {
-      entity: {
-        id: updated.id,
-        name: project.name,
+
+    entity: buildProjectEntity(project),
+
+    changes: buildChanges(
+      {
+        isArchived: true,
       },
-      changes: {
-        isArchived: {
-          before: true,
-          after: false,
-        },
-      },
-    },
+
+      {
+        isArchived: false,
+      }
+    ),
   });
 
   return updated;
@@ -298,15 +308,14 @@ export const deleteProjectService = async (
   // Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.PROJECT_DELETED,
+
     organizationId,
+
     projectId,
-    metadata: {
-      entity: {
-        id: project.id,
-        name: project.name,
-      },
-    },
+
+    entity: buildProjectEntity(project),
   });
 
   return true;
