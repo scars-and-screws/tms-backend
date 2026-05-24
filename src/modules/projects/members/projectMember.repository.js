@@ -36,6 +36,13 @@ export const findProjectMember = async (userId, projectId) => {
 export const findProjectMemberById = async memberId => {
   return prisma.projectMember.findUnique({
     where: { id: memberId },
+    include: {
+      project: {
+        select: {
+          organizationId: true,
+        },
+      },
+    },
   });
 };
 

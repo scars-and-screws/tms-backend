@@ -8,6 +8,8 @@ import {
 
 import { PROJECT_ROLES } from "./project.constants.js";
 
+import { sanitizeProject, sanitizeProjectList } from "./project.helper.js";
+
 import {
   findOrganizationById,
   findOrganizationMember,
@@ -94,13 +96,7 @@ export const createProjectService = async ({
   });
 
   // 8️⃣ Return clean response
-  return {
-    id: project.id,
-    name: project.name,
-    description: project.description,
-    organizationId: project.organizationId,
-    createdAt: project.createdAt,
-  };
+  return sanitizeProject(project);
 };
 
 // ! LIST PROJECTS SERVICE
@@ -115,15 +111,7 @@ export const listProjectsService = async ({
     onlyArchived,
   });
 
-  return projects.map(project => ({
-    id: project.id,
-    name: project.name,
-    description: project.description,
-    isArchived: project.isArchived,
-    organizationId: project.organizationId,
-    createdAt: project.createdAt,
-    updatedAt: project.updatedAt,
-  }));
+  return sanitizeProjectList(projects);
 };
 
 // ! GET PROJECT SERVICE
@@ -133,15 +121,7 @@ export const getProjectService = async (projectId, organizationId) => {
   if (!project || project.organizationId !== organizationId) {
     throw new ApiError(404, "Project not found");
   }
-  return {
-    id: project.id,
-    name: project.name,
-    description: project.description,
-    isArchived: project.isArchived,
-    createdAt: project.createdAt,
-    updatedAt: project.updatedAt,
-    organizationId: project.organizationId,
-  };
+  return sanitizeProject(project);
 };
 
 // ! UPDATE PROJECT SERVICE
@@ -188,15 +168,7 @@ export const updateProjectService = async (
     changes,
   });
 
-  return {
-    id: updated.id,
-    name: updated.name,
-    description: updated.description,
-    isArchived: updated.isArchived,
-    createdAt: updated.createdAt,
-    updatedAt: updated.updatedAt,
-    organizationId: updated.organizationId,
-  };
+  return sanitizeProject(updated);
 };
 
 // ! ARCHIVE PROJECT SERVICE

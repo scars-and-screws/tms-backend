@@ -4,6 +4,7 @@ import { findOrganizationMember } from "../../organizations/core/organization.re
 import {
   createActivityService,
   ACTIVITY_TYPES,
+  buildChanges,
 } from "../../../core/activity/index.js";
 import {
   createProjectMember,
@@ -66,19 +67,24 @@ export const addProjectMemberService = async (
   });
 
   // 6️⃣ Log activity (non-blocking)
+  // 6️⃣ Log activity
   await createActivityService({
-    projectId,
-    userId: actorId,
+    actorId,
+
     type: ACTIVITY_TYPES.PROJECT_MEMBER_ADDED,
+
     organizationId: project.organizationId,
+
     projectId,
-    metadata: {
-      entity: {
-        id: userId,
-      },
-      extra: {
-        role,
-      },
+
+    entity: {
+      id: userId,
+
+      type: "USER",
+    },
+
+    extra: {
+      role,
     },
   });
 
@@ -125,19 +131,28 @@ export const updateProjectMemberRoleService = async (
   // 4️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId,
+
     type: ACTIVITY_TYPES.PROJECT_MEMBER_ROLE_UPDATED,
+
+    organizationId: member.project.organizationId,
+
     projectId: member.projectId,
-    metadata: {
-      entity: {
-        id: member.userId,
-      },
-      changes: {
-        role: {
-          before: member.role,
-          after: newRole,
-        },
-      },
+
+    entity: {
+      id: member.userId,
+
+      type: "USER",
     },
+
+    changes: buildChanges(
+      {
+        role: member.role,
+      },
+
+      {
+        role: newRole,
+      }
+    ),
   });
 
   return updated;
@@ -162,12 +177,21 @@ export const removeProjectMemberService = async (memberId, actorId) => {
   // 4️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId,
+
     type: ACTIVITY_TYPES.PROJECT_MEMBER_REMOVED,
+
+    organizationId: member.project.organizationId,
+
     projectId: member.projectId,
-    metadata: {
-      entity: {
-        id: member.userId,
-      },
+
+    entity: {
+      id: member.userId,
+
+      type: "USER",
+    },
+
+    extra: {
+      role: member.role,
     },
   });
 };
@@ -203,12 +227,21 @@ export const leaveProjectService = async (projectId, userId) => {
   // 5️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.PROJECT_MEMBER_LEFT,
+
+    organizationId: project.organizationId,
+
     projectId,
-    metadata: {
-      entity: {
-        id: userId,
-      },
+
+    entity: {
+      id: userId,
+
+      type: "USER",
+    },
+
+    extra: {
+      role: member.role,
     },
   });
 
