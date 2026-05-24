@@ -17,6 +17,7 @@ export const buildOrganizationResponse = (organization, role) => {
     logoUrl: organization.logoUrl,
     role,
     createdAt: organization.createdAt,
+    updatedAt: organization.updatedAt,
   };
 };
 
@@ -27,5 +28,6 @@ export const mapOrganizationList = memberships => {
     logoUrl: membership.organization.logoUrl,
     role: membership.role,
     createdAt: membership.organization.createdAt,
+    updatedAt: membership.organization.updatedAt,
   }));
 };

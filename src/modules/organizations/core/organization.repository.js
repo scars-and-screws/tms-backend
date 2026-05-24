@@ -81,14 +81,31 @@ export const findUserById = async userId => {
 };
 
 // ! LIST USER ORGANIZATIONS
-export const findUserOrganizations = async userId => {
+export const findUserOrganizations = async ({ userId, skip, limit }) => {
   return prisma.organizationMember.findMany({
-    where: { userId },
+    where: {
+      userId,
+    },
+
     include: {
       organization: true,
     },
+
     orderBy: {
-      joinedAt: "asc",
+      joinedAt: "desc",
+    },
+
+    skip,
+
+    take: limit,
+  });
+};
+
+// ! COUNT USER ORGANIZATIONS
+export const countUserOrganizations = async userId => {
+  return prisma.organizationMember.count({
+    where: {
+      userId,
     },
   });
 };

@@ -27,6 +27,7 @@ import {
   updateOrganizationSchema,
   leaveOrganizationSchema,
   deleteOrganizationSchema,
+  listOrganizationsSchema,
 } from "./organization.validation.js";
 
 import organizationActivityRoutes from "../../../core/activity/organization.activity.routes.js";
@@ -43,7 +44,11 @@ router.post(
 );
 
 // ! LIST USER ORGANIZATIONS ROUTE
-router.get("/", listUserOrganizationsController);
+router.get(
+  "/",
+  validate(listOrganizationsSchema),
+  listUserOrganizationsController
+);
 
 // ! GET ORGANIZATION ROUTE
 router.get(

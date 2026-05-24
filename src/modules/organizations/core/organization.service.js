@@ -7,6 +7,11 @@ import {
 } from "../../../core/activity/index.js";
 
 import {
+  getPagination,
+  buildPaginationMeta,
+} from "../../../core/pagination/pagination.utils.js";
+
+import {
   sanitizeOrganization,
   mapOrganizationList,
 } from "./organization.helper.js";
@@ -16,6 +21,7 @@ import { deleteFromCloudinary } from "../../../core/upload/index.js";
 import {
   findOrganizationById,
   findUserOrganizations,
+  countUserOrganizations,
   findOrganizationByNameAndOwnerId,
   createOrganization,
   createOrganizationMember,
@@ -38,10 +44,32 @@ export const getOrganizationService = async organizationId => {
 };
 
 // ! LIST USER ORGANIZATIONS SERVICE
-export const listUserOrganizationsService = async userId => {
-  const memberships = await findUserOrganizations(userId);
+export const listUserOrganizationsService = async (userId, query) => {
+  // 1️⃣ Normalize pagination
+  const pagination = getPagination(query);
 
-  return mapOrganizationList(memberships);
+  // 2️⃣ Fetch in parallel
+  const [memberships, total] = await Promise.all([
+    findUserOrganizations({
+      userId,
+      skip: pagination.skip,
+      limit: pagination.limit,
+    }),
+    countUserOrganizations(userId),
+  ]);
+
+  // 3️⃣ Build pagination metadata
+  const meta = buildPaginationMeta({
+    total,
+    page: pagination.page,
+    limit: pagination.limit,
+  });
+
+  // 4️⃣ Return
+  return {
+    organizations: mapOrganizationList(memberships),
+    pagination: meta,
+  };
 };
 
 // ! CREATE ORGANIZATION SERVICE

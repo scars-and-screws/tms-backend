@@ -5,6 +5,8 @@ import {
   idSchema,
 } from "../../../core/validation/index.js";
 
+import { paginationQuerySchema } from "../../../core/pagination/pagination.validation.js";
+
 // ! CREATE ORGANIZATION VALIDATION SCHEMA
 export const createOrganizationSchema = {
   body: z
@@ -13,6 +15,11 @@ export const createOrganizationSchema = {
       description: descriptionSchema.optional(),
     })
     .strict(),
+};
+
+// ! LIST USER ORGANIZATIONS VALIDATION
+export const listOrganizationsSchema = {
+  query: paginationQuerySchema,
 };
 
 // ! UPDATE ORGANIZATION VALIDATION SCHEMA

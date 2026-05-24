@@ -22,16 +22,12 @@ export const createOrganizationController = asyncHandler(async (req, res) => {
 // ! LIST USER ORGANIZATIONS CONTROLLER
 export const listUserOrganizationsController = asyncHandler(
   async (req, res) => {
-    const organizations = await listUserOrganizationsService(req.user.id);
+    const result = await listUserOrganizationsService(req.user.id, req.query);
 
     return res
       .status(200)
       .json(
-        new ApiResponse(
-          200,
-          organizations,
-          "Organizations retrieved successfully"
-        )
+        new ApiResponse(200, result, "Organizations retrieved successfully")
       );
   }
 );
