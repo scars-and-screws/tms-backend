@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { idSchema } from "../../../../core/validation/index.js";
+import { paginationQuerySchema } from "../../../../core/pagination/pagination.validation.js";
 
 // ! TASK ATTACHMENT PARAM VALIDATION SCHEMA
 export const taskAttachmentParamSchema = {
@@ -22,6 +23,12 @@ export const commentAttachmentParamSchema = {
       commentId: idSchema,
     })
     .strict(),
+};
+
+// ! LIST TASK ATTACHMENTS
+export const listTaskAttachmentsSchema = {
+  params: taskAttachmentParamSchema.params,
+  query: paginationQuerySchema,
 };
 
 // ! DELETE TASK ATTACHMENT PARAM VALIDATION SCHEMA

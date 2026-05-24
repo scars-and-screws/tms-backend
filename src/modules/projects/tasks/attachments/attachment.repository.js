@@ -5,11 +5,29 @@ export const createFile = data => {
   return prisma.file.create({ data });
 };
 
-// ! FIND FILE BY TASK ID
-export const findFilesByTaskId = taskId => {
+// ! FIND FILES BY TASK
+export const findFilesByTaskId = ({ taskId, skip, limit }) => {
   return prisma.file.findMany({
-    where: { taskId },
-    orderBy: { createdAt: "desc" },
+    where: {
+      taskId,
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    skip,
+
+    take: limit,
+  });
+};
+
+// ! COUNT TASK FILES
+export const countTaskFiles = taskId => {
+  return prisma.file.count({
+    where: {
+      taskId,
+    },
   });
 };
 

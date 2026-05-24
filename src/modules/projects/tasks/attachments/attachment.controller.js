@@ -49,15 +49,12 @@ export const uploadCommentAttachmentController = asyncHandler(
 export const listTaskAttachmentsController = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
 
-  const attachments = await listTaskAttachmentsService(taskId);
+  const result = await listTaskAttachmentsService(taskId, req.query);
+
   res
     .status(200)
     .json(
-      new ApiResponse(
-        200,
-        attachments,
-        "Task attachments retrieved successfully"
-      )
+      new ApiResponse(200, result, "Task attachments retrieved successfully")
     );
 });
 

@@ -15,6 +15,7 @@ import { validate } from "../../../../core/middleware/index.js";
 import {
   taskAttachmentParamSchema,
   deleteTaskAttachmentParamSchema,
+  listTaskAttachmentsSchema,
 } from "./attachment.validation.js";
 
 import {
@@ -40,7 +41,7 @@ router.post(
 // ! LIST ATTACHMENTS ROUTE
 router.get(
   "/",
-  validate(taskAttachmentParamSchema),
+  validate(listTaskAttachmentsSchema),
   requireTaskAccess,
   listTaskAttachmentsController
 );
