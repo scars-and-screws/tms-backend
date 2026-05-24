@@ -9,6 +9,8 @@ import {
   taskStatusSchema,
 } from "../../../../core/validation/index.js";
 
+import { paginationQuerySchema } from "../../../../core/pagination/pagination.validation.js";
+
 // ! CREATE TASK
 export const createTaskSchema = {
   params: z
@@ -105,8 +107,8 @@ export const listTasksSchema = {
     })
     .strict(),
 
-  query: z
-    .object({
+  query: paginationQuerySchema
+    .extend({
       status: taskStatusSchema.optional(),
       priority: taskPrioritySchema.optional(),
       assigneeId: idSchema.optional(),

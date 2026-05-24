@@ -4,6 +4,7 @@ import {
   findTaskById,
   findTaskByIdMinimal,
   findTasksByProjectId,
+  countTasksByProject,
   updateTask,
   deleteTask,
   assignTask,
@@ -22,6 +23,11 @@ import {
   NOTIFICATION_TYPES,
   ENTITY_TYPES,
 } from "../../../notifications/notification.constants.js";
+
+import {
+  getPagination,
+  buildPaginationMeta,
+} from "../../../../core/pagination/pagination.utils.js";
 import { getProjectAdmins } from "../../../projects/members/projectMember.repository.js";
 import { buildTaskUpdateData } from "./task.helper.js";
 import { notify } from "./task.notification.js";
@@ -126,8 +132,35 @@ export const createTaskService = async (projectId, userId, data) => {
 };
 
 // ! LIST TASKS SERVICE
-export const listTasksService = async (projectId, filters) => {
-  return findTasksByProjectId({ projectId, ...filters });
+export const listTasksService = async (projectId, query) => {
+  // 1️⃣ Normalize
+  const pagination = getPagination(query);
+
+  // 2️⃣ Query
+  const [tasks, total] = await Promise.all([
+    findTasksByProjectId({
+      projectId,
+      ...query,
+      skip: pagination.skip,
+      limit: pagination.limit,
+    }),
+
+    countTasksByProject({
+      projectId,
+      ...query,
+    }),
+  ]);
+
+  // 3️⃣ Return
+  return {
+    tasks,
+
+    pagination: buildPaginationMeta({
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+    }),
+  };
 };
 
 // ! GET TASK SERVICE
@@ -157,13 +190,17 @@ export const updateTaskService = async (taskId, userId, data) => {
   // 2️⃣ Prevent protected fields from being updated
   const updateData = buildTaskUpdateData(data);
 
-  // 3️⃣ update task
+  // 3️⃣ Prevent empty update
+  if (Object.keys(updateData).length === 0) {
+    throw new ApiError(400, "No fields to update");
+  }
+  // 4️⃣ update task
   const updated = await updateTask(taskId, updateData);
 
-  // 4️⃣ Build activity changes
+  // 5️⃣ Build activity changes
   const changes = buildChanges(task, updated);
 
-  // 5️⃣ Log activity (non-blocking)
+  // 6️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
 
@@ -259,7 +296,7 @@ export const assignTaskService = async (taskId, assigneeId, userId) => {
         userId: assigneeId,
         type: NOTIFICATION_TYPES.TASK_ASSIGNED,
         title: "Task Assigned",
-        message: `You were assigned "${task.title}"`,
+        message: `Task "${task.title}" was assigned to you`,
         entityId: task.id,
         entityType: ENTITY_TYPES.TASK,
       },

@@ -59,6 +59,8 @@ export const findTasksByProjectId = async ({
   status,
   priority,
   assigneeId,
+  skip,
+  limit,
 }) => {
   const where = {
     projectId,
@@ -66,14 +68,60 @@ export const findTasksByProjectId = async ({
   };
 
   if (status) where.status = status;
+
   if (priority) where.priority = priority;
+
   if (assigneeId) where.assigneeId = assigneeId;
 
   return prisma.task.findMany({
     where,
-    orderBy: {
-      position: "asc",
+
+    include: {
+      assignee: {
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+        },
+      },
     },
+
+    orderBy: [
+      {
+        position: "asc",
+      },
+
+      {
+        createdAt: "desc",
+      },
+    ],
+
+    skip,
+
+    take: limit,
+  });
+};
+
+// ! COUNT TASKs
+export const countTasksByProject = async ({
+  projectId,
+  status,
+  priority,
+  assigneeId,
+}) => {
+  const where = {
+    projectId,
+    isArchived: false,
+  };
+
+  if (status) where.status = status;
+
+  if (priority) where.priority = priority;
+
+  if (assigneeId) where.assigneeId = assigneeId;
+
+  return prisma.task.count({
+    where,
   });
 };
 

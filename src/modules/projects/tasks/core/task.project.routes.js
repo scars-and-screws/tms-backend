@@ -32,6 +32,7 @@ router.get(
   "/",
   validate(listTasksSchema),
   requireProjectMember,
+  requireActiveProject,
   listTasksController
 );
 

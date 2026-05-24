@@ -29,11 +29,11 @@ export const listTasksController = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
   const filters = req.query;
 
-  const tasks = await listTasksService(projectId, filters);
+  const result = await listTasksService(projectId, req.query);
 
   return res
     .status(200)
-    .json(new ApiResponse(200, tasks, "Tasks retrieved successfully"));
+    .json(new new ApiResponse(200, result, "Tasks retrieved successfully")());
 });
 
 // ! GET TASK CONTROLLER
