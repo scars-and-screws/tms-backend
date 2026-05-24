@@ -1,9 +1,28 @@
 import prisma from "../../../../core/database/prisma.js";
 
+// helper for activity + notification context
+const commentActivityInclude = {
+  task: {
+    select: {
+      id: true,
+
+      projectId: true,
+
+      project: {
+        select: {
+          organizationId: true,
+        },
+      },
+    },
+  },
+};
+
 // ! CREATE COMMENT
 export const createComment = async data => {
   return prisma.taskComment.create({
     data,
+
+    include: commentActivityInclude,
   });
 };
 
@@ -13,13 +32,7 @@ export const findCommentById = async commentId => {
     where: {
       id: commentId,
     },
-    include: {
-      task: {
-        select: {
-          projectId: true,
-        },
-      },
-    },
+    include: commentActivityInclude,
   });
 };
 
@@ -71,7 +84,10 @@ export const updateComment = async (commentId, data) => {
     where: {
       id: commentId,
     },
+
     data,
+
+    include: commentActivityInclude,
   });
 };
 

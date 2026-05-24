@@ -14,6 +14,7 @@ import { findUsersByUsernames } from "../../../auth/core/auth.repository.js";
 import {
   createActivityService,
   ACTIVITY_TYPES,
+  buildCommentEntity,
 } from "../../../../core/activity/index.js";
 
 import { findTaskNotificationData } from "../core/task.repository.js";
@@ -115,7 +116,7 @@ export const createCommentService = async (taskId, userId, content) => {
       notify(
         {
           userId: user.id,
-          type: NOTIFICATION_TYPES.MENTIONED_IN_COMMENT,
+          type: NOTIFICATION_TYPES.COMMENT_MENTIONED,
           title: "Mentioned in Comment",
           message: `You were mentioned in task "${taskData.title}"`,
           entityId: taskData.id,
@@ -126,19 +127,24 @@ export const createCommentService = async (taskId, userId, content) => {
     )
   );
 
-  // 9️⃣ Log activity (non-blocking)
-  createActivityService({
+  // 9️⃣ Log activity
+  await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.COMMENT_ADDED,
+
+    organizationId: comment.task.project.organizationId,
+
+    projectId: comment.task.projectId,
+
     taskId,
-    metadata: {
-      entity: {
-        id: comment.id,
-      },
-      extra: {
-        preview: content.slice(0, 50),
-        mentions: usernames,
-      },
+
+    entity: buildCommentEntity(comment),
+
+    extra: {
+      preview: content.slice(0, 50),
+
+      mentions: usernames,
     },
   });
 
@@ -187,15 +193,18 @@ export const deleteCommentService = async (commentId, userId, role) => {
   await deleteComment(commentId);
 
   // 4️⃣ Log activity (non-blocking)
-  createActivityService({
+  await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.COMMENT_DELETED,
+
+    organizationId: comment.task.project.organizationId,
+
+    projectId: comment.task.projectId,
+
     taskId: comment.taskId,
-    metadata: {
-      entity: {
-        id: comment.id,
-      },
-    },
+
+    entity: buildCommentEntity(comment),
   });
   return true;
 };
