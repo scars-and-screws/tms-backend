@@ -10,6 +10,8 @@ export const sanitizeProject = project => ({
 
   organizationId: project.organizationId,
 
+  createdById: project.createdById,
+
   createdAt: project.createdAt,
 
   updatedAt: project.updatedAt,

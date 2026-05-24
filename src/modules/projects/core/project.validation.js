@@ -5,6 +5,8 @@ import {
   descriptionSchema,
 } from "../../../core/validation/index.js";
 
+import { paginationQuerySchema } from "../../../core/pagination/pagination.validation.js";
+
 // ! CREATE PROJECT SCHEMA
 export const createProjectSchema = {
   params: z
@@ -28,21 +30,29 @@ export const listProjectsSchema = {
     })
     .strict(),
 
-  query: z
-    .object({
+  query: paginationQuerySchema
+    .extend({
       includeArchived: z
         .enum(["true", "false"])
         .optional()
         .transform(val => val === "true"),
+
       onlyArchived: z
         .enum(["true", "false"])
         .optional()
         .transform(val => val === "true"),
     })
-    .refine(data => !(data.includeArchived && data.onlyArchived), {
-      message: "Cannot use includeArchived and onlyArchived together",
-      path: ["includeArchived"],
-    })
+
+    .refine(
+      data => !(data.includeArchived && data.onlyArchived),
+
+      {
+        message: "Cannot use includeArchived and onlyArchived together",
+
+        path: ["includeArchived"],
+      }
+    )
+
     .strict(),
 };
 

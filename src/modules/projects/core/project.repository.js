@@ -42,22 +42,47 @@ export const findProjectsByOrganization = async ({
   organizationId,
   includeArchived = false,
   onlyArchived = false,
+  skip,
+  limit,
 }) => {
-  let where = { organizationId };
+  const where = {
+    organizationId,
+  };
 
   if (onlyArchived) {
     where.isArchived = true;
   } else if (!includeArchived) {
     where.isArchived = false;
   }
-  // Default is to include all projects regardless of archive status (no filter on isArchived)
-
-  // logging the filter being applied for debugging
-  console.log("Project filter:", where);
 
   return prisma.project.findMany({
     where,
-    orderBy: { createdAt: "desc" },
+    orderBy: {
+      createdAt: "desc",
+    },
+    skip,
+    take: limit,
+  });
+};
+
+// ! COUNT PROJECTS
+export const countProjectsByOrganization = async ({
+  organizationId,
+  includeArchived = false,
+  onlyArchived = false,
+}) => {
+  const where = {
+    organizationId,
+  };
+
+  if (onlyArchived) {
+    where.isArchived = true;
+  } else if (!includeArchived) {
+    where.isArchived = false;
+  }
+
+  return prisma.project.count({
+    where,
   });
 };
 

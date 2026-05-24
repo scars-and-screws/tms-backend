@@ -31,15 +31,16 @@ export const listProjectsController = asyncHandler(async (req, res) => {
 
   const { includeArchived = false, onlyArchived = false } = req.query;
 
-  const projects = await listProjectsService({
+  const result = await listProjectsService({
     organizationId,
     includeArchived,
     onlyArchived,
+    query: req.query,
   });
 
   res
     .status(200)
-    .json(new ApiResponse(200, projects, "Projects retrieved successfully"));
+    .json(new ApiResponse(200, result, "Projects retrieved successfully"));
 });
 
 // ! GET PROJECT CONTROLLER

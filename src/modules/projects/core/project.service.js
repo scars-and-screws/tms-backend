@@ -11,6 +11,11 @@ import { PROJECT_ROLES } from "./project.constants.js";
 import { sanitizeProject, sanitizeProjectList } from "./project.helper.js";
 
 import {
+  getPagination,
+  buildPaginationMeta,
+} from "../../../core/pagination/pagination.utils.js";
+
+import {
   findOrganizationById,
   findOrganizationMember,
 } from "../../organizations/core/organization.repository.js";
@@ -18,6 +23,7 @@ import {
 import {
   createProject,
   findProjectByNameAndOrg,
+  countProjectsByOrganization,
   findProjectsByOrganization,
   findProjectById,
   deleteProjectById,
@@ -104,14 +110,38 @@ export const listProjectsService = async ({
   organizationId,
   includeArchived,
   onlyArchived,
+  query,
 }) => {
-  const projects = await findProjectsByOrganization({
-    organizationId,
-    includeArchived,
-    onlyArchived,
-  });
+  // 1️⃣ Normalize
+  const pagination = getPagination(query);
 
-  return sanitizeProjectList(projects);
+  // 2️⃣ Fetch
+  const [projects, total] = await Promise.all([
+    findProjectsByOrganization({
+      organizationId,
+      includeArchived,
+      onlyArchived,
+      skip: pagination.skip,
+      limit: pagination.limit,
+    }),
+
+    countProjectsByOrganization({
+      organizationId,
+      includeArchived,
+      onlyArchived,
+    }),
+  ]);
+
+  // 3️⃣ Return
+  return {
+    projects: sanitizeProjectList(projects),
+
+    pagination: buildPaginationMeta({
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+    }),
+  };
 };
 
 // ! GET PROJECT SERVICE

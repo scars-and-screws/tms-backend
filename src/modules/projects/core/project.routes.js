@@ -66,6 +66,7 @@ router.patch(
   "/:projectId/archive",
   validate(archiveProjectSchema),
   requireProjectMember,
+  requireActiveProject,
   requireProjectRole(["ADMIN"]),
   archiveProjectController
 );
