@@ -31,21 +31,21 @@ export const addProjectMemberController = asyncHandler(async (req, res) => {
 export const listProjectMembersController = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
 
-  const members = await listProjectMembersService(projectId);
+  const result = await listProjectMembersService(projectId, req.query);
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, members, "Project members retrieved successfully")
+      new ApiResponse(200, result, "Project members retrieved successfully")
     );
 });
 
 // ! SEARCH PROJECT MEMBERS CONTROLLER (MENTIONS)
 export const searchProjectMembersController = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
-  const { query } = req.body;
+  const { query } = req.query;
 
-  const ussers = await searchProjectMembersService(projectId, query);
+  const users = await searchProjectMembersService(projectId, query);
 
   return res
     .status(200)

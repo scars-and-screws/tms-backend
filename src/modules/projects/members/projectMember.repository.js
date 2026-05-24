@@ -47,16 +47,33 @@ export const findProjectMemberById = async memberId => {
 };
 
 // ! GET ALL PROJECT MEMBERS
-export const findProjectMembers = async projectId => {
+export const findProjectMembers = async ({ projectId, skip, limit }) => {
   return prisma.projectMember.findMany({
-    where: { projectId },
+    where: {
+      projectId,
+    },
+
     include: {
       user: {
         select: userSelect,
       },
     },
+
     orderBy: {
-      joinedAt: "asc",
+      joinedAt: "desc",
+    },
+
+    skip,
+
+    take: limit,
+  });
+};
+
+// ! COUNT PROJECT MEMBERS
+export const countProjectMembers = async projectId => {
+  return prisma.projectMember.count({
+    where: {
+      projectId,
     },
   });
 };

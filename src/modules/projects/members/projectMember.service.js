@@ -2,6 +2,11 @@ import { ApiError } from "../../../core/utils/index.js";
 import { findProjectById } from "../core/project.repository.js";
 import { findOrganizationMember } from "../../organizations/core/organization.repository.js";
 import {
+  getPagination,
+  buildPaginationMeta,
+} from "../../../core/pagination/pagination.utils.js";
+
+import {
   createActivityService,
   ACTIVITY_TYPES,
   buildChanges,
@@ -11,6 +16,7 @@ import {
   findProjectMember,
   findProjectMemberById,
   findProjectMembers,
+  countProjectMembers,
   updateProjectMemberRoleById,
   deleteProjectMemberById,
   countProjectAdmins,
@@ -81,6 +87,8 @@ export const addProjectMemberService = async (
       id: userId,
 
       type: "USER",
+
+      title: member.user?.username,
     },
 
     extra: {
@@ -92,8 +100,35 @@ export const addProjectMemberService = async (
 };
 
 // ! LIST PROJECT MEMBERS SERVICE
-export const listProjectMembersService = async projectId => {
-  return await findProjectMembers(projectId);
+export const listProjectMembersService = async (projectId, query) => {
+  // 1️⃣ Normalize
+  const pagination = getPagination(query);
+
+  // 2️⃣ Query
+  const [members, total] = await Promise.all([
+    findProjectMembers({
+      projectId,
+
+      skip: pagination.skip,
+
+      limit: pagination.limit,
+    }),
+
+    countProjectMembers(projectId),
+  ]);
+
+  // 3️⃣ Return
+  return {
+    members,
+
+    pagination: buildPaginationMeta({
+      total,
+
+      page: pagination.page,
+
+      limit: pagination.limit,
+    }),
+  };
 };
 
 // ! SEARCH PROJECT MEMBERS SERVICE (FOR MENTIONS)
@@ -126,9 +161,18 @@ export const updateProjectMemberRoleService = async (
     throw new ApiError(400, "Role is already set ");
   }
 
+  // 4️⃣ Prevent orphan project
+  if (member.role === "ADMIN" && newRole !== "ADMIN") {
+    const adminCount = await countProjectAdmins(member.projectId);
+
+    if (adminCount <= 1) {
+      throw new ApiError(400, "Project must have at least one admin");
+    }
+  }
+
   const updated = await updateProjectMemberRoleById(memberId, newRole);
 
-  // 4️⃣ Log activity (non-blocking)
+  // 5️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId,
 
@@ -142,6 +186,8 @@ export const updateProjectMemberRoleService = async (
       id: member.userId,
 
       type: "USER",
+
+      title: member.user?.username,
     },
 
     changes: buildChanges(
@@ -188,6 +234,8 @@ export const removeProjectMemberService = async (memberId, actorId) => {
       id: member.userId,
 
       type: "USER",
+
+      title: member.user?.username,
     },
 
     extra: {
@@ -238,6 +286,8 @@ export const leaveProjectService = async (projectId, userId) => {
       id: userId,
 
       type: "USER",
+
+      title: member.user?.username,
     },
 
     extra: {

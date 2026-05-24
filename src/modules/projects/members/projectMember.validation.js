@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { idSchema, projectRoleSchema } from "../../../core/validation/index.js";
+import { paginationQuerySchema } from "../../../core/pagination/pagination.validation.js";
 
 // ! ADD PROJECT MEMBER SCHEMA
 export const addProjectMemberSchema = {
@@ -25,6 +26,7 @@ export const listProjectMembersSchema = {
       projectId: idSchema,
     })
     .strict(),
+  query: paginationQuerySchema,
 };
 
 // ! SEARCH PROJECT MEMBERS (MENTIONS)
