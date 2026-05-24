@@ -15,6 +15,7 @@ import { ApiError } from "../../../core/utils/index.js";
 import {
   createActivityService,
   ACTIVITY_TYPES,
+  buildChanges,
 } from "../../../core/activity/index.js";
 
 import {
@@ -53,16 +54,21 @@ export const addOrganizationMemberService = async ({
   // 4️⃣ Log activity
   await createActivityService({
     actorId,
-    type: ACTIVITY_TYPES.MEMBER_ADDED,
+
+    type: ACTIVITY_TYPES.ORGANIZATION_MEMBER_ADDED,
+
     organizationId,
-    metadata: {
-      entity: {
-        id: user.id,
-        email: user.email,
-      },
-      extra: {
-        role,
-      },
+
+    entity: {
+      id: user.id,
+
+      type: "USER",
+
+      title: user.email,
+    },
+
+    extra: {
+      role,
     },
   });
 
@@ -112,19 +118,26 @@ export const updateOrganizationMemberRoleService = async (
   // 6️⃣ Log activity
   await createActivityService({
     actorId,
-    type: ACTIVITY_TYPES.MEMBER_ROLE_UPDATED,
+
+    type: ACTIVITY_TYPES.ORGANIZATION_MEMBER_ROLE_UPDATED,
+
     organizationId,
-    metadata: {
-      entity: {
-        id: target.userId,
-      },
-      changes: {
-        role: {
-          before: target.role,
-          after: newRole,
-        },
-      },
+
+    entity: {
+      id: target.userId,
+
+      type: "USER",
     },
+
+    changes: buildChanges(
+      {
+        role: target.role,
+      },
+
+      {
+        role: newRole,
+      }
+    ),
   });
 
   return sanitizeOrganizationMember(updated);
@@ -174,12 +187,19 @@ export const removeOrganizationMemberService = async ({
   // 7️⃣ Log activity
   await createActivityService({
     actorId,
-    type: ACTIVITY_TYPES.MEMBER_REMOVED,
+
+    type: ACTIVITY_TYPES.ORGANIZATION_MEMBER_REMOVED,
+
     organizationId,
-    metadata: {
-      entity: {
-        id: target.userId,
-      },
+
+    entity: {
+      id: target.userId,
+
+      type: "USER",
+    },
+
+    extra: {
+      role: target.role,
     },
   });
 };

@@ -2,9 +2,9 @@ import { ApiError } from "../../../core/utils/index.js";
 import {
   createActivityService,
   ACTIVITY_TYPES,
+  buildOrganizationEntity,
+  buildChanges,
 } from "../../../core/activity/index.js";
-
-import { buildChanges } from "../../../core/activity/activity.helper.js";
 
 import {
   sanitizeOrganization,
@@ -75,10 +75,15 @@ export const createOrganizationService = async (userId, data) => {
   // 4️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.ORGANIZATION_CREATED,
+
     organizationId: organization.id,
-    metadata: {
-      organizationName: name,
+
+    entity: buildOrganizationEntity(organization),
+
+    extra: {
+      description,
     },
   });
 
@@ -106,15 +111,14 @@ export const updateOrganizationService = async (
   // Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.ORGANIZATION_UPDATED,
+
     organizationId,
-    metadata: {
-      entity: {
-        id: organizationId,
-        name: organization.name,
-      },
-      changes,
-    },
+
+    entity: buildOrganizationEntity(organization),
+
+    changes,
   });
 
   return sanitizeOrganization(updated);
@@ -170,14 +174,20 @@ export const transferOrganizationOwnershipService = async ({
   // 8️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId,
-    type: ACTIVITY_TYPES.OWNERSHIP_TRANSFERRED,
+
+    type: ACTIVITY_TYPES.ORGANIZATION_OWNERSHIP_TRANSFERRED,
+
     organizationId,
-    metadata: {
-      changes: {
-        owner: {
-          before: actorId,
-          after: newOwnerId,
-        },
+
+    entity: {
+      id: organizationId,
+      type: "ORGANIZATION",
+    },
+
+    changes: {
+      ownerId: {
+        before: actorId,
+        after: newOwnerId,
       },
     },
   });
@@ -210,17 +220,21 @@ export const leaveOrganizationService = async ({ organizationId, userId }) => {
   // 4️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId: userId,
-    type: ACTIVITY_TYPES.MEMBER_LEFT,
+
+    type: ACTIVITY_TYPES.ORGANIZATION_MEMBER_LEFT,
+
     organizationId,
-    metadata: {
-      entity: {
-        id: userId,
-      },
-      changes: {
-        role: {
-          before: membership.role,
-          after: null,
-        },
+
+    entity: {
+      id: userId,
+      type: "USER",
+    },
+
+    changes: {
+      role: {
+        before: membership.role,
+
+        after: null,
       },
     },
   });
@@ -264,13 +278,11 @@ export const deleteOrganizationService = async ({
   // 6️⃣ Log activity (non-blocking)
   await createActivityService({
     actorId,
+
     type: ACTIVITY_TYPES.ORGANIZATION_DELETED,
+
     organizationId,
-    metadata: {
-      entity: {
-        id: organizationId,
-        name: organization.name,
-      },
-    },
+
+    entity: buildOrganizationEntity(organization),
   });
 };

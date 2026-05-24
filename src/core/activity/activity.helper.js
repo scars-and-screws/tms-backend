@@ -18,14 +18,14 @@ export const buildChanges = (oldData, newData) => {
 };
 
 // ! BUILD STANDARDIZED ACTIVITY METADATA
-// export const buildActivityMetadata = ({
-//   entity = {},
-//   changes = {},
-//   extra = {},
-// }) => {
-//   return {
-//     entity,
-//     changes,
-//     extra,
-//   };
-// };
+export const buildActivityMetadata = ({
+  entity = null,
+  changes = null,
+  extra = null,
+} = {}) => {
+  return {
+    entity,
+    changes,
+    extra,
+  };
+};

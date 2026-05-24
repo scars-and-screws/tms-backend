@@ -13,27 +13,36 @@ import {
   countOrganizationActivities,
 } from "./activity.repository.js";
 
-// ! CREATE ACTIVITY SERVICE
+// ! CREATE ACTIVITY LOG
 export const createActivityService = async ({
   actorId,
   type,
   organizationId = null,
   projectId = null,
   taskId = null,
-  metadata = null,
+  entity = null,
+  changes = null,
+  extra = null,
 }) => {
   try {
-    await createActivity({
+    return await createActivity({
       actorId,
       type,
       organizationId,
       projectId,
       taskId,
-      metadata,
+
+      metadata: buildActivityMetadata({
+        entity,
+        changes,
+        extra,
+      }),
     });
   } catch (err) {
-    // ACTIVITY LOGGING FAILURE SHOULD NOT BLOCK MAIN OPERATION, LOG ERROR AND CONTINUE
-    console.error("Activity logging failed:", err.message);
+    // Activity failures should never break business operations
+    console.error(`[ACTIVITY_LOG_FAILED] ${type}`, err.message);
+
+    return null;
   }
 };
 
