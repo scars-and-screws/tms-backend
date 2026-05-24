@@ -68,7 +68,7 @@ const descriptionSchema = z
   .trim()
   .max(500, { message: "Description must be at most 500 characters" });
 
-const organizationRoleSchema = z.enum(["OWNER", "ADMIN", "MEMBER"], {
+const organizationRoleSchema = z.enum(["ADMIN", "MEMBER"], {
   errorMap: () => ({ message: "Role must be one of OWNER, ADMIN, or MEMBER" }),
 });
 

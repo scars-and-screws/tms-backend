@@ -31,11 +31,14 @@ export const listOrganizationMembersController = asyncHandler(
   async (req, res) => {
     const { organizationId } = req.params;
 
-    const members = await listOrganizationMembersService(organizationId);
+    const result = await listOrganizationMembersService(
+      organizationId,
+      req.query
+    );
 
     return res
       .status(200)
-      .json(new ApiResponse(200, members, "Members retrieved successfully"));
+      .json(new ApiResponse(200, result, "Members retrieved successfully"));
   }
 );
 

@@ -5,6 +5,8 @@ import {
   organizationRoleSchema,
 } from "../../../core/validation/index.js";
 
+import { paginationQuerySchema } from "../../../core/pagination/pagination.validation.js";
+
 // ! ADD ORGANIZATION MEMBER VALIDATION SCHEMA
 export const addOrganizationMemberSchema = {
   params: z.object({
@@ -24,6 +26,7 @@ export const listOrganizationMembersSchema = {
   params: z.object({
     organizationId: idSchema,
   }),
+  query: paginationQuerySchema,
 };
 
 // ! UPDATE ORGANIZATION MEMBER ROLE VALIDATION SCHEMA

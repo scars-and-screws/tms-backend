@@ -4,6 +4,7 @@ import {
   updateOrganizationMemberRoleById,
   findUserByEmail,
   findOrganizationMembers,
+  countOrganizationMembers,
 } from "./organizationMember.repository.js";
 
 import {
@@ -17,6 +18,11 @@ import {
   ACTIVITY_TYPES,
   buildChanges,
 } from "../../../core/activity/index.js";
+
+import {
+  getPagination,
+  buildPaginationMeta,
+} from "../../../core/pagination/pagination.utils.js";
 
 import {
   mapOrganizationMemberList,
@@ -64,7 +70,7 @@ export const addOrganizationMemberService = async ({
 
       type: "USER",
 
-      title: user.email,
+      title: user.username,
     },
 
     extra: {
@@ -76,9 +82,31 @@ export const addOrganizationMemberService = async ({
 };
 
 // ! LIST ORGANIZATION MEMBERS SERVICE
-export const listOrganizationMembersService = async organizationId => {
-  const members = await findOrganizationMembers(organizationId);
-  return mapOrganizationMemberList(members);
+export const listOrganizationMembersService = async (organizationId, query) => {
+  // 1️⃣ Normalize
+  const pagination = getPagination(query);
+
+  // 2️⃣ Query
+  const [members, total] = await Promise.all([
+    findOrganizationMembers({
+      organizationId,
+      skip: pagination.skip,
+      limit: pagination.limit,
+    }),
+
+    countOrganizationMembers(organizationId),
+  ]);
+
+  // 3️⃣ Return
+  return {
+    members: mapOrganizationMemberList(members),
+
+    pagination: buildPaginationMeta({
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+    }),
+  };
 };
 
 // ! UPDATE ORGANIZATION MEMBER ROLE SERVICE
@@ -112,10 +140,15 @@ export const updateOrganizationMemberRoleService = async (
     throw new ApiError(403, "Admin can only modify member roles");
   }
 
-  // 5️⃣ Update role
+  // 5️⃣ Prevent redundent db call
+  if (target.role === newRole) {
+    throw new ApiError(400, "Member already has this role");
+  }
+
+  // 6️⃣ Update role
   const updated = await updateOrganizationMemberRoleById(memberId, newRole);
 
-  // 6️⃣ Log activity
+  // 7️⃣ Log activity
   await createActivityService({
     actorId,
 

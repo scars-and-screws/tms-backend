@@ -6,7 +6,7 @@ export const sanitizeOrganizationMember = membership => {
 
     user: {
       id: membership.user.id,
-      name: membership.user.username,
+      username: membership.user.username,
       email: membership.user.email,
       firstName: membership.user.firstName,
       lastName: membership.user.lastName,

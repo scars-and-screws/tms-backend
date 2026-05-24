@@ -58,16 +58,39 @@ export const deleteOrganizationMemberById = async memberId => {
 };
 
 // ! LIST MEMBERS
-export const findOrganizationMembers = async organizationId => {
+export const findOrganizationMembers = async ({
+  organizationId,
+
+  skip,
+
+  limit,
+}) => {
   return prisma.organizationMember.findMany({
-    where: { organizationId },
+    where: {
+      organizationId,
+    },
+
     include: {
       user: {
         select: userSelect,
       },
     },
+
     orderBy: {
-      joinedAt: "asc",
+      joinedAt: "desc",
+    },
+
+    skip,
+
+    take: limit,
+  });
+};
+
+// ! COUNT MEMBERS
+export const countOrganizationMembers = async organizationId => {
+  return prisma.organizationMember.count({
+    where: {
+      organizationId,
     },
   });
 };
