@@ -15,9 +15,9 @@ import { findProjectMember } from "../../members/projectMember.repository.js";
 import {
   createActivityService,
   ACTIVITY_TYPES,
+  buildChanges,
+  buildTaskEntity,
 } from "../../../../core/activity/index.js";
-import { buildChanges } from "../../../../core/activity/activity.helper.js";
-import { createNotificationService } from "../../../notifications/notification.service.js";
 import {
   NOTIFICATION_TYPES,
   ENTITY_TYPES,
@@ -102,19 +102,23 @@ export const createTaskService = async (projectId, userId, data) => {
   // 4️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.TASK_CREATED,
+
+    organizationId: task.project.organizationId,
+
     projectId,
+
     taskId: task.id,
-    metadata: {
-      entity: {
-        id: task.id,
-        title,
-      },
-      extra: {
-        priority,
-        dueDate,
-        assigneeId,
-      },
+
+    entity: buildTaskEntity(task),
+
+    extra: {
+      priority,
+
+      dueDate,
+
+      assigneeId: task.assigneeId,
     },
   });
 
@@ -162,16 +166,18 @@ export const updateTaskService = async (taskId, userId, data) => {
   // 5️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.TASK_UPDATED,
+
+    organizationId: task.project.organizationId,
+
     projectId: task.projectId,
+
     taskId,
-    metadata: {
-      entity: {
-        id: task.id,
-        title: task.title,
-      },
-      changes,
-    },
+
+    entity: buildTaskEntity(task),
+
+    changes,
   });
 
   return updated;
@@ -195,15 +201,16 @@ export const deleteTaskService = async (taskId, userId) => {
   // 3️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.TASK_DELETED,
+
+    organizationId: task.project.organizationId,
+
     projectId: task.projectId,
+
     taskId,
-    metadata: {
-      entity: {
-        id: task.id,
-        title: task.title,
-      },
-    },
+
+    entity: buildTaskEntity(task),
   });
 
   return true;
@@ -281,21 +288,26 @@ export const assignTaskService = async (taskId, assigneeId, userId) => {
   // 3️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.TASK_ASSIGNED,
+
+    organizationId: task.project.organizationId,
+
     projectId: task.projectId,
+
     taskId,
-    metadata: {
-      entity: {
-        id: task.id,
-        title: task.title,
+
+    entity: buildTaskEntity(task),
+
+    changes: buildChanges(
+      {
+        assigneeId: task.assigneeId,
       },
-      changes: {
-        assigneeId: {
-          before: task.assigneeId,
-          after: assigneeId,
-        },
-      },
-    },
+
+      {
+        assigneeId,
+      }
+    ),
   });
 
   return updated;
@@ -371,22 +383,28 @@ export const updateTaskStatusService = async (taskId, status, userId) => {
   // 3️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
-    type: ACTIVITY_TYPES.TASK_STATUS_UPDATED,
+
+    type: ACTIVITY_TYPES.TASK_STATUS_CHANGED,
+
+    organizationId: task.project.organizationId,
+
     projectId: task.projectId,
+
     taskId,
-    metadata: {
-      entity: {
-        id: task.id,
-        title: task.title,
+
+    entity: buildTaskEntity(task),
+
+    changes: buildChanges(
+      {
+        status: task.status,
       },
-      changes: {
-        status: {
-          before: task.status,
-          after: status,
-        },
-      },
-    },
+
+      {
+        status,
+      }
+    ),
   });
+
   return updated;
 };
 
@@ -419,22 +437,28 @@ export const archiveTaskService = async (taskId, userId) => {
   // 5️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.TASK_ARCHIVED,
+
+    organizationId: task.project.organizationId,
+
     projectId: task.projectId,
+
     taskId,
-    metadata: {
-      entity: {
-        id: task.id,
-        title: task.title,
+
+    entity: buildTaskEntity(task),
+
+    changes: buildChanges(
+      {
+        isArchived: false,
       },
-      changes: {
-        isArchived: {
-          before: false,
-          after: true,
-        },
-      },
-    },
+
+      {
+        isArchived: true,
+      }
+    ),
   });
+
   return true;
 };
 
@@ -468,21 +492,26 @@ export const unarchiveTaskService = async (taskId, userId) => {
   // 5️⃣ Log activity (non-blocking)
   createActivityService({
     actorId: userId,
+
     type: ACTIVITY_TYPES.TASK_UNARCHIVED,
+
+    organizationId: task.project.organizationId,
+
     projectId: task.projectId,
+
     taskId,
-    metadata: {
-      entity: {
-        id: task.id,
-        title: task.title,
+
+    entity: buildTaskEntity(task),
+
+    changes: buildChanges(
+      {
+        isArchived: true,
       },
-      changes: {
-        isArchived: {
-          before: true,
-          after: false,
-        },
-      },
-    },
+
+      {
+        isArchived: false,
+      }
+    ),
   });
   return true;
 };

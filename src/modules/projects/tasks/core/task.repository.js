@@ -1,9 +1,20 @@
 import prisma from "../../../../core/database/prisma.js";
+// helper to nclude organization id
+const taskActivityInclude = {
+  project: {
+    select: {
+      id: true,
+      organizationId: true,
+    },
+  },
+};
 
 // ! CREATE TASK
 export const createTask = async data => {
   return prisma.task.create({
     data,
+
+    include: taskActivityInclude,
   });
 };
 
@@ -15,12 +26,8 @@ export const findTaskById = async taskId => {
     },
 
     include: {
-      project: {
-        select: {
-          id: true,
-          organizationId: true,
-        },
-      },
+      ...taskActivityInclude,
+
       assignee: {
         select: {
           id: true,
@@ -76,7 +83,10 @@ export const updateTask = async (taskId, data) => {
     where: {
       id: taskId,
     },
+
     data,
+
+    include: taskActivityInclude,
   });
 };
 
@@ -95,10 +105,14 @@ export const assignTask = async (taskId, assigneeId, assignedById) => {
     where: {
       id: taskId,
     },
+
     data: {
       assigneeId,
+
       assignedById,
     },
+
+    include: taskActivityInclude,
   });
 };
 
@@ -108,10 +122,14 @@ export const updateTaskStatus = async (taskId, status) => {
     where: {
       id: taskId,
     },
+
     data: {
       status,
+
       completedAt: status === "DONE" ? new Date() : null,
     },
+
+    include: taskActivityInclude,
   });
 };
 
@@ -121,9 +139,12 @@ export const archiveTask = async taskId => {
     where: {
       id: taskId,
     },
+
     data: {
       isArchived: true,
     },
+
+    include: taskActivityInclude,
   });
 };
 
@@ -133,9 +154,12 @@ export const unarchiveTask = async taskId => {
     where: {
       id: taskId,
     },
+
     data: {
       isArchived: false,
     },
+
+    include: taskActivityInclude,
   });
 };
 
@@ -147,9 +171,15 @@ export const findTaskNotificationData = async taskId => {
     },
     select: {
       id: true,
+
       title: true,
+
+      projectId: true,
+
       createdById: true,
+
       assigneeId: true,
+
       assignedById: true,
     },
   });
