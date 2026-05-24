@@ -36,6 +36,7 @@ router.get(
   "/",
   validate(listCommentsSchema),
   requireTaskAccess,
+  requireActiveTask,
   listCommentsController
 );
 

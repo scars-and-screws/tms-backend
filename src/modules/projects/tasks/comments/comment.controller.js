@@ -23,11 +23,11 @@ export const createCommentController = asyncHandler(async (req, res) => {
 export const listCommentsController = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
 
-  const comments = await listCommentsService(taskId);
+  const result = await listCommentsService(taskId, req.query);
 
   return res
     .status(200)
-    .json(new ApiResponse(200, comments, "Comments retrieved successfully"));
+    .json(new ApiResponse(200, result, "Comments retrieved successfully"));
 });
 
 // ! UPDATE COMMENT CONTROLLER

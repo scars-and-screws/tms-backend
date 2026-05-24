@@ -4,6 +4,8 @@ import {
   idSchema,
 } from "../../../../core/validation/index.js";
 
+import { paginationQuerySchema } from "../../../../core/pagination/pagination.validation.js";
+
 export const createCommentSchema = {
   params: z
     .object({
@@ -27,6 +29,7 @@ export const listCommentsSchema = {
       taskId: idSchema,
     })
     .strict(),
+  query: paginationQuerySchema,
 };
 
 export const getCommentSchema = {

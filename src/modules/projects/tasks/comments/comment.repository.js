@@ -37,13 +37,16 @@ export const findCommentById = async commentId => {
 };
 
 // ! LIST COMMENTS BY TASK ID
-export const findCommentsByTaskId = async taskId => {
+export const findCommentsByTaskId = async ({
+  taskId,
+
+  skip,
+
+  limit,
+}) => {
   return prisma.taskComment.findMany({
     where: {
-      taskId: taskId,
-    },
-    orderBy: {
-      createdAt: "asc",
+      taskId,
     },
 
     include: {
@@ -54,7 +57,7 @@ export const findCommentsByTaskId = async taskId => {
           avatarUrl: true,
         },
       },
-      // Include the attachments
+
       files: {
         select: {
           id: true,
@@ -64,6 +67,7 @@ export const findCommentsByTaskId = async taskId => {
           size: true,
         },
       },
+
       mentions: {
         include: {
           user: {
@@ -74,6 +78,23 @@ export const findCommentsByTaskId = async taskId => {
           },
         },
       },
+    },
+
+    orderBy: {
+      createdAt: "asc",
+    },
+
+    skip,
+
+    take: limit,
+  });
+};
+
+// ! COUNT COMMENTS
+export const countCommentsByTask = taskId => {
+  return prisma.taskComment.count({
+    where: {
+      taskId,
     },
   });
 };

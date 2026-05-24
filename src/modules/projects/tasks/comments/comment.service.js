@@ -3,6 +3,7 @@ import {
   createComment,
   findCommentById,
   findCommentsByTaskId,
+  countCommentsByTask,
   updateComment,
   deleteComment,
 } from "./comment.repository.js";
@@ -11,6 +12,10 @@ import { extractMentions } from "./comment.utils.js";
 import { createCommentMentions } from "./comment.mention.repository.js";
 import { findUsersByUsernames } from "../../../auth/core/auth.repository.js";
 
+import {
+  getPagination,
+  buildPaginationMeta,
+} from "../../../../core/pagination/pagination.utils.js";
 import {
   createActivityService,
   ACTIVITY_TYPES,
@@ -117,7 +122,7 @@ export const createCommentService = async (taskId, userId, content) => {
         {
           userId: user.id,
           type: NOTIFICATION_TYPES.COMMENT_MENTIONED,
-          title: "Mentioned in Comment",
+          title: "You were mentioned",
           message: `You were mentioned in task "${taskData.title}"`,
           entityId: taskData.id,
           entityType: ENTITY_TYPES.TASK,
@@ -151,9 +156,30 @@ export const createCommentService = async (taskId, userId, content) => {
   // 🔟 Return created comment
   return comment;
 };
+
 // ! LIST COMMENTS SERVICE
-export const listCommentsService = async taskId => {
-  return findCommentsByTaskId(taskId);
+export const listCommentsService = async (taskId, query) => {
+  const pagination = getPagination(query);
+
+  const [comments, total] = await Promise.all([
+    findCommentsByTaskId({
+      taskId,
+      skip: pagination.skip,
+      limit: pagination.limit,
+    }),
+
+    countCommentsByTask(taskId),
+  ]);
+
+  return {
+    comments,
+
+    pagination: buildPaginationMeta({
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+    }),
+  };
 };
 
 // ! UPDATE COMMENT SERVICE
@@ -170,7 +196,28 @@ export const updateCommentService = async (commentId, userId, content) => {
   }
 
   // Update the comment
-  return updateComment(commentId, { content });
+  const updated = await updateComment(commentId, {
+    content,
+  });
+  // 2️⃣ Log activity
+  await createActivityService({
+    actorId: userId,
+
+    type: ACTIVITY_TYPES.COMMENT_UPDATED,
+
+    organizationId: comment.task.project.organizationId,
+
+    projectId: comment.task.projectId,
+
+    taskId: comment.taskId,
+
+    entity: buildCommentEntity(comment),
+    extra: {
+      edited: true,
+    },
+  });
+
+  return updated;
 };
 
 // ! DELETE COMMENT SERVICE
