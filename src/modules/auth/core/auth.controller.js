@@ -53,7 +53,7 @@ export const loginController = asyncHandler(async (req, res) => {
   if (result.require2FA) {
     return res.status(200).json(
       new ApiResponse(200, {
-        twofactorRequired: true,
+        twoFactorRequired: true,
         tempToken: result.tempToken,
       })
     );
