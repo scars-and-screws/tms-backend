@@ -23,4 +23,5 @@ export const buildOrganizationEntity = organization => ({
 export const buildCommentEntity = comment => ({
   id: comment.id,
   type: "COMMENT",
+  title: comment.content?.slice(0, 40),
 });

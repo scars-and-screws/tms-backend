@@ -19,9 +19,9 @@ export const buildChanges = (oldData, newData) => {
 
 // ! BUILD STANDARDIZED ACTIVITY METADATA
 export const buildActivityMetadata = ({
-  entity = null,
-  changes = null,
-  extra = null,
+  entity = {},
+  changes = {},
+  extra = {},
 } = {}) => {
   return {
     entity,
