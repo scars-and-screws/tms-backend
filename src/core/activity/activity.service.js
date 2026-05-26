@@ -43,6 +43,7 @@ export const createActivityService = async ({
       }),
     });
 
+    // for SSE
     if (organizationId) {
       publishActivity("ORGANIZATION", organizationId, activity);
     }
