@@ -81,15 +81,29 @@ export const loginService = async ({ identifier, password }, meta) => {
   if (!isValid) {
     throw new ApiError(401, "Invalid credentials");
   }
-  // * 3️⃣ Check if device is trusted
+
+  // * 3️⃣ Check trusted device
+
   const deviceId = meta.deviceId;
+
   const fingerprint = generateFingerprint(deviceId, meta.userAgent);
 
   const trustedDevice = await findTrustedDevice(user.id, deviceId);
 
-  if (trustedDevice && trustedDevice.fingerprint === fingerprint) {
-    //  DEVICE IS TRUSTED, SKIP 2FA AND LOGIN DIRECTLY
-    return finalizeLoginService(user, meta);
+  if (trustedDevice) {
+    const fingerprintMatch = trustedDevice.fingerprint === fingerprint;
+
+    const notExpired = trustedDevice.expiresAt > new Date();
+
+    if (fingerprintMatch && notExpired) {
+      await touchTrustedDevice(trustedDevice.id);
+
+      // Skip OTP
+      return finalizeLoginService(user, meta);
+    }
+
+    // cleanup invalid
+    await deleteTrustedDevice(trustedDevice.id);
   }
 
   // * 4️⃣ Check 2FA

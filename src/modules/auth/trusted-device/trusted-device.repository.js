@@ -1,4 +1,5 @@
 import prisma from "../../../core/database/prisma.js";
+import { getTrustedDeviceExpiry } from "./trusted-device.utils.js";
 
 // ! FIND TRUSTED DEVICE
 export const findTrustedDevice = async (userId, deviceId) => {
@@ -21,9 +22,39 @@ export const upsertTrustedDevice = async data => {
         deviceId: data.deviceId,
       },
     },
+
     update: {
       fingerprint: data.fingerprint,
+      expiresAt: getTrustedDeviceExpiry(),
+      lastUsedAt: new Date(),
     },
-    create: data,
+
+    create: {
+      ...data,
+      expiresAt: getTrustedDeviceExpiry(),
+      lastUsedAt: new Date(),
+    },
+  });
+};
+
+// ! DELETE DEVICE
+export const deleteTrustedDevice = id => {
+  return prisma.trustedDevice.delete({
+    where: {
+      id,
+    },
+  });
+};
+
+// ! TOUCH DEVICE
+export const touchTrustedDevice = id => {
+  return prisma.trustedDevice.update({
+    where: {
+      id,
+    },
+
+    data: {
+      lastUsedAt: new Date(),
+    },
   });
 };

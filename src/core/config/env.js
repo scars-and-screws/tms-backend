@@ -38,3 +38,4 @@ export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 export const CLOUDINARY_URL = process.env.CLOUDINARY_URL;
 export const DEVICE_COOKIE_MAX_AGE =
   parseInt(process.env.DEVICE_COOKIE_MAX_AGE) || 31536000000; // Default to 365 days in milliseconds
+export const TRUSTED_DEVICE_EXPIRATION = TRUSTED_DEVICE_EXPIRATION || "60d";

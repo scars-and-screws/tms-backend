@@ -4,7 +4,10 @@ import {
   OTP_PURPOSE,
 } from "../../../core/otp/index.js";
 
-import { upsertTrustedDevice } from "../trusted-device/trusted-device.repository.js";
+import {
+  upsertTrustedDevice,
+  deleteTrustedDevices,
+} from "../trusted-device/trusted-device.repository.js";
 import { generateFingerprint } from "../../../core/security/index.js";
 
 import { sendMail, twoFactorTemplate } from "../../../core/mail/index.js";
@@ -82,6 +85,9 @@ export const disableTwoFactorLoginService = async userId => {
   }
 
   await disableTwoFactor(userId);
+
+  // cleanup trusted devices
+  await deleteTrustedDevices(userId);
 };
 
 // ! VERIFY TWO FACTOR LOGIN SERVICE

@@ -84,10 +84,15 @@ model RefreshToken {
 model TrustedDevice {
   id String @id @default(uuid())
 
-  userId   String
+  userId String
+
   deviceId String
 
   fingerprint String
+
+  expiresAt DateTime
+
+  lastUsedAt DateTime?
 
   createdAt DateTime @default(now())
 
