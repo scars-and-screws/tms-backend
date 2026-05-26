@@ -41,9 +41,10 @@ export const publishActivity = (scope, id, activity) => {
   if (!clients) return;
 
   for (const client of clients) {
-    client.write(
-      `event:activity
-data:${JSON.stringify(activity)}\n\n`
-    );
+    try {
+      client.write(`event:activity data:${JSON.stringify(activity)}\n\n`);
+    } catch {
+      clients.delete(client);
+    }
   }
 };

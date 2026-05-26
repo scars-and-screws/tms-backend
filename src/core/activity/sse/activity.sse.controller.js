@@ -6,12 +6,15 @@ import {
 export const activityStreamController = (req, res) => {
   const { organizationId, projectId, taskId } = req.params;
 
-  const scope =
-    organizationId && !projectId
-      ? "ORGANIZATION"
-      : projectId && !taskId
-      ? "PROJECT"
-      : "TASK";
+  let scope;
+
+  if (taskId) {
+    scope = "TASK";
+  } else if (projectId) {
+    scope = "PROJECT";
+  } else {
+    scope = "ORGANIZATION";
+  }
 
   const id = taskId || projectId || organizationId;
 
@@ -23,7 +26,23 @@ export const activityStreamController = (req, res) => {
 
   res.flushHeaders();
 
+  // keep connection alive
+  const heartbeat = setInterval(() => {
+    res.write(":heartbeat\n\n");
+  }, 30000);
+
   subscribeActivity(scope, id, res);
 
-  req.on("close", () => unsubscribeActivity(scope, id, res));
+  res.write(
+    `event:connected
+data:${JSON.stringify({
+      status: "connected",
+    })}\n\n`
+  );
+
+  req.on("close", () => {
+    clearInterval(heartbeat);
+    unsubscribeActivity(scope, id, res);
+    res.end();
+  });
 };

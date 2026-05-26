@@ -4,6 +4,8 @@ import {
   buildPaginationMeta,
 } from "../pagination/pagination.utils.js";
 
+import { publishActivity } from "./sse/activity.sse.manager.js";
+
 import {
   findProjectActivities,
   countProjectActivities,
@@ -12,6 +14,7 @@ import {
   findOrganizationActivities,
   countOrganizationActivities,
 } from "./activity.repository.js";
+import { Activity } from "react";
 
 // ! CREATE ACTIVITY LOG
 export const createActivityService = async ({
@@ -25,9 +28,10 @@ export const createActivityService = async ({
   extra = null,
 }) => {
   try {
-    return await createActivity({
+    const activity = await createActivity({
       actorId,
       type,
+
       organizationId,
       projectId,
       taskId,
@@ -38,6 +42,20 @@ export const createActivityService = async ({
         extra,
       }),
     });
+
+    if (organizationId) {
+      publishActivity("ORGANIZATION", organizationId, activity);
+    }
+
+    if (projectId) {
+      publishActivity("PROJECT", projectId, activity);
+    }
+
+    if (taskId) {
+      publishActivity("TASK", taskId, activity);
+    }
+
+    return activity;
   } catch (err) {
     // Activity failures should never break business operations
     console.error(`[ACTIVITY_LOG_FAILED] ${type}`, err.message);

@@ -8,9 +8,19 @@ import {
   taskActivityQuerySchema,
 } from "./activity.validation.js";
 
+import { activityStreamController } from "./sse/activity.sse.controller.js";
+
 const router = Router({ mergeParams: true });
 
 // ! LIST TASK ACTIVITIES
+
+router.get(
+  "/stream",
+  validate(taskActivityParamsSchema),
+  requireTaskAccess,
+  activityStreamController
+);
+
 router.get(
   "/",
   validate(taskActivityParamsSchema),
