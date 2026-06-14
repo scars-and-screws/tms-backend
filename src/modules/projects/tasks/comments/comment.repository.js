@@ -1,4 +1,4 @@
-import prisma from "../../../../core/database/prisma.js";
+import prisma from "../../../../infrastructure/database/prisma.js";
 
 // helper for activity + notification context
 const commentActivityInclude = {

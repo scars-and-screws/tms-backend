@@ -1,8 +1,8 @@
-import { ApiError } from "../../../core/utils/index.js";
+import { ApiError } from "../../../shared/errors/api-error.js";
 import {
   uploadToCloudinary,
   deleteFromCloudinary,
-} from "../../../core/upload/index.js";
+} from "../../../infrastructure/storage/upload.service.js";
 
 import { findUserAvatar, updateUserAvatar } from "./avatar.repository.js";
 

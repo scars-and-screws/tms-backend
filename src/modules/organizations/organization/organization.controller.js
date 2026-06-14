@@ -1,0 +1,116 @@
+import { asyncHandler } from "../../../shared/utils/index.js";
+import { ApiResponse } from "../../../shared/responses/api-response.js";
+import {
+  createOrganizationService,
+  getOrganizationService,
+  listUserOrganizationsService,
+  updateOrganizationService,
+  transferOrganizationOwnershipService,
+  leaveOrganizationService,
+  deleteOrganizationService,
+} from "./organization.service.js";
+
+// ! CREATE ORGANIZATION CONTROLLER
+export const createOrganizationController = asyncHandler(async (req, res) => {
+  const organization = await createOrganizationService(req.user.id, req.body);
+  res
+    .status(201)
+    .json(
+      new ApiResponse(201, organization, "Organization created successfully")
+    );
+});
+
+// ! LIST USER ORGANIZATIONS CONTROLLER
+export const listUserOrganizationsController = asyncHandler(
+  async (req, res) => {
+    const result = await listUserOrganizationsService(req.user.id, req.query);
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, result, "Organizations retrieved successfully")
+      );
+  }
+);
+
+// ! GET ORGANIZATION CONTROLLER
+export const getOrganizationController = asyncHandler(async (req, res) => {
+  const organization = await getOrganizationService(req.params.organizationId);
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, organization, "Organization retrieved successfully")
+    );
+});
+
+// ! UPDATE ORGANIZATION CONTROLLER
+export const updateOrganizationController = asyncHandler(async (req, res) => {
+  const { organizationId } = req.params;
+  const data = req.body;
+  const userId = req.user.id;
+  const updatedOrganization = await updateOrganizationService(
+    organizationId,
+    userId,
+    data
+  );
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedOrganization,
+        "Organization updated successfully"
+      )
+    );
+});
+
+// ! TRANSFER ORGANIZATION OWNERSHIP CONTROLLER
+export const transferOrganizationOwnershipController = asyncHandler(
+  async (req, res) => {
+    const { organizationId } = req.params;
+    const { newOwnerId } = req.body;
+    const actorId = req.user.id;
+
+    const result = await transferOrganizationOwnershipService({
+      organizationId,
+      newOwnerId,
+      actorId,
+    });
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          result,
+          "Organization ownership transferred successfully"
+        )
+      );
+  }
+);
+
+// ! LEAVE ORGANIZATION CONTROLLER
+export const leaveOrganizationController = asyncHandler(async (req, res) => {
+  const { organizationId } = req.params;
+  const userId = req.user.id;
+
+  await leaveOrganizationService({ organizationId, userId });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Left organization successfully"));
+});
+
+// ! DELETE ORGANIZATION CONTROLLER
+export const deleteOrganizationController = asyncHandler(async (req, res) => {
+  const { organizationId } = req.params;
+  const { organizationName } = req.body;
+  const actorId = req.user.id;
+
+  await deleteOrganizationService({
+    organizationId,
+    actorId,
+    organizationName,
+  });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Organization deleted successfully"));
+});

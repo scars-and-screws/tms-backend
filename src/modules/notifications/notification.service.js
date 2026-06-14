@@ -1,17 +1,18 @@
 import {
   createNotification,
   findUserNotifications,
+  countUserNotifications,
   markNotificationAsRead,
 } from "./notification.repository.js";
 
 import {
   getPagination,
   buildPaginationMeta,
-} from "../../core/pagination/pagination.utils.js";
+} from "../../shared/pagination/pagination.utils.js";
 
-import { sendToUser } from "./sse/sse.manager.js";
+import { sendToUser } from "./sse/notification-sse.manager.js";
 
-import { ApiError } from "../../core/utils/index.js";
+import { ApiError } from "../../shared/errors/api-error.js";
 
 // ! CREATE NOTIFICATION SERVICE
 export const createNotificationService = async data => {

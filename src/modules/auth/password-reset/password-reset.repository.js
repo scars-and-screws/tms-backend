@@ -1,4 +1,4 @@
-import prisma from "../../../core/database/prisma.js";
+import prisma from "../../../infrastructure/database/prisma.js";
 
 // ! FIND USER BY EMAIL
 export const findUserByEmail = async email => {

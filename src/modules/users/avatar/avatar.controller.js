@@ -1,4 +1,5 @@
-import { ApiResponse, asyncHandler } from "../../../core/utils/index.js";
+import { asyncHandler } from "../../../shared/utils/index.js";
+import { ApiResponse } from "../../../shared/responses/api-response.js";
 import { uploadAvatarService } from "./avatar.service.js";
 
 // ! UPLOAD AVATAR CONTROLLER

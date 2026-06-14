@@ -1,0 +1,82 @@
+import { asyncHandler } from "../../../shared/utils/index.js";
+import { ApiResponse } from "../../../shared/responses/api-response.js";
+import {
+  addOrganizationMemberService,
+  listOrganizationMembersService,
+  updateOrganizationMemberRoleService,
+  removeOrganizationMemberService,
+} from "./organization-members.service.js";
+
+// ! ADD ORGANIZATION MEMBER CONTROLLER
+export const addOrganizationMemberController = asyncHandler(
+  async (req, res) => {
+    const { organizationId } = req.params;
+    const { email, role } = req.body;
+    const actorId = req.user.id;
+
+    const member = await addOrganizationMemberService({
+      organizationId,
+      email,
+      role,
+      actorId,
+    });
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, member, "Member added successfully"));
+  }
+);
+
+// ! LIST ORGANIZATION MEMBERS CONTROLLER
+export const listOrganizationMembersController = asyncHandler(
+  async (req, res) => {
+    const { organizationId } = req.params;
+
+    const result = await listOrganizationMembersService(
+      organizationId,
+      req.query
+    );
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, result, "Members retrieved successfully"));
+  }
+);
+
+// ! UPDATE ORGANIZATION MEMBER ROLE CONTROLLER
+export const updateOrganizationMemberRoleController = asyncHandler(
+  async (req, res) => {
+    const { organizationId, memberId } = req.params;
+    const { role } = req.body;
+    const actorId = req.user.id;
+
+    const updated = await updateOrganizationMemberRoleService(
+      organizationId,
+      memberId,
+      role,
+      actorId
+    );
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, updated, "Member role updated successfully"));
+  }
+);
+
+// ! REMOVE ORGANIZATION MEMBER CONTROLLER
+export const removeOrganizationMemberController = asyncHandler(
+  async (req, res) => {
+    const { organizationId, memberId } = req.params;
+    const actorId = req.user.id;
+
+    await removeOrganizationMemberService({
+      organizationId,
+      memberId,
+      actorId,
+    });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "Member removed successfully"));
+  }
+);

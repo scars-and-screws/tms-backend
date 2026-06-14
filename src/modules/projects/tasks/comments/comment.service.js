@@ -1,4 +1,4 @@
-import { ApiError } from "../../../../core/utils/index.js";
+import { ApiError } from "../../../../shared/errors/api-error.js";
 import {
   createComment,
   findCommentById,
@@ -8,26 +8,26 @@ import {
   deleteComment,
 } from "./comment.repository.js";
 
-import { extractMentions } from "./comment.utils.js";
-import { createCommentMentions } from "./comment.mention.repository.js";
-import { findUsersByUsernames } from "../../../auth/core/auth.repository.js";
+import { extractMentions } from "./comment.helper.js";
+import { createCommentMentions } from "./comment-mention.repository.js";
+import { findUsersByUsernames } from "../../../auth/auth/auth.repository.js";
 
 import {
   getPagination,
   buildPaginationMeta,
-} from "../../../../core/pagination/pagination.utils.js";
+} from "../../../../shared/pagination/pagination.utils.js";
 import {
   createActivityService,
   ACTIVITY_TYPES,
   buildCommentEntity,
-} from "../../../../core/activity/index.js";
+} from "../../../activity/activity/index.js";
 
-import { findTaskNotificationData } from "../core/task.repository.js";
+import { findTaskNotificationData } from "../task/task.repository.js";
 import {
   NOTIFICATION_TYPES,
   ENTITY_TYPES,
 } from "../../../notifications/notification.constants.js";
-import { notify } from "./comment.notification.js";
+import { notify } from "./comment-notification.helper.js";
 
 // ! CREATE COMMENT SERVICE
 export const createCommentService = async (taskId, userId, content) => {

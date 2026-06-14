@@ -1,5 +1,9 @@
-import { ApiError, sanitizeUser } from "../../../core/utils/index.js";
-import { hashPassword, comparePassword } from "../../../core/security/index.js";
+import { ApiError } from "../../../shared/errors/api-error.js";
+import { sanitizeUser } from "../../auth/shared/mappers/index.js";
+import {
+  hashPassword,
+  comparePassword,
+} from "../../../infrastructure/security/index.js";
 
 import {
   findUserById,
@@ -10,7 +14,7 @@ import {
 import {
   createSessionService,
   revokeAllSessionsService,
-} from "../../auth/session/session.service.js";
+} from "../../auth/sessions/session.service.js";
 
 // ! CURRENT USER PROFILE SERVICE
 export const getProfileService = async userId => {

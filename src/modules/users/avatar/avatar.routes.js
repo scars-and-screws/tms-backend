@@ -1,12 +1,15 @@
 import { Router } from "express";
-import { upload, validateUpload } from "../../../core/upload/index.js";
+import {
+  uploadService,
+  validateUpload,
+} from "../../../infrastructure/storage/index.js";
 import { uploadAvatarController } from "./avatar.controller.js";
 
 const router = Router();
 
 router.patch(
   "/",
-  upload.single("avatar"),
+  uploadService.single("avatar"),
   validateUpload("avatar"),
   uploadAvatarController
 );

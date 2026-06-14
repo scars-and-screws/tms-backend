@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { idSchema } from "../../../../core/validation/index.js";
-import { paginationQuerySchema } from "../../../../core/pagination/pagination.validation.js";
+import { idSchema } from "../../../../shared/validation/index.js";
+import { paginationQuerySchema } from "../../../../shared/pagination/pagination.validation.js";
 
 // ! TASK ATTACHMENT PARAM VALIDATION SCHEMA
 export const taskAttachmentParamSchema = {

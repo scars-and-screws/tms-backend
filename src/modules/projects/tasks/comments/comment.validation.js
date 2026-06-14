@@ -2,9 +2,9 @@ import { z } from "zod";
 import {
   commentContentSchema,
   idSchema,
-} from "../../../../core/validation/index.js";
+} from "../../../../shared/validation/index.js";
 
-import { paginationQuerySchema } from "../../../../core/pagination/pagination.validation.js";
+import { paginationQuerySchema } from "../../../../shared/pagination/pagination.validation.js";
 
 export const createCommentSchema = {
   params: z

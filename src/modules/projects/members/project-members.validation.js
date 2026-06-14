@@ -1,0 +1,83 @@
+import { z } from "zod";
+import { idSchema, projectRoleSchema } from "../../../shared/validation/index.js";
+import { paginationQuerySchema } from "../../../shared/pagination/pagination.validation.js";
+
+// ! ADD PROJECT MEMBER SCHEMA
+export const addProjectMemberSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+  body: z
+    .object({
+      userId: idSchema,
+      role: projectRoleSchema.default("MEMBER"),
+    })
+    .strict(),
+};
+
+// ! LIST PROJECT MEMBERS SCHEMA (VALIDATION FOR PROJECT ID PARAM)
+export const listProjectMembersSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+  query: paginationQuerySchema,
+};
+
+// ! SEARCH PROJECT MEMBERS (MENTIONS)
+export const searchProjectMembersSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+
+  query: z
+    .object({
+      query: z.string().min(0).max(50).optional(),
+    })
+    .strict(),
+};
+
+// ! UPDATE PROJECT MEMBER ROLE SCHEMA
+export const updateProjectMemberRoleSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+      memberId: idSchema,
+    })
+    .strict(),
+  body: z
+    .object({
+      role: projectRoleSchema,
+    })
+    .strict(),
+};
+
+// ! REMOVE PROJECT MEMBER SCHEMA
+export const removeProjectMemberSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+      memberId: idSchema,
+    })
+    .strict(),
+};
+
+// ! LEAVE PROJECT SCHEMA (SELF-REMOVAL)
+export const leaveProjectSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+};

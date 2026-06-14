@@ -1,4 +1,4 @@
-import prisma from "../../../core/database/prisma.js";
+import prisma from "../../../infrastructure/database/prisma.js";
 
 // ! FIND USER AVATAR DATA
 export const findUserAvatar = userId => {

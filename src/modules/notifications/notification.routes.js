@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validate } from "../../core/middleware/index.js";
+import { validate } from "../../shared/middleware/index.js";
 import {
   listNotificationsController,
   markNotificationAsReadController,
@@ -8,7 +8,7 @@ import {
   notificationIdParamSchema,
   listNotificationsQuerySchema,
 } from "./notification.validation.js";
-import { notificationStreamController } from "./sse/sse.controller.js";
+import { notificationStreamController } from "./sse/notification-sse.controller.js";
 
 const router = Router();
 

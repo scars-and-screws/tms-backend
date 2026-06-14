@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { otpSchema, idSchema } from "../../../core/validation/index.js";
+import { otpSchema, idSchema } from "../../../shared/validation/index.js";
 
 export const verifyTwoFactorLoginSchema = {
   body: z

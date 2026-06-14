@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validate } from "../../../core/middleware/index.js";
+import { validate } from "../../../shared/middleware/index.js";
 
 import {
   requestPasswordResetSchema,

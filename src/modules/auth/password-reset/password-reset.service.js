@@ -1,11 +1,10 @@
-import { hashPassword } from "../../../core/security/index.js";
+import { hashPassword } from "../../../infrastructure/security/password.js";
 
-import { sendMail, passwordResetTemplate } from "../../../core/mail/index.js";
 import {
-  createOtpRecord,
-  verifyOtpRecord,
-  OTP_PURPOSE,
-} from "../../../core/otp/index.js";
+  mailService,
+  passwordResetTemplate,
+} from "../../../infrastructure/mail/index.js";
+import { createOtpRecord, verifyOtpRecord, OTP_PURPOSE } from "../otp/index.js";
 
 import {
   findUserByEmail,

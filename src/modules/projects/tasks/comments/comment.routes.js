@@ -9,12 +9,14 @@ import {
   deleteCommentSchema,
 } from "./comment.validation.js";
 
+import { validate } from "../../../../shared/middleware/index.js";
+
+import { requireActiveProject } from "../../../projects/middleware/index.js";
+
 import {
-  validate,
-  requireCommentAccess,
-  requireActiveProject,
+  requireTaskCommentAccess,
   requireActiveTask,
-} from "../../../../core/middleware/index.js";
+} from "../middleware/index.js";
 
 const router = Router({ mergeParams: true });
 
@@ -22,7 +24,7 @@ const router = Router({ mergeParams: true });
 router.patch(
   "/:commentId",
   validate(updateCommentSchema),
-  requireCommentAccess,
+  requireTaskCommentAccess,
   requireActiveProject,
   requireActiveTask,
   updateCommentController
@@ -32,7 +34,7 @@ router.patch(
 router.delete(
   "/:commentId",
   validate(deleteCommentSchema),
-  requireCommentAccess,
+  requireTaskCommentAccess,
   requireActiveProject,
   requireActiveTask,
   deleteCommentController

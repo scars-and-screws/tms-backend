@@ -3,7 +3,7 @@ import {
   passwordSchema,
   emailSchema,
   otpSchema,
-} from "../../../core/validation/index.js";
+} from "../../../shared/validation/index.js";
 
 export const requestPasswordResetSchema = {
   body: z

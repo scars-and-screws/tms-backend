@@ -1,0 +1,301 @@
+Folder PATH listing
+Volume serial number is F389-4B42
+C:.
+³   structure.txt
+³   
+ÃÄÄÄapp
+³       app.js
+³       server.js
+³       
+ÃÄÄÄconfig
+³       env.js
+³       mail.config.js
+³       otp.config.js
+³       
+ÃÄÄÄcore
+³   ÃÄÄÄotp
+³   ³       index.js
+³   ³       otp.constants.js
+³   ³       otp.service.js
+³   ³       otp.validation.js
+³   ³       
+³   ÀÄÄÄvalidation
+³           index.js
+³           
+ÃÄÄÄgenerated
+³   ÀÄÄÄprisma
+³       ³   client.d.ts
+³       ³   client.js
+³       ³   default.d.ts
+³       ³   default.js
+³       ³   edge.d.ts
+³       ³   edge.js
+³       ³   index-browser.js
+³       ³   index.d.ts
+³       ³   index.js
+³       ³   package.json
+³       ³   query_compiler_fast_bg.js
+³       ³   query_compiler_fast_bg.wasm
+³       ³   query_compiler_fast_bg.wasm-base64.js
+³       ³   schema.prisma
+³       ³   wasm-edge-light-loader.mjs
+³       ³   wasm-worker-loader.mjs
+³       ³   
+³       ÀÄÄÄruntime
+³               client.d.ts
+³               client.js
+³               index-browser.d.ts
+³               index-browser.js
+³               wasm-compiler-edge.js
+³               
+ÃÄÄÄinfrastructure
+³   ÃÄÄÄdatabase
+³   ³       prisma.js
+³   ³       
+³   ÃÄÄÄlogger
+³   ÃÄÄÄmail
+³   ³   ³   index.js
+³   ³   ³   mail.service.js
+³   ³   ³   
+³   ³   ÀÄÄÄtemplates
+³   ³       ³   base.template.js
+³   ³       ³   emailVerification.template.js
+³   ³       ³   passwordReset.template.js
+³   ³       ³   twoFactor.template.js
+³   ³       ³   
+³   ³       ÀÄÄÄcomponents
+³   ³               otpBlock.js
+³   ³               
+³   ÃÄÄÄrealtime
+³   ÃÄÄÄsecurity
+³   ³       cookies.js
+³   ³       device.js
+³   ³       deviceCookie.js
+³   ³       deviceParser.js
+³   ³       expiry.js
+³   ³       fingerprint.js
+³   ³       hash.js
+³   ³       index.js
+³   ³       password.js
+³   ³       session.js
+³   ³       token.js
+³   ³       
+³   ÀÄÄÄstorage
+³           cloudinary.js
+³           index.js
+³           upload.config.js
+³           upload.constants.js
+³           upload.middleware.js
+³           upload.service.js
+³           upload.validation.js
+³           
+ÃÄÄÄmodules
+³   ÃÄÄÄactivity
+³   ³   ÃÄÄÄactivity
+³   ³   ³       activity.constants.js
+³   ³   ³       activity.controller.js
+³   ³   ³       activity.entity.js
+³   ³   ³       activity.helper.js
+³   ³   ³       activity.repository.js
+³   ³   ³       activity.service.js
+³   ³   ³       activity.validation.js
+³   ³   ³       index.js
+³   ³   ³       organization.activity.routes.js
+³   ³   ³       project.activity.routes.js
+³   ³   ³       task.activity.routes.js
+³   ³   ³       
+³   ³   ÃÄÄÄshared
+³   ³   ÀÄÄÄsse
+³   ³           activity.sse.controller.js
+³   ³           activity.sse.manager.js
+³   ³           
+³   ÃÄÄÄauth
+³   ³   ÃÄÄÄauth
+³   ³   ³       auth.controller.js
+³   ³   ³       auth.repository.js
+³   ³   ³       auth.routes.js
+³   ³   ³       auth.service.js
+³   ³   ³       auth.validation.js
+³   ³   ³       
+³   ³   ÃÄÄÄemail-verification
+³   ³   ³       verification.controller.js
+³   ³   ³       verification.repository.js
+³   ³   ³       verification.routes.js
+³   ³   ³       verification.service.js
+³   ³   ³       
+³   ³   ÃÄÄÄmiddleware
+³   ³   ÃÄÄÄpassword-reset
+³   ³   ³       password-reset.controller.js
+³   ³   ³       password-reset.repository.js
+³   ³   ³       password-reset.routes.js
+³   ³   ³       password-reset.service.js
+³   ³   ³       password-reset.validation.js
+³   ³   ³       
+³   ³   ÃÄÄÄsessions
+³   ³   ³       session.helper.js
+³   ³   ³       session.repository.js
+³   ³   ³       session.security.js
+³   ³   ³       session.service.js
+³   ³   ³       
+³   ³   ÃÄÄÄshared
+³   ³   ³       auth-response.mapper.js
+³   ³   ³       auth.utils.js
+³   ³   ³       sanitize-user.js
+³   ³   ³       token-payload.mapper.js
+³   ³   ³       
+³   ³   ÃÄÄÄtrusted-devices
+³   ³   ³       trusted-device.repository.js
+³   ³   ³       trusted-device.utils.js
+³   ³   ³       
+³   ³   ÀÄÄÄtwo-factor
+³   ³           two-factor.controller.js
+³   ³           two-factor.repository.js
+³   ³           two-factor.routes.js
+³   ³           two-factor.service.js
+³   ³           two-factor.validation.js
+³   ³           
+³   ÃÄÄÄnotifications
+³   ³   ÃÄÄÄnotification
+³   ³   ³       notification.constants.js
+³   ³   ³       notification.controller.js
+³   ³   ³       notification.repository.js
+³   ³   ³       notification.routes.js
+³   ³   ³       notification.service.js
+³   ³   ³       notification.validation.js
+³   ³   ³       
+³   ³   ÃÄÄÄshared
+³   ³   ÀÄÄÄsse
+³   ³           sse.controller.js
+³   ³           sse.manager.js
+³   ³           
+³   ÃÄÄÄorganizations
+³   ³   ÃÄÄÄlogos
+³   ³   ³       logo.controller.js
+³   ³   ³       logo.repository.js
+³   ³   ³       logo.routes.js
+³   ³   ³       logo.service.js
+³   ³   ³       logo.validation.js
+³   ³   ³       
+³   ³   ÃÄÄÄmembers
+³   ³   ³       organization-members.controller.js
+³   ³   ³       organization-members.helper.js
+³   ³   ³       organization-members.repository.js
+³   ³   ³       organization-members.routes.js
+³   ³   ³       organization-members.service.js
+³   ³   ³       organization-members.validation.js
+³   ³   ³       
+³   ³   ÃÄÄÄmiddleware
+³   ³   ³       requireOrganizationMember.js
+³   ³   ³       requireOrganizationRole.js
+³   ³   ³       
+³   ³   ÃÄÄÄorganization
+³   ³   ³       organization.constants.js
+³   ³   ³       organization.controller.js
+³   ³   ³       organization.helper.js
+³   ³   ³       organization.repository.js
+³   ³   ³       organization.routes.js
+³   ³   ³       organization.service.js
+³   ³   ³       organization.validation.js
+³   ³   ³       
+³   ³   ÀÄÄÄshared
+³   ÃÄÄÄprojects
+³   ³   ÃÄÄÄmembers
+³   ³   ³       project-members.controller.js
+³   ³   ³       project-members.mapper.js
+³   ³   ³       project-members.repository.js
+³   ³   ³       project-members.routes.js
+³   ³   ³       project-members.service.js
+³   ³   ³       project-members.validation.js
+³   ³   ³       
+³   ³   ÃÄÄÄmiddleware
+³   ³   ³       requireActiveProject.js
+³   ³   ³       requireProjectMember.js
+³   ³   ³       requireProjectRole.js
+³   ³   ³       
+³   ³   ÃÄÄÄproject
+³   ³   ³       project.constants.js
+³   ³   ³       project.controller.js
+³   ³   ³       project.helper.js
+³   ³   ³       project.repository.js
+³   ³   ³       project.routes.js
+³   ³   ³       project.service.js
+³   ³   ³       project.validation.js
+³   ³   ³       
+³   ³   ÀÄÄÄtasks
+³   ³       ÃÄÄÄattachments
+³   ³       ³       attachment.comment.routes.js
+³   ³       ³       attachment.controller.js
+³   ³       ³       attachment.repository.js
+³   ³       ³       attachment.service.js
+³   ³       ³       attachment.task.routes.js
+³   ³       ³       attachment.validation.js
+³   ³       ³       
+³   ³       ÃÄÄÄcomments
+³   ³       ³       comment.controller.js
+³   ³       ³       comment.mention.repository.js
+³   ³       ³       comment.notification.js
+³   ³       ³       comment.repository.js
+³   ³       ³       comment.routes.js
+³   ³       ³       comment.service.js
+³   ³       ³       comment.task.routes.js
+³   ³       ³       comment.utils.js
+³   ³       ³       comment.validation.js
+³   ³       ³       
+³   ³       ÃÄÄÄmiddleware
+³   ³       ³       requireActiveTask.js
+³   ³       ³       requireCommentAccess.js
+³   ³       ³       requireTaskAccess.js
+³   ³       ³       requireTaskAttachmentAccess.js
+³   ³       ³       
+³   ³       ÃÄÄÄshared
+³   ³       ÀÄÄÄtask
+³   ³               task.controller.js
+³   ³               task.helper.js
+³   ³               task.notification.js
+³   ³               task.project.routes.js
+³   ³               task.repository.js
+³   ³               task.routes.js
+³   ³               task.service.js
+³   ³               task.validation.js
+³   ³               
+³   ÀÄÄÄusers
+³       ÃÄÄÄavatar
+³       ³       avatar.constants.js
+³       ³       avatar.controller.js
+³       ³       avatar.repository.js
+³       ³       avatar.routes.js
+³       ³       avatar.service.js
+³       ³       
+³       ÀÄÄÄprofile
+³               profile.controller.js
+³               profile.repository.js
+³               profile.routes.js
+³               profile.service.js
+³               profile.validation.js
+³               
+ÀÄÄÄshared
+    ÃÄÄÄconstants
+    ÃÄÄÄerrors
+    ³       api-error.js
+    ³       
+    ÃÄÄÄmiddleware
+    ³       authenticate.js
+    ³       error-handler.js
+    ³       index.js
+    ³       not-found.js
+    ³       requireVerifiedEmail.js
+    ³       validate.js
+    ³       
+    ÃÄÄÄpagination
+    ³       pagination.constants.js
+    ³       pagination.utils.js
+    ³       pagination.validation.js
+    ³       
+    ÃÄÄÄresponses
+    ³       api-response.js
+    ³       
+    ÀÄÄÄutils
+            async-handler.js
+            getRequestMeta.js
+            index.js
+            

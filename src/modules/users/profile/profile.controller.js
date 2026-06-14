@@ -1,9 +1,6 @@
-import {
-  asyncHandler,
-  ApiResponse,
-  buildAuthResponse,
-  getRequestMeta,
-} from "../../../core/utils/index.js";
+import { asyncHandler, getRequestMeta } from "../../../shared/utils/index.js";
+import { ApiResponse } from "../../../shared/responses/api-response.js";
+import { buildAuthResponse } from "../../auth/shared/mappers/index.js";
 
 import {
   getProfileService,
@@ -11,7 +8,7 @@ import {
   updateProfileService,
 } from "./profile.service.js";
 
-import { setRefreshTokenCookie } from "../../../core/security/index.js";
+import { setRefreshTokenCookie } from "../../auth/shared/cookies/index.js";
 
 // ! GET PROFILE CONTROLLER
 export const getProfileController = asyncHandler(async (req, res) => {

@@ -1,0 +1,101 @@
+import { asyncHandler } from "../../../shared/utils/index.js";
+import { ApiResponse } from "../../../shared/responses/api-response.js";
+
+import {
+  addProjectMemberService,
+  listProjectMembersService,
+  updateProjectMemberRoleService,
+  removeProjectMemberService,
+  leaveProjectService,
+  searchProjectMembersService,
+} from "./project-members.service.js";
+
+// ! ADD PROJECT MEMBER CONTROLLER
+export const addProjectMemberController = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+  const { userId, role } = req.body;
+  const actorId = req.user.id;
+
+  const member = await addProjectMemberService(
+    projectId,
+    userId,
+    role,
+    actorId
+  );
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, member, "Project member added successfully"));
+});
+
+// ! LIST PROJECT MEMBERS CONTROLLER
+export const listProjectMembersController = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+
+  const result = await listProjectMembersService(projectId, req.query);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, result, "Project members retrieved successfully")
+    );
+});
+
+// ! SEARCH PROJECT MEMBERS CONTROLLER (MENTIONS)
+export const searchProjectMembersController = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+  const { query } = req.query;
+
+  const users = await searchProjectMembersService(projectId, query);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "Project members search successful"));
+});
+
+// ! UPDATE PROJECT MEMBER ROLE CONTROLLER
+export const updateProjectMemberRoleController = asyncHandler(
+  async (req, res) => {
+    const { memberId } = req.params;
+    const { role } = req.body;
+    const actorId = req.user.id;
+
+    const updated = await updateProjectMemberRoleService(
+      memberId,
+      role,
+      actorId
+    );
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          updated,
+          "Project member role updated successfully"
+        )
+      );
+  }
+);
+
+// ! REMOVE PROJECT MEMBER CONTROLLER
+export const removeProjectMemberController = asyncHandler(async (req, res) => {
+  const { memberId } = req.params;
+  const actorId = req.user.id;
+  await removeProjectMemberService(memberId, actorId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Project member removed successfully"));
+});
+
+// ! LEAVE PROJECT CONTROLLER
+export const leaveProjectController = asyncHandler(async (req, res) => {
+  const { projectId } = req.params;
+  const userId = req.user.id;
+  await leaveProjectService(projectId, userId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "You left the project successfully"));
+});

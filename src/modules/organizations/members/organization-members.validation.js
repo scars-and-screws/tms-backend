@@ -1,0 +1,52 @@
+import { z } from "zod";
+import {
+  emailSchema,
+  idSchema,
+  organizationRoleSchema,
+} from "../../../shared/validation/index.js";
+
+import { paginationQuerySchema } from "../../../shared/pagination/pagination.validation.js";
+
+// ! ADD ORGANIZATION MEMBER VALIDATION SCHEMA
+export const addOrganizationMemberSchema = {
+  params: z.object({
+    organizationId: idSchema,
+  }),
+
+  body: z
+    .object({
+      email: emailSchema,
+      role: z.enum(["ADMIN", "MEMBER"]).default("MEMBER"),
+    })
+    .strict(),
+};
+
+// ! LIST ORGANIZATION MEMBERS VALIDATION SCHEMA
+export const listOrganizationMembersSchema = {
+  params: z.object({
+    organizationId: idSchema,
+  }),
+  query: paginationQuerySchema,
+};
+
+// ! UPDATE ORGANIZATION MEMBER ROLE VALIDATION SCHEMA
+export const updateOrganizationMemberRoleSchema = {
+  params: z.object({
+    organizationId: idSchema,
+    memberId: idSchema,
+  }),
+
+  body: z
+    .object({
+      role: organizationRoleSchema,
+    })
+    .strict(),
+};
+
+// ! REMOVE ORGANIZATION MEMBER VALIDATION SCHEMA
+export const removeOrganizationMemberSchema = {
+  params: z.object({
+    organizationId: idSchema,
+    memberId: idSchema,
+  }),
+};

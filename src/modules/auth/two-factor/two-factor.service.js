@@ -1,29 +1,26 @@
-import {
-  createOtpRecord,
-  verifyOtpRecord,
-  OTP_PURPOSE,
-} from "../../../core/otp/index.js";
+import { createOtpRecord, verifyOtpRecord, OTP_PURPOSE } from "../otp/index.js";
 
 import {
   upsertTrustedDevice,
-  deleteTrustedDevices,
-} from "../trusted-device/trusted-device.repository.js";
-import { generateFingerprint } from "../../../core/security/index.js";
+  deleteTrustedDevice,
+} from "../trusted-devices/trusted-devices.repository.js";
+import { generateFingerprint } from "../shared/devices/device-fingerprint.js";
 
-import { sendMail, twoFactorTemplate } from "../../../core/mail/index.js";
-import { ApiError } from "../../../core/utils/index.js";
-import { finalizeLoginService } from "../core/auth.service.js";
+import { mailService } from "../../../infrastructure/mail/index.js";
+import { twoFactorTemplate } from "../../../infrastructure/mail/index.js";
+import { ApiError } from "../../../shared/errors/api-error.js";
+import { finalizeLoginService } from "../auth/auth.service.js";
 import {
   safeVerifyTempToken,
   safeDecodeTempToken,
-} from "../shared/auth.utils.js";
+} from "../shared/helpers/auth.helper.js";
 
 import {
   findUserById,
   enableTwoFactor,
   disableTwoFactor,
 } from "./two-factor.repository.js";
-import { verifyTempToken } from "../../../core/security/token.js";
+import { verifyTempToken } from "../../../infrastructure/security/token.js";
 
 // ! ENABLE TWO FACTOR LOGIN SERVICE
 export const enableTwoFactorLoginService = async userId => {
@@ -44,7 +41,7 @@ export const enableTwoFactorLoginService = async userId => {
 export const sendLoginOtpService = async user => {
   const otp = await createOtpRecord(user.id, OTP_PURPOSE.TWO_FACTOR);
 
-  await sendMail({
+  await mailService({
     to: user.email,
     subject: "Your OTP for Two-Factor Authentication",
     html: twoFactorTemplate(otp),
@@ -87,7 +84,7 @@ export const disableTwoFactorLoginService = async userId => {
   await disableTwoFactor(userId);
 
   // cleanup trusted devices
-  await deleteTrustedDevices(userId);
+  await deleteTrustedDevice(userId);
 };
 
 // ! VERIFY TWO FACTOR LOGIN SERVICE

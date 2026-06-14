@@ -1,8 +1,9 @@
 import {
   uploadToCloudinary,
   deleteFromCloudinary,
-} from "../../../../core/upload/index.js";
-import { ApiError } from "../../../../core/utils/index.js";
+} from "../../../../infrastructure/storage/upload.service.js";
+
+import { ApiError } from "../../../../shared/errors/api-error.js";
 import {
   createFile,
   findFilesByTaskId,
@@ -15,7 +16,7 @@ import {
 import {
   getPagination,
   buildPaginationMeta,
-} from "../../../../core/pagination/pagination.utils.js";
+} from "../../../../shared/pagination/pagination.utils.js";
 
 // ! UPLOAD  TASK ATTACHMENT SERVICE
 export const uploadAttachmentService = async (

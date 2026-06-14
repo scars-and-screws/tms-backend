@@ -1,0 +1,131 @@
+import { z } from "zod";
+import {
+  idSchema,
+  projectNameSchema,
+  descriptionSchema,
+} from "../../../shared/validation/index.js";
+
+import { paginationQuerySchema } from "../../../shared/pagination/pagination.validation.js";
+
+// ! CREATE PROJECT SCHEMA
+export const createProjectSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+    })
+    .strict(),
+  body: z
+    .object({
+      name: projectNameSchema,
+      description: z.string().optional(),
+    })
+    .strict(),
+};
+
+// ! LIST PROJECTS SCHEMA (VALIDATION FOR ORGANIZATION ID PARAM)
+export const listProjectsSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+    })
+    .strict(),
+
+  query: paginationQuerySchema
+    .extend({
+      includeArchived: z
+        .enum(["true", "false"])
+        .optional()
+        .transform(val => val === "true"),
+
+      onlyArchived: z
+        .enum(["true", "false"])
+        .optional()
+        .transform(val => val === "true"),
+    })
+
+    .refine(
+      data => !(data.includeArchived && data.onlyArchived),
+
+      {
+        message: "Cannot use includeArchived and onlyArchived together",
+
+        path: ["includeArchived"],
+      }
+    )
+
+    .strict(),
+};
+
+// ! UPDATE PROJECT SCHEMA
+export const updateProjectSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+
+  body: z
+    .object({
+      name: projectNameSchema.optional(),
+      description: descriptionSchema.optional(),
+    })
+    .strict()
+    .refine(data => data.name || data.description, {
+      message: "At least one field required (name or description)",
+    }),
+};
+
+// ! PROJECT PARAM VALIDATION SCHEMA
+export const getProjectIdParamSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+};
+
+// ! ARCHIVE PROJECT SCHEMA
+export const archiveProjectSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+};
+
+// ! UNARCHIVE PROJECT SCHEMA
+export const unarchiveProjectSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+};
+
+// ! DELETE PROJECT SCHEMA
+export const deleteProjectSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+      projectId: idSchema,
+    })
+    .strict(),
+  body: z
+    .object({
+      projectName: projectNameSchema,
+    })
+    .strict(),
+};
+
+// ! ORGANIZATION PARAM VALIDATION (FOR GETTING ALL PROJECTS IN AN ORGANIZATION)
+export const organizationIdParamSchema = {
+  params: z
+    .object({
+      organizationId: idSchema,
+    })
+    .strict(),
+};

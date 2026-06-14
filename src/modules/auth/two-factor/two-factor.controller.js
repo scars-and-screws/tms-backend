@@ -1,16 +1,15 @@
-import { setRefreshTokenCookie } from "../../../core/security/index.js";
+import { setRefreshTokenCookie } from "../shared/cookies/index.js";
 import {
   enableTwoFactorLoginService,
   disableTwoFactorLoginService,
   verifyTwoFactorLoginService,
   resendTwoFactorOtpService,
 } from "./two-factor.service.js";
-import {
-  ApiResponse,
-  asyncHandler,
-  buildAuthResponse,
-  getRequestMeta,
-} from "../../../core/utils/index.js";
+import { asyncHandler, getRequestMeta } from "../../../shared/utils/index.js";
+
+import { buildAuthResponse } from "../shared/mappers/index.js";
+
+import { ApiResponse } from "../../../shared/responses/api-response.js";
 
 // ! ENABLE TWO FACTOR LOGIN CONTROLLER
 export const enableTwoFactorLoginController = asyncHandler(async (req, res) => {

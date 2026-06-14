@@ -1,0 +1,34 @@
+import { Router } from "express";
+
+import { requireTaskAccess } from "../../projects/tasks/middleware/index.js";
+import { validate } from "../../../shared/middleware/index.js";
+
+import { listTaskActivitiesController } from "./activity.controller.js";
+
+import {
+  taskActivityParamsSchema,
+  taskActivityQuerySchema,
+} from "./activity.validation.js";
+
+import { activityStreamController } from "../sse/activity-sse.controller.js";
+
+const router = Router({ mergeParams: true });
+
+// ! LIST TASK ACTIVITIES
+
+router.get(
+  "/stream",
+  validate(taskActivityParamsSchema),
+  requireTaskAccess,
+  activityStreamController
+);
+
+router.get(
+  "/",
+  validate(taskActivityParamsSchema),
+  validate(taskActivityQuerySchema),
+  requireTaskAccess,
+  listTaskActivitiesController
+);
+
+export default router;

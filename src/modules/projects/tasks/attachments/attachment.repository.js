@@ -1,4 +1,4 @@
-import prisma from "../../../../core/database/prisma.js";
+import prisma from "../../../../infrastructure/database/prisma.js";
 
 // ! CREATE FILE
 export const createFile = data => {
